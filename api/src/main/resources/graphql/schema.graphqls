@@ -1,0 +1,9 @@
+type Query {
+    allEmployees: [Employee]
+}
+
+type Employee {
+    name: String!
+    wage: Float
+}
+

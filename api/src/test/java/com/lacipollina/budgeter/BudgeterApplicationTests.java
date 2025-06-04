@@ -1,10 +1,10 @@
-package com.lacipollina.bugeter;
+package com.lacipollina.budgeter;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BugeterApplicationTests {
+class BudgeterApplicationTests {
 
 	@Test
 	void contextLoads() {
