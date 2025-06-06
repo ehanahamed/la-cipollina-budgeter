@@ -1,9 +1,20 @@
 type Query {
     allEmployees: [Employee]
 }
+type Mutation {
+    runDay(
+      floorHours: [EmployeeHours],
+      kitchenHours: [EmployeeHours],
+      foodCostChange: Int
+    ): Boolean
+}
 
 type Employee {
     name: String!
     wage: Float
+}
+input EmployeeHours {
+    name: String!
+    hours: Int!
 }
 
