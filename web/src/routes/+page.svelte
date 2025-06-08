@@ -16,9 +16,9 @@
     }
 </style>
 <div class="img-container">
-    <img src="https://lacipollina.com/content/website/accounts/1298/240-476aee843252af73ec11abdffa5aff45.png">
+    <img src="/logo.png" alt="La Cipollina">
 </div>
-<h1 class="h3 header-text">Budgeter</h1>
+<p class="h4 header-text">Budgeter</p>
 <div class="flex center">
     <div class="flex center" style="flex-direction: column;">
         <div class="combo-select">

@@ -34,12 +34,8 @@ let employees = [
 .centerthisplz {
     text-align: center;
 }
-:global {
-    body {
-        padding: 1rem;
-    }
-}
 </style>
+<div style="padding: 1rem;">
 <h2 class="centerthisplz">Run Day</h2>
 <div class="layoutthing">
 <table>
@@ -115,5 +111,6 @@ let employees = [
             })
         })
     }}>Save</button>
+</div>
 </div>
 
