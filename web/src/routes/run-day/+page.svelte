@@ -107,8 +107,11 @@ let employees = [
         floorHours: $floorHoursArray,
         kitchenHours: kitchenHoursArray,
         foodCost: $foodCost
-)
-}`
+    )
+}`,
+                variables: {
+                    "floorHoursArray": ""
+                }
             })
         })
     }}>Save</button>
