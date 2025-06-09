@@ -35,5 +35,32 @@ public class EmployeeRepo {
             return null;
         }
     }
+    public Employee getEmployeeByName(String name) {
+        try {
+            return jdbcTemplate.queryForObject(
+                "SELECT name, wage, type FROM employees WHERE name = ?",
+                employeeRowMapper,
+                name
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+    public Employee addEmployee(Employee employee) {
+        try {
+            return jdbcTemplate.queryForObject(
+                """
+                INSERT INTO employees (name, wage, type) VALUES
+                (?, ?, ?) RETURNING name, wage, type
+                """,
+                employeeRowMapper,
+                employee.getName(),
+                employee.getWage(),
+                employee.getType()
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
 }
 

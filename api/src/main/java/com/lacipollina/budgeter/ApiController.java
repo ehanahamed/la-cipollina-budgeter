@@ -25,10 +25,10 @@ public class ApiController {
 
     @MutationMapping
     public boolean runDay(
-        @Argument Map<> floorHours,
-        @Argument Map<> kitchenHours,
-        @Argument float foodCost
+        @Argument Map<String, Float> floorHours,
+        @Argument Map<String, Float> kitchenHours,
+        @Argument float foodCostChange
     ) {
-        
+        for (
     }
 }
