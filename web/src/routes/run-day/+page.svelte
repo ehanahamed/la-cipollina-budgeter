@@ -1,4 +1,5 @@
 <script>
+import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import { onMount } from "svelte";
 let employees = [
     {
@@ -18,13 +19,31 @@ let floorHours = {
     "asdfjkl": 123
 }
 let floorWorkersArray;
-let kitchenWorkersArray;
+let kitchenWorkersArray = $state([
+    {
+        name: "",
+        hours: ""
+    }
+]);
 let foodCostsArray = $state([
     {
         increase: "",
         decrease: ""
     }
 ]);
+let dayOfTheWeek = $state();
+let weekDays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thrusday",
+    "Friday",
+    "Saturday"
+]
+onMount(function () {
+    dayOfTheWeek = weekDays[(new Date()).getDay()]
+})
 </script>
 <style>
 .layoutthing {
@@ -34,7 +53,7 @@ let foodCostsArray = $state([
     grid-template-columns: 1fr 1fr 1fr;
     padding: 1rem;
 }
-.layoutthing table {
+.layoutthing div {
     margin-top: 0px;
 }
 @media only screen and (max-width: 1000px) {
@@ -46,13 +65,28 @@ let foodCostsArray = $state([
 .centerthisplz {
     text-align: center;
 }
+.centerbutnotonmobile {
+    text-align: center;
+}
+@media only screen and (max-width: 1000px) {
+    .centerbutnotonmobile {
+        text-align: start;
+    }
+}
 </style>
 <div style="padding: 1rem;">
+    <div>
+        <a href="/" class="button faint">
+            <BackArrowIcon></BackArrowIcon>
+            Back
+        </a>
+    </div>
 <h2 class="centerthisplz">Run Day</h2>
+<p class="center">{dayOfTheWeek}</p>
 <div class="layoutthing">
 <div>
-    <p class="h4 center">Floor Workers</p>
-    <table bind:this={floorWorkersTable}>
+    <p class="h4 centerbutnotonmobile">Floor Workers</p>
+    <table>
         <thead>
             <tr>
                 <th>List of People</th>
@@ -72,8 +106,8 @@ let foodCostsArray = $state([
     </table>
 </div>
 <div>
-    <p class="h4 center">Kitchen Workers</p>
-    <table bind:this={kitchenWorkersTable}>
+    <p class="h4 centerbutnotonmobile">Kitchen Workers</p>
+    <table>
         <thead>
             <tr>
                 <th>List of People</th>
@@ -93,7 +127,7 @@ let foodCostsArray = $state([
     </table>
 </div>
 <div>
-    <p class="h4 center">Food Costs</p>
+    <p class="h4 centerbutnotonmobile">Food Costs</p>
     <table>
         <thead>
             <tr>
