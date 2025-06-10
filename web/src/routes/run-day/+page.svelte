@@ -56,6 +56,9 @@ onMount(function () {
 .layoutthing div {
     margin-top: 0px;
 }
+.layoutthing table {
+    width: 100%;
+}
 @media only screen and (max-width: 1000px) {
     .layoutthing {
         grid-template-rwos: auto auto auto;
@@ -65,16 +68,8 @@ onMount(function () {
 .centerthisplz {
     text-align: center;
 }
-.centerbutnotonmobile {
-    text-align: center;
-}
-@media only screen and (max-width: 1000px) {
-    .centerbutnotonmobile {
-        text-align: start;
-    }
-}
 </style>
-<div style="padding: 1rem;">
+<div style="padding-top: 4rem; padding-left: 2rem; padding-right: 2rem; padding-down: 2rem;">
     <div>
         <a href="/" class="button faint">
             <BackArrowIcon></BackArrowIcon>
@@ -85,7 +80,7 @@ onMount(function () {
 <p class="center">{dayOfTheWeek}</p>
 <div class="layoutthing">
 <div>
-    <p class="h4 centerbutnotonmobile">Floor Workers</p>
+    <p class="h4 center">Floor Workers</p>
     <table>
         <thead>
             <tr>
@@ -106,7 +101,7 @@ onMount(function () {
     </table>
 </div>
 <div>
-    <p class="h4 centerbutnotonmobile">Kitchen Workers</p>
+    <p class="h4 center">Kitchen Workers</p>
     <table>
         <thead>
             <tr>
@@ -127,7 +122,7 @@ onMount(function () {
     </table>
 </div>
 <div>
-    <p class="h4 centerbutnotonmobile">Food Costs</p>
+    <p class="h4 center">Food Costs</p>
     <table>
         <thead>
             <tr>
