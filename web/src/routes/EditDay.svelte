@@ -2,40 +2,27 @@
 import { base } from "$app/paths";
 import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import PlusIcon from "$lib/icons/Plus.svelte";
+import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import { onMount } from "svelte";
-let employees = [
-    {
-        name: "Carson",
-        wage: 200000,
-        type: "floor"
-    },
-    {
-        name: "Cristian",
-        wage: 200000,
-        type: "floor"
-    },
-    {
-        name: "Example",
-        wage: 1234,
-        type: "kitchen"
-    },
-]
+let { data } = $props();
 let floorHoursArray = $state([]);
 let kitchenHoursArray = $state([]);
-employees.forEach(function (employee) {
-    if (employee?.type == "floor") {
-        floorHoursArray.push({
-            name: employee.name,
-            hours: ""
-        })
-    }
-    if (employee?.type == "kitchen") {
-        kitchenHoursArray.push({
-            name: employee.name,
-            hours: ""
-        })
-    }
-})
+if (data.new) {
+    data.employees.forEach(function (employee) {
+        if (employee?.type == "floor") {
+            floorHoursArray.push({
+                name: employee.name,
+                hours: ""
+            })
+        }
+        if (employee?.type == "kitchen") {
+            kitchenHoursArray.push({
+                name: employee.name,
+                hours: ""
+            })
+        }
+    })
+}
 let ingredientExpensesArray = $state([
     {
         increase: "",
@@ -59,6 +46,7 @@ onMount(function () {
 <style>
 .gridtablelayout {
     display: grid;
+    gap: 1rem;
     grid-template-rows: auto auto auto;
     grid-template-columns: auto auto auto;
     grid-template-areas:
@@ -86,6 +74,12 @@ onMount(function () {
     grid-area: areasave;
     justify-self: start;
 }
+.gridtablelayout input[type=text] {
+    width: 8rem;
+}
+.centerbutnotonmobile {
+    text-align: center;
+}
 @media only screen and (max-width: 1000px) {
     .gridtablelayout {
         grid-template-rows: auto auto auto auto;
@@ -102,10 +96,21 @@ onMount(function () {
     .gridtablelayout > .areafood {
         justify-self: start;
     }
+    .centerbutnotonmobile {
+        text-align: start;
+    }
 }
 </style>
 <div class="grid page" style="margin-top: 2rem;">
     <div class="content">
+        <div class="centerbutnotonmobile">
+            {#if data.new}
+                <p>Run Day</p>
+            {:else}
+                <p>Edit Day</p>
+            {/if}
+            <h3 style="margin-top: 0px;">{dayOfTheWeek}</h3>
+        </div>
         <div class="gridtablelayout">
             <div class="areaback">
                 <a href={base} class="button faint">
@@ -142,7 +147,7 @@ onMount(function () {
                         </tr>
                     </thead>
                     <tbody>
-                        {#each floorHoursArray as row}
+                        {#each kitchenHoursArray as row}
                             <tr>
                                 <td>{row.name}</td>
                                 <td><input type="text" bind:value={row.hours}></td>
@@ -179,6 +184,12 @@ onMount(function () {
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div class="areasave">
+                <button>
+                    <CheckmarkIcon></CheckmarkIcon>
+                    Save
+                </button>
             </div>
         </div>
     </div>
