@@ -9,7 +9,10 @@ const config = {
             fallback: undefined,
             precompress: true,
             strict: true
-        })
+        }),
+        paths: {
+            base: "/la-cipollina-budgeter"
+        }
 	}
 };
 
