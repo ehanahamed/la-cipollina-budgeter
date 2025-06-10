@@ -1,0 +1,185 @@
+<script>
+import { base } from "$app/paths";
+import BackArrowIcon from "$lib/icons/BackArrow.svelte";
+import PlusIcon from "$lib/icons/Plus.svelte";
+import { onMount } from "svelte";
+let employees = [
+    {
+        name: "Carson",
+        wage: 200000,
+        type: "floor"
+    },
+    {
+        name: "Cristian",
+        wage: 200000,
+        type: "floor"
+    },
+    {
+        name: "Example",
+        wage: 1234,
+        type: "kitchen"
+    },
+]
+let floorHoursArray = $state([]);
+let kitchenHoursArray = $state([]);
+employees.forEach(function (employee) {
+    if (employee?.type == "floor") {
+        floorHoursArray.push({
+            name: employee.name,
+            hours: ""
+        })
+    }
+    if (employee?.type == "kitchen") {
+        kitchenHoursArray.push({
+            name: employee.name,
+            hours: ""
+        })
+    }
+})
+let ingredientExpensesArray = $state([
+    {
+        increase: "",
+        decrease: ""
+    }
+]);
+let dayOfTheWeek = $state();
+let weekDays = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thrusday",
+    "Friday",
+    "Saturday"
+]
+onMount(function () {
+    dayOfTheWeek = weekDays[(new Date()).getDay()]
+})
+</script>
+<style>
+.gridtablelayout {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: auto auto auto;
+    grid-template-areas:
+        "areaback areaback areaback"
+        "areafloor areakitchen areafood"
+        "areasave areasave areasave";
+}
+.gridtablelayout > .areaback {
+    grid-area: areaback;
+    justify-self: start;
+}
+.gridtablelayout > .areafloor {
+    grid-area: areafloor;
+    justify-self: center;
+}
+.gridtablelayout > .areakitchen {
+    grid-area: areakitchen;
+    justify-self: center;
+}
+.gridtablelayout > .areafood {
+    grid-area: areafood;
+    justify-self: center;
+}
+.gridtablelayout > .areasave {
+    grid-area: areasave;
+    justify-self: start;
+}
+@media only screen and (max-width: 1000px) {
+    .gridtablelayout {
+        grid-template-rows: auto auto auto auto;
+        grid-template-columns: auto;
+        grid-template-areas:
+            "areaback"
+            "areafloor"
+            "areakitchen"
+            "areafood"
+            "areasave";
+    }
+    .gridtablelayout > .areafloor,
+    .gridtablelayout > .areakitchen,
+    .gridtablelayout > .areafood {
+        justify-self: start;
+    }
+}
+</style>
+<div class="grid page" style="margin-top: 2rem;">
+    <div class="content">
+        <div class="gridtablelayout">
+            <div class="areaback">
+                <a href={base} class="button faint">
+                    <BackArrowIcon></BackArrowIcon>
+                    Back
+                </a>
+            </div>
+            <div class="areafloor">
+                <p>Floor Workers</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Hours Worked</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each floorHoursArray as row}
+                            <tr>
+                                <td>{row.name}</td>
+                                <td><input type="text" bind:value={row.hours}></td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+            <div class="areakitchen">
+                <p>Kitchen Workers</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Hours Worked</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each floorHoursArray as row}
+                            <tr>
+                                <td>{row.name}</td>
+                                <td><input type="text" bind:value={row.hours}></td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+            <div class="areafood">
+                <p>Ingredient Expenses</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Increases</th>
+                            <th>Decreases</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each ingredientExpensesArray as row}
+                            <tr>
+                                <td><input type="text" bind:value={row.increase}></td>
+                                <td><input type="text" bind:value={row.decrease}></td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <td>
+                                <button onclick={function () {
+                                    ingredientExpensesArray.push({increase:"",decrease:""})
+                                }}>
+                                    <PlusIcon></PlusIcon>
+                                    Add
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
