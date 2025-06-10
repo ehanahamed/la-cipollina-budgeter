@@ -1,3 +1,6 @@
+<script>
+    import { base } from "$app/paths";
+</script>
 <style>
     .header-text {
         text-align: center;
@@ -17,18 +20,17 @@
     }
 </style>
 <div class="img-container">
-    <img src="/logo.png" alt="La Cipollina">
+    <img src="{base}/logo.png" alt="La Cipollina">
 </div>
 <p class="h4 header-text">Budgeter</p>
 <div class="flex center">
     <div class="flex center" style="flex-direction: column;">
         <div class="combo-buttons">
-            <a class="button left" href="/edit-budget">Edit Budget</a>
-            <a class="button mid" href="/run-day">Run Day</a>
+            <a class="button left" href="{base}/edit-budget">Edit Budget</a>
+            <a class="button mid" href="{base}/run-day">Run Day</a>
             <button class="right">Edit Day</button>
         </div>
-        <a href="/reports" class="button">Reports</a>
-        <a href="/settings" class="button">Settings</a>
+        <a href="{base}/reports" class="button">Reports</a>
+        <a href="{base}/settings" class="button">Settings</a>
     </div>
 </div>
-

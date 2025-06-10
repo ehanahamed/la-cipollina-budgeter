@@ -1,4 +1,5 @@
 <script>
+import { base } from "$app/paths";
 import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import PlusIcon from "$lib/icons/Plus.svelte";
 import { onMount } from "svelte";
@@ -107,7 +108,7 @@ onMount(function () {
     <div class="content">
         <div class="gridtablelayout">
             <div class="areaback">
-                <a href="/" class="button faint">
+                <a href={base} class="button faint">
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a>

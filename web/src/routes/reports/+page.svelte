@@ -1,4 +1,5 @@
 <script>
+    import { base } from "$app/paths";
     import {Calendar, DayGrid} from '@event-calendar/core';
     import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 
@@ -27,7 +28,7 @@
 <div class="grid page">
     <div class="content" style="padding-top: 2rem;">
     <div>
-        <a href="/" class="button faint">
+        <a href={base} class="button faint">
             <BackArrowIcon></BackArrowIcon>
             Back
         </a>
