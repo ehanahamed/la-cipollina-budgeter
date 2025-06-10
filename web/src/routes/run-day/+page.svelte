@@ -1,31 +1,41 @@
 <script>
 import BackArrowIcon from "$lib/icons/BackArrow.svelte";
+import PlusIcon from "$lib/icons/Plus.svelte";
 import { onMount } from "svelte";
 let employees = [
     {
         name: "Carson",
-        wage: 200000
+        wage: 200000,
+        type: "floor"
     },
     {
         name: "Cristian",
-        wage: 200000
+        wage: 200000,
+        type: "floor"
     },
     {
         name: "Example",
-        wage: 1234
+        wage: 1234,
+        type: "kitchen"
     },
 ]
-let floorHours = {
-    "asdfjkl": 123
-}
-let floorWorkersArray;
-let kitchenWorkersArray = $state([
-    {
-        name: "",
-        hours: ""
+let floorHoursArray = $state([]);
+let kitchenHoursArray = $state([]);
+employees.forEach(function (employee) {
+    if (employee?.type == "floor") {
+        floorHoursArray.push({
+            name: employee.name,
+            hours: ""
+        })
     }
-]);
-let foodCostsArray = $state([
+    if (employee?.type == "kitchen") {
+        kitchenHoursArray.push({
+            name: employee.name,
+            hours: ""
+        })
+    }
+})
+let ingredientExpensesArray = $state([
     {
         increase: "",
         decrease: ""
@@ -46,133 +56,129 @@ onMount(function () {
 })
 </script>
 <style>
-.layoutthing {
+.gridtablelayout {
     display: grid;
-    gap: 1rem;
-    grid-template-rows: auto;
-    grid-template-columns: 1fr 1fr 1fr;
-    padding: 1rem;
+    grid-template-rows: auto auto auto;
+    grid-template-columns: auto auto auto;
+    grid-template-areas:
+        "areaback areaback areaback"
+        "areafloor areakitchen areafood"
+        "areasave areasave areasave";
 }
-.layoutthing div {
-    margin-top: 0px;
+.gridtablelayout > .areaback {
+    grid-area: areaback;
+    justify-self: start;
 }
-.layoutthing table {
-    width: 100%;
+.gridtablelayout > .areafloor {
+    grid-area: areafloor;
+    justify-self: center;
+}
+.gridtablelayout > .areakitchen {
+    grid-area: areakitchen;
+    justify-self: center;
+}
+.gridtablelayout > .areafood {
+    grid-area: areafood;
+    justify-self: center;
+}
+.gridtablelayout > .areasave {
+    grid-area: areasave;
+    justify-self: start;
 }
 @media only screen and (max-width: 1000px) {
-    .layoutthing {
-        grid-template-rwos: auto auto auto;
+    .gridtablelayout {
+        grid-template-rows: auto auto auto auto;
         grid-template-columns: auto;
+        grid-template-areas:
+            "areaback"
+            "areafloor"
+            "areakitchen"
+            "areafood"
+            "areasave";
+    }
+    .gridtablelayout > .areafloor,
+    .gridtablelayout > .areakitchen,
+    .gridtablelayout > .areafood {
+        justify-self: start;
     }
 }
-.centerthisplz {
-    text-align: center;
-}
 </style>
-<div style="padding-top: 4rem; padding-left: 2rem; padding-right: 2rem; padding-down: 2rem;">
-    <div>
-        <a href="/" class="button faint">
-            <BackArrowIcon></BackArrowIcon>
-            Back
-        </a>
+<div class="grid page" style="margin-top: 2rem;">
+    <div class="content">
+        <div class="gridtablelayout">
+            <div class="areaback">
+                <a href="/" class="button faint">
+                    <BackArrowIcon></BackArrowIcon>
+                    Back
+                </a>
+            </div>
+            <div class="areafloor">
+                <p>Floor Workers</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Hours Worked</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each floorHoursArray as row}
+                            <tr>
+                                <td>{row.name}</td>
+                                <td><input type="text" bind:value={row.hours}></td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+            <div class="areakitchen">
+                <p>Kitchen Workers</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Hours Worked</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each floorHoursArray as row}
+                            <tr>
+                                <td>{row.name}</td>
+                                <td><input type="text" bind:value={row.hours}></td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+            <div class="areafood">
+                <p>Ingredient Expenses</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Increases</th>
+                            <th>Decreases</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each ingredientExpensesArray as row}
+                            <tr>
+                                <td><input type="text" bind:value={row.increase}></td>
+                                <td><input type="text" bind:value={row.decrease}></td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <td>
+                                <button onclick={function () {
+                                    ingredientExpensesArray.push({increase:"",decrease:""})
+                                }}>
+                                    <PlusIcon></PlusIcon>
+                                    Add
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-<h2 class="centerthisplz">Run Day</h2>
-<p class="center">{dayOfTheWeek}</p>
-<div class="layoutthing">
-<div>
-    <p class="h4 center">Floor Workers</p>
-    <table>
-        <thead>
-            <tr>
-                <th>List of People</th>
-                <th>Hours Worked</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each employees as employee}
-            <tr>
-                <td>{employee.name}</td>
-                <td>
-                    <input type="text">
-                </td>
-            </tr>
-            {/each}
-        </tbody>
-    </table>
 </div>
-<div>
-    <p class="h4 center">Kitchen Workers</p>
-    <table>
-        <thead>
-            <tr>
-                <th>List of People</th>
-                <th>Hours Worked</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each employees as employee}
-            <tr>
-                <td>{employee.name}</td>
-                <td>
-                    <input type="text">
-                </td>
-            </tr>
-            {/each}
-        </tbody>
-    </table>
-</div>
-<div>
-    <p class="h4 center">Food Costs</p>
-    <table>
-        <thead>
-            <tr>
-                <th>Increases</th>
-                <th>Decreases</th>
-            </tr>
-        </thead>
-        <tbody>
-            {#each foodCostsArray as row}
-            <tr>
-                <td>
-                    <input type="text" bind:value={row.increase}>
-                </td>
-                <td>
-                    <input type="text" bind:value={row.decrease}>
-                </td>
-            </tr>
-            {/each}
-            <tr>
-                <td>
-                    <button onclick={function () {
-                        foodCostsArray.push({
-                            increase: "",
-                            decrease: ""
-                        })
-                    }}>Add</button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-</div>
-<div class="flex">
-    <button onclick={function () {
-        fetch("/api/graphql", {
-            method: "POST",
-            body: JSON.stringify({
-                query: `{
-    runDay(
-        floorHours: $floorHoursArray,
-        kitchenHours: kitchenHoursArray,
-        foodCost: $foodCost
-    )
-}`,
-                variables: {
-                    "floorHoursArray": ""
-                }
-            })
-        })
-    }}>Save</button>
-</div>
-</div>
-
