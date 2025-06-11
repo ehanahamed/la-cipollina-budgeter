@@ -1,6 +1,6 @@
 <script>
     import { base } from "$app/paths";
-    import { PUBLIC_API_URL } from "$env/static/public";
+    let { data } = $props();
     let authed = $state(false);
     let enteredPassword = $state("");
 </script>
@@ -46,7 +46,7 @@
             <input type="password" placeholder="Enter password" bind:value={enteredPassword}>
             <div class="flex">
                 <button onclick={function () {
-                    fetch(PUBLIC_API_URL + "/graphql", {
+                    fetch(data.PUBLIC_API_URL + "/graphql", {
                         method: "POST",
                         body: JSON.stringify({
                             query: `query signIn($password: String!){
