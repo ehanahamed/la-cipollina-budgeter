@@ -23,7 +23,7 @@ grant update on auth.users to budgeter_api;
 grant delete on auth.users to budgeter_api;
 
 insert into auth.users (username, encrypted_password)
-values ('')
+values ('admin', crypt('admin', gen_salt('bf')));
 
 create view public.usernames as select
 username from auth.users;

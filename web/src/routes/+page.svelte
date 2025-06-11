@@ -2,6 +2,7 @@
     import { base } from "$app/paths";
     let { data } = $props();
     let authed = $state(false);
+    let enteredUsername = $state("");
     let enteredPassword = $state("");
 </script>
 <style>
@@ -43,16 +44,22 @@
     <div class="grid thin-centered">
         <div class="content">
             <div class="separator">Login</div>
-            <input type="password" placeholder="Enter password" bind:value={enteredPassword}>
+            <div>
+            <input type="text" placeholder="Username" bind:value={enteredUsername}>
+            </div>
+            <div>
+            <input type="password" placeholder="Password" bind:value={enteredPassword}>
+            </div>
             <div class="flex">
                 <button onclick={function () {
                     fetch(data.PUBLIC_API_URL + "/graphql", {
                         method: "POST",
                         body: JSON.stringify({
-                            query: `query signIn($password: String!){
-    signIn(password: $password)
+                            query: `query signIn($username: String!, $password: String!){
+    signIn(username: $username, password: $password)
 }`,
                             variables: {
+                                username: enteredUsername,
                                 password: enteredPassword
                             }
                         })
