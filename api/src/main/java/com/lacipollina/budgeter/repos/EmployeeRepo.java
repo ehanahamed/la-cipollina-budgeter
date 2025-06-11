@@ -62,5 +62,32 @@ public class EmployeeRepo {
             return null;
         }
     }
+    public Employee updateEmployee(String name, Employee employee) {
+        try {
+            return jdbcTemplate.queryForObject(
+                """
+                UPDATE employees SET name = ?, wage = ?, type = ?
+                WHERE name = ?
+                RETURNING name, wage, type
+                """,
+                employeeRowMapper,
+                employee.getName(),
+                employee.getWage(),
+                employee.getType(),
+                name
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+    public boolean deleteEmployee(String name) {
+        return jdbcTemplate.update(
+            """
+            DELETE FROM employees
+            WHERE name = ?
+            """,
+            name
+        ) > 0;
+    }
 }
 
