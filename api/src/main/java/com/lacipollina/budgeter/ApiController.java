@@ -65,5 +65,9 @@ public class ApiController {
     {
         totalPay+=foodCost.get(k);
     }
-    
+
+    public void genWeekReport(ArrayList<DayReport>)
+    {
+
+    }
 }
