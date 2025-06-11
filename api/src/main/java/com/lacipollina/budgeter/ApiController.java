@@ -47,8 +47,23 @@ public class ApiController {
         ).getWage() * floorHours.get(0).getHours()
         @Argument float foodCostChange
     ) 
-        for(
+        float totalPay=0.0;
+
+        for(int i=0;i<floorHours.size();i++)
     {
-        
+        float floorPay= employeeRepo.getEmployeeByName(floorHours.
+        get(i).getName()).getWage()*floorHours.get(i).getHours();
+        totalPay+=floorPay;
     }
+        for (int j=0;j<kitchenHours.size();j++)
+    {
+        float kitchenPay=employeeRepo.getEmployeeByName(kitchenHours.
+        get(jk).getName()).getWage()*kitchenHours.get(j).getHours();
+        totalPay+=floorPay;
+    }
+        for (int k=0;k<foodCost.size();k++)
+    {
+        totalPay+=foodCost.get(k);
+    }
+    
 }
