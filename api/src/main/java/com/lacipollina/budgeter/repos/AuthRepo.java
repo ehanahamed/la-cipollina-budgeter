@@ -19,6 +19,11 @@ public class AuthRepo {
             return resultSet.getString("username");
         }
     };
+    private RowMapper<String> tokenRowMapper = new RowMapper<String>() {
+        public String mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+            return resultSet.getString("token");
+        }
+    };
     public List<String> getAllUsers() {
         try {
             return jdbcTemplate.query(
@@ -30,61 +35,33 @@ public class AuthRepo {
         }
     }
     public String verifyPasswordAndGenAuthToken(String username, String password) {
+        String verifiedUsername;
         try {
-             jdbcTemplate.queryForObject(
+             verifiedUsername = jdbcTemplate.queryForObject(
                 """
-
-                SELECT name, wage, type FROM employees WHERE name = ?
+                SELECT username FROM auth.users
+                WHERE username = ? and encrypted_password = crypt(?, encrypted_password)
                 """,
-                employeeRowMapper,
-                name
+                usernameRowMapper,
+                username,
+                password
             );
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
-    }
-    public Employee addEmployee(Employee employee) {
-        try {
+        if (verifiedUsername != null) {
             return jdbcTemplate.queryForObject(
                 """
-                INSERT INTO employees (name, wage, type) VALUES
-                (?, ?, ?) RETURNING name, wage, type
+                INSERT INTO auth.sessions (username)
+                VALUES (?) RETURNING token
                 """,
-                employeeRowMapper,
-                employee.getName(),
-                employee.getWage(),
-                employee.getType()
-            );
-        } catch (EmptyResultDataAccessException e) {
-            return null;
+                tokenRowMapper,
+                verifiedUsername
+            )
         }
     }
-    public Employee updateEmployee(String name, Employee employee) {
-        try {
-            return jdbcTemplate.queryForObject(
-                """
-                UPDATE employees SET name = ?, wage = ?, type = ?
-                WHERE name = ?
-                RETURNING name, wage, type
-                """,
-                employeeRowMapper,
-                employee.getName(),
-                employee.getWage(),
-                employee.getType(),
-                name
-            );
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-    public boolean deleteEmployee(String name) {
-        return jdbcTemplate.update(
-            """
-            DELETE FROM employees
-            WHERE name = ?
-            """,
-            name
-        ) > 0;
-    }
+    // public String verifyToken(String token) {
+    //     jdbcTemplate.queryForObject()
+    // }
 }
 

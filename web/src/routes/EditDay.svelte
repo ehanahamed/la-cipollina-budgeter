@@ -39,8 +39,17 @@ let weekDays = [
     "Friday",
     "Saturday"
 ]
+let showSetBudget = $state(false);
 onMount(function () {
-    dayOfTheWeek = weekDays[(new Date()).getDay()]
+    let today = new Date()
+    dayOfTheWeek = weekDays[today.getDay()]
+    if (
+        dayOfTheWeek == "Monday" ||
+        dayOfTheWeek == "Tuesday" ||
+        dayOfTheWeek == "Wednesday"
+    ) {
+        showSetBudget = true;
+    }
 })
 </script>
 <style>
@@ -57,6 +66,10 @@ onMount(function () {
 .gridtablelayout > .areaback {
     grid-area: areaback;
     justify-self: start;
+}
+.gridtablelayout > .areainfo {
+    grid-area: areainfo;
+    justify-self: center;
 }
 .gridtablelayout > .areafloor {
     grid-area: areafloor;
@@ -82,15 +95,17 @@ onMount(function () {
 }
 @media only screen and (max-width: 1000px) {
     .gridtablelayout {
-        grid-template-rows: auto auto auto auto;
+        grid-template-rows: auto auto auto auto auto;
         grid-template-columns: auto;
         grid-template-areas:
             "areaback"
+            "areainfo"
             "areafloor"
             "areakitchen"
             "areafood"
             "areasave";
     }
+    .gridtablelayout > .areainfo,
     .gridtablelayout > .areafloor,
     .gridtablelayout > .areakitchen,
     .gridtablelayout > .areafood {
@@ -99,6 +114,9 @@ onMount(function () {
     .centerbutnotonmobile {
         text-align: start;
     }
+}
+.setbudgettable {
+    
 }
 </style>
 <div class="grid page" style="margin-top: 2rem;">
@@ -111,6 +129,25 @@ onMount(function () {
             {/if}
             <h3 style="margin-top: 0px;">{dayOfTheWeek}</h3>
         </div>
+        {#if showSetBudget}
+            <div>
+                Set budget for this week:
+                <table class="setbudgettable">
+                    <thead>
+                        <tr>
+                            <th>Floor Pay</th>
+                            <th>Kitchen Pay</th>
+                            <th>Food Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="text"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {/if}
         <div class="gridtablelayout">
             <div class="areaback">
                 <a href={base} class="button faint">
