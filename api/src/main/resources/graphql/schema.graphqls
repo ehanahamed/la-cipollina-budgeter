@@ -9,6 +9,7 @@ type Query {
     kitchenWorkers: [Employee]
 }
 type Mutation {
+    signIn: String!
     recordDay(
       day: Date,
       floorWorkersHours: [EmployeeHours],
