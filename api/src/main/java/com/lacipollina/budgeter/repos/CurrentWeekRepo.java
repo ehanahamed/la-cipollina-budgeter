@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
-public class AuthRepo {
+public class CurrentWeekRepo {
     @Autowired
     private JdbcTemplate jdbcTemplate;
    

@@ -60,3 +60,7 @@ as $$
 delete from auth.sessions where expire_at < (select now())
 $$;
 
+create table current_week (
+    day date
+)
+

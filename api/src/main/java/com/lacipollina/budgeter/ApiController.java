@@ -23,12 +23,28 @@ public class ApiController {
         return employeRepo.getAllEmployees();
     }
 
+    ArrayList<Double> dayFinals = new ArrayList<Double>();
+            //Holds Initial and day finals for all budget^^^
+            ArrayList<Double> weekIncreases = new ArrayList<Double>();
+            //Holds all budget Increases(0 if none)^^^
+            ArrayList<Double> weekExpenses = new ArrayList<Double>();
+        //Holds all expenses from the budget^^^(0 if none)
+    public void calculateDay()
+
     @MutationMapping
     public boolean runDay(
         @Argument List<HoursInput> floorHours,
         @Argument List<HoursInput> kitchenHours,
-        @Argument float foodCostChange
+        @Argument List<float> foodCost
     ) {
+        currentWeekRepo.saveData(
+            floorHours,
+            kitchenHours,
+            foodCost
+        )
+        employeeRepo.getEmployeeByName(
+            floorHours.get(0).getName()
+        ).getWage() * floorHours.get(0).getHours()
         
     }
 }
