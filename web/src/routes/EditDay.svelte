@@ -121,33 +121,35 @@ onMount(function () {
 </style>
 <div class="grid page" style="margin-top: 2rem;">
     <div class="content">
-        <div class="centerbutnotonmobile">
-            {#if data.new}
-                <p>Run Day</p>
-            {:else}
-                <p>Edit Day</p>
-            {/if}
-            <h3 style="margin-top: 0px;">{dayOfTheWeek}</h3>
-        </div>
-        {#if showSetBudget}
-            <div>
-                Set budget for this week:
-                <table class="setbudgettable">
-                    <thead>
-                        <tr>
-                            <th>Floor Pay</th>
-                            <th>Kitchen Pay</th>
-                            <th>Food Cost</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><input type="text"></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="areainfo">
+            <div class="centerbutnotonmobile">
+                {#if data.new}
+                    <p>Run Day</p>
+                {:else}
+                    <p>Edit Day</p>
+                {/if}
+                <h3 style="margin-top: 0px;">{dayOfTheWeek}</h3>
             </div>
-        {/if}
+            {#if showSetBudget}
+                <div>
+                    Set budget for this week:
+                    <table class="setbudgettable">
+                        <thead>
+                            <tr>
+                                <th>Floor Pay</th>
+                                <th>Kitchen Pay</th>
+                                <th>Food Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            {/if}
+        </div>
         <div class="gridtablelayout">
             <div class="areaback">
                 <a href={base} class="button faint">
