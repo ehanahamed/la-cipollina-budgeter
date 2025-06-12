@@ -27,7 +27,7 @@ jobs:
           cp -R la-cipollina-budgeter/web/build freehold.dev/site/la-cipollina-budgeter
       - name: Commit & push to freehold.dev
         run: |
-          cd site
+          cd freehold.dev
           git add .
           git config --global user.name "Ehan"
           git config --global user.email "ehanahamed@ehan.dev"
