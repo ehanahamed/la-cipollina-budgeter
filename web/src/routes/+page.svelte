@@ -1,9 +1,17 @@
 <script>
+    import { onMount } from "svelte";
     import { base } from "$app/paths";
     let { data } = $props();
     let authed = $state(false);
     let enteredUsername = $state("");
     let enteredPassword = $state("");
+    onMount(function () {
+        if (window.localStorage) {
+            if (localStorage.getItem("auth")) {
+                authed = true;
+            }
+        }
+    })
 </script>
 <style>
     .header-text {
@@ -47,33 +55,35 @@
             </div>
             <div class="flex">
                 <button onclick={function () {
-                    fetch(data.PUBLIC_API_URL + "/graphql", {
-                        method: "POST",
-                        body: JSON.stringify({
-                            query: `query signIn($username: String!, $password: String!){
-    signIn(username: $username, password: $password)
-}`,
-                            variables: {
-                                username: enteredUsername,
-                                password: enteredPassword
-                            }
-                        })
-                    }).then(function (result) {
-                        result.json().then(function (resultjson) {
-                            if (resultjson?.data?.signIn) {
-                                localStorage.setItem("auth", resultjson.data.signIn)
-                            } else {
-                                alert("wrong password?")
-                            }
-                        }).catch(function (error) {
-                            console.error("Error in signIn req json", error);
-                            alert("API Error")
-
-                        })
-                    }).catch(function (error) {
-                        console.error("Error in signIn req", error);
-                        alert("API Error")
-                    });
+//                     fetch(data.PUBLIC_API_URL + "/graphql", {
+//                         method: "POST",
+//                         body: JSON.stringify({
+//                             query: `query signIn($username: String!, $password: String!){
+//     signIn(username: $username, password: $password)
+// }`,
+//                             variables: {
+//                                 username: enteredUsername,
+//                                 password: enteredPassword
+//                             }
+//                         })
+//                     }).then(function (result) {
+//                         result.json().then(function (resultjson) {
+//                             if (resultjson?.data?.signIn) {
+//                                 localStorage.setItem("auth", resultjson.data.signIn)
+//                             } else {
+//                                 alert("wrong password?")
+//                             }
+//                         }).catch(function (error) {
+//                             console.error("Error in signIn req json", error);
+//                             alert("API Error")
+//
+//                         })
+//                     }).catch(function (error) {
+//                         console.error("Error in signIn req", error);
+//                         alert("API Error")
+//                     });
+                    localStorage.setItem("auth", Math.random())
+                    authed = true;
                 }}>Continue</button>
             </div>
         </div>

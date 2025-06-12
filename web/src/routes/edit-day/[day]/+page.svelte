@@ -1,4 +1,4 @@
 <script>
-    import EditDay from "../EditDay.svelte";
+    import EditDay from "../../EditDay.svelte";
 </script>
 <EditDay></EditDay>
