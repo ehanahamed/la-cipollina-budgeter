@@ -93,6 +93,9 @@ onMount(function () {
 .centerbutnotonmobile {
     text-align: center;
 }
+.gridtablelayout table td {
+    padding-top: 0px;
+}
 @media only screen and (max-width: 1000px) {
     .gridtablelayout {
         grid-template-rows: auto auto auto auto auto;

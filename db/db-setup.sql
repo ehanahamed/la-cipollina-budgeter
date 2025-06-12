@@ -6,12 +6,6 @@ create schema auth;
 
 grant usage on schema auth to budgeter_api;
 
-/*create function auth.get_user_id() returns uuid
-language sql
-as $$
-select current_setting('quizfreely_authed_user.user_id')::uuid
-$$;*/
-
 create table auth.users (
   username text primary key,
   encrypted_password text
@@ -60,7 +54,31 @@ as $$
 delete from auth.sessions where expire_at < (select now())
 $$;
 
-create table current_week (
-    day date
-)
+create table day_inputs (
+    id date primary key,
+    floor_hours jsonb,
+    kitchen_hours jsonb,
+    food_costs jsonb
+);
+
+grant select on public.day_inputs to budgeter_api;
+grant insert on public.day_inputs to budgeter_api;
+grant update on public.day_inputs to budgeter_api;
+grant delete on public.day_inputs to budgeter_api;
+
+create table day_reports (
+    id date primary key,
+    food_cost_start numeric,
+    floor_budget_start numeric,
+    kitchen_budget_start numeric,
+    food_cost_final numeric,
+    floor_budget_final numeric,
+    kitchen_budget_final numeric,
+    current_wages jsonb
+);
+
+grant select on public.day_reports to budgeter_api;
+grant insert on public.day_reports to budgeter_api;
+grant update on public.day_reports to budgeter_api;
+grant delete on public.day_reports to budgeter_api;
 

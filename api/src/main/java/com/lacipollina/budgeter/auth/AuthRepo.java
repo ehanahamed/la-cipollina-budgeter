@@ -65,7 +65,7 @@ public class AuthRepo {
         if (authToken != null && !authToken.isEmpty()) {
             try {
                 return jdbcTemplate.queryForObject(
-                    "SELECT u.username " +
+                    "SELECT u.username, u.encrypted_password, u.updated_at " +
                     "FROM auth.users u JOIN auth.sessions s ON u.username = s.username " +
                     "WHERE s.token = ? and s.expire_at > (select now())",
                     new Object[] { authToken },

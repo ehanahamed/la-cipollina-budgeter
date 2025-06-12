@@ -41,3 +41,4 @@ public class ContextGraphQLInterceptor implements WebGraphQlInterceptor {
         return chain.next(request);
     }
 }
+

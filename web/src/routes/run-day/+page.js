@@ -12,9 +12,17 @@ export function load() {
                 "type": "floor"
             },
             {
-                "name": "Example",
+                "name": "Renato",
                 "type": "kitchen"
-            }
+            },
+            {
+                "name": "Manuel",
+                "type": "kitchen"
+            },
+            {
+                "name": "Caitlyn",
+                "type": "floor"
+            },
         ]
     }
 }
