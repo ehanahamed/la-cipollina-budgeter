@@ -17,11 +17,6 @@
         justify-items: center;
         justify-content: center;
     }
-    @media only screen and (max-width: 800px) {
-        .header-text {
-            font-size: 0.8rem;
-        }
-    }
 </style>
 <div class="img-container">
     <img src="{base}/logo.png" alt="La Cipollina">
@@ -72,10 +67,12 @@
                             }
                         }).catch(function (error) {
                             console.error("Error in signIn req json", error);
+                            alert("API Error")
 
                         })
                     }).catch(function (error) {
                         console.error("Error in signIn req", error);
+                        alert("API Error")
                     });
                 }}>Continue</button>
             </div>

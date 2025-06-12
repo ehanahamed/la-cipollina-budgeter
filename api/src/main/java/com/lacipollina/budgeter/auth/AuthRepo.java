@@ -1,4 +1,4 @@
-package com.lacipollina.budgeter.repos;
+package com.lacipollina.budgeter.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,11 +24,11 @@ public class AuthRepo {
             return resultSet.getString("token");
         }
     };
-    public List<String> getAllUsers() {
+    public List<String> getAllUsernames() {
         try {
             return jdbcTemplate.query(
                 "SELECT name FROM public.usernames",
-                rowMapper
+                usernameRowMapper
             );
         } catch (EmptyResultDataAccessException e) {
             return null;
@@ -57,11 +57,29 @@ public class AuthRepo {
                 """,
                 tokenRowMapper,
                 verifiedUsername
-            )
+            );
         }
     }
-    // public String verifyToken(String token) {
-    //     jdbcTemplate.queryForObject()
-    // }
+
+    public AuthContext authContextUsingToken(String authToken) {
+        if (authToken != null && !authToken.isEmpty()) {
+            try {
+                return jdbcTemplate.queryForObject(
+                    "SELECT u.username " +
+                    "FROM auth.users u JOIN auth.sessions s ON u.username = s.username " +
+                    "WHERE s.token = ? and s.expire_at > (select now())",
+                    new Object[] { authToken },
+                    (resultSet, rowNum) -> new AuthContext(
+                        true,
+                        resultSet.getString("username")
+                    )
+                );
+            } catch (EmptyResultDataAccessException e) {
+                return new AuthContext(false);
+            }
+        } else {
+            return new AuthContext(false);
+        } 
+    }
 }
 

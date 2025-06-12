@@ -11,24 +11,25 @@ import graphql.schema.DataFetchingEnvironment;
 
 import java.util.List;
 
-import com.lacipollina.budgeter.repos.EmployeeRepo;
-
 @Controller
-public class ApiController {
+public class AuthController {
     @Autowired
-    private EmployeeRepo employeRepo;
+    private AuthRepo authRepo;
 
     @QueryMapping
-    public List<Employee> allEmployees() {
-        return employeRepo.getAllEmployees();
+    public List<String> allUsernames() {
+        return authRepo.getAllUsernames();
     }
 
     @MutationMapping
-    public boolean runDay(
-        @Argument List<HoursInput> floorHours,
-        @Argument List<HoursInput> kitchenHours,
-        @Argument float foodCostChange
+    public boolean signIn(
+        @Argument String username,
+        @Argument String password
     ) {
-        
+        /* returns token */
+        return authRepo.verifyPasswordAndGenAuthToken(
+            username,
+            password
+        );
     }
 }

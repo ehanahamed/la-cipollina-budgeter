@@ -23,51 +23,51 @@ public class ApiController {
         return employeRepo.getAllEmployees();
     }
 
-    ArrayList<Double> dayFinals = new ArrayList<Double>();
-            //Holds Initial and day finals for all budget^^^
-            ArrayList<Double> weekIncreases = new ArrayList<Double>();
-            //Holds all budget Increases(0 if none)^^^
-            ArrayList<Double> weekExpenses = new ArrayList<Double>();
-        //Holds all expenses from the budget^^^(0 if none)
-    public void calculateDay()
+    // ArrayList<Double> dayFinals = new ArrayList<Double>();
+    //         //Holds Initial and day finals for all budget^^^
+    //         ArrayList<Double> weekIncreases = new ArrayList<Double>();
+    //         //Holds all budget Increases(0 if none)^^^
+    //         ArrayList<Double> weekExpenses = new ArrayList<Double>();
+    //     //Holds all expenses from the budget^^^(0 if none)
+    // public void calculateDay()
+    //
+    // @MutationMapping
+    // public boolean runDay(
+    //     @Argument List<HoursInput> floorHours,
+    //     @Argument List<HoursInput> kitchenHours,
+    //     @Argument List<float> foodCost
+    // ) {
+    //     currentWeekRepo.saveData(
+    //         floorHours,
+    //         kitchenHours,
+    //         foodCost
+    //     )
+    //     employeeRepo.getEmployeeByName(
+    //         floorHours.get(0).getName()
+    //     ).getWage() * floorHours.get(0).getHours()
+    //     @Argument float foodCostChange
+    // ) 
+    //     float totalPay=0.0;
+    //
+    //     for(int i=0;i<floorHours.size();i++)
+    // {
+    //     float floorPay= employeeRepo.getEmployeeByName(floorHours.
+    //     get(i).getName()).getWage()*floorHours.get(i).getHours();
+    //     totalPay+=floorPay;
+    // }
+    //     for (int j=0;j<kitchenHours.size();j++)
+    // {
+    //     float kitchenPay=employeeRepo.getEmployeeByName(kitchenHours.
+    //     get(jk).getName()).getWage()*kitchenHours.get(j).getHours();
+    //     totalPay+=floorPay;
+    // }
+    //     for (int k=0;k<foodCost.size();k++)
+    // {
+    //     totalPay+=foodCost.get(k);
+    // }
 
-    @MutationMapping
-    public boolean runDay(
-        @Argument List<HoursInput> floorHours,
-        @Argument List<HoursInput> kitchenHours,
-        @Argument List<float> foodCost
-    ) {
-        currentWeekRepo.saveData(
-            floorHours,
-            kitchenHours,
-            foodCost
-        )
-        employeeRepo.getEmployeeByName(
-            floorHours.get(0).getName()
-        ).getWage() * floorHours.get(0).getHours()
-        @Argument float foodCostChange
-    ) 
-        float totalPay=0.0;
-
-        for(int i=0;i<floorHours.size();i++)
-    {
-        float floorPay= employeeRepo.getEmployeeByName(floorHours.
-        get(i).getName()).getWage()*floorHours.get(i).getHours();
-        totalPay+=floorPay;
-    }
-        for (int j=0;j<kitchenHours.size();j++)
-    {
-        float kitchenPay=employeeRepo.getEmployeeByName(kitchenHours.
-        get(jk).getName()).getWage()*kitchenHours.get(j).getHours();
-        totalPay+=floorPay;
-    }
-        for (int k=0;k<foodCost.size();k++)
-    {
-        totalPay+=foodCost.get(k);
-    }
-
-    public void genWeekReport(ArrayList<DayReport>)
-    {
-
-    }
+    // public void genWeekReport(ArrayList<DayReport>)
+    // {
+    //
+    // }
 }
