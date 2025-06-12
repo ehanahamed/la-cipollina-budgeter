@@ -4,6 +4,7 @@ scalar Date
   )
 
 type Query {
+    amAuthed: Boolean
     allEmployees: [Employee]
     floorWorkers: [Employee]
     kitchenWorkers: [Employee]
