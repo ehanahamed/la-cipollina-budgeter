@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Repository
-public class DayRepo {
+public class DayInputRepo {
     @Autowired
     private JdbcTemplate jdbcTemplate;
    
@@ -19,31 +20,7 @@ public class DayRepo {
             return resultSet.getString("username");
         }
     };
-    public List<String> getAllUsers() {
-        try {
-            return jdbcTemplate.query(
-                "SELECT name FROM public.usernames",
-                rowMapper
-            );
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-    public String verifyPasswordAndGenAuthToken(String username, String password) {
-        try {
-             jdbcTemplate.queryForObject(
-                """
-
-                SELECT name, wage, type FROM employees WHERE name = ?
-                """,
-                employeeRowMapper,
-                name
-            );
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
-    }
-    public Employee addEmployee(Employee employee) {
+    public Employee addDayInput(Employee employee) {
         try {
             return jdbcTemplate.queryForObject(
                 """

@@ -10,64 +10,51 @@ import org.springframework.stereotype.Controller;
 import graphql.schema.DataFetchingEnvironment;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.time.LocalDate;
 
 import com.lacipollina.budgeter.repos.EmployeeRepo;
+import com.lacipollina.budgeter.repos.DayInputRepo;
 
 @Controller
 public class ApiController {
     @Autowired
-    private EmployeeRepo employeRepo;
+    private EmployeeRepo employeeRepo;
+    @Autowired
+    private DayInputRepo dayInputRepo;
+    @Autowired
+    private DayReportRepo dayReportRepo;
 
     @QueryMapping
     public List<Employee> allEmployees() {
         return employeRepo.getAllEmployees();
     }
 
-    // ArrayList<Double> dayFinals = new ArrayList<Double>();
-    //         //Holds Initial and day finals for all budget^^^
-    //         ArrayList<Double> weekIncreases = new ArrayList<Double>();
-    //         //Holds all budget Increases(0 if none)^^^
-    //         ArrayList<Double> weekExpenses = new ArrayList<Double>();
-    //     //Holds all expenses from the budget^^^(0 if none)
-    // public void calculateDay()
-    //
-    // @MutationMapping
-    // public boolean runDay(
-    //     @Argument List<HoursInput> floorHours,
-    //     @Argument List<HoursInput> kitchenHours,
-    //     @Argument List<float> foodCost
-    // ) {
-    //     currentWeekRepo.saveData(
-    //         floorHours,
-    //         kitchenHours,
-    //         foodCost
-    //     )
-    //     employeeRepo.getEmployeeByName(
-    //         floorHours.get(0).getName()
-    //     ).getWage() * floorHours.get(0).getHours()
-    //     @Argument float foodCostChange
-    // ) 
-    //     float totalPay=0.0;
-    //
-    //     for(int i=0;i<floorHours.size();i++)
-    // {
-    //     float floorPay= employeeRepo.getEmployeeByName(floorHours.
-    //     get(i).getName()).getWage()*floorHours.get(i).getHours();
-    //     totalPay+=floorPay;
-    // }
-    //     for (int j=0;j<kitchenHours.size();j++)
-    // {
-    //     float kitchenPay=employeeRepo.getEmployeeByName(kitchenHours.
-    //     get(jk).getName()).getWage()*kitchenHours.get(j).getHours();
-    //     totalPay+=floorPay;
-    // }
-    //     for (int k=0;k<foodCost.size();k++)
-    // {
-    //     totalPay+=foodCost.get(k);
-    // }
-
-    // public void genWeekReport(ArrayList<DayReport>)
-    // {
-    //
-    // }
+    @MutationMapping
+    public boolean runDay(
+        @Argument LocalDate id,
+        @Argument List<HoursInput> floorHours,
+        @Argument List<HoursInput> kitchenHours,
+        @Argument List<Double> foodCosts
+    ) {
+        dayInputRepo.create(
+            id,
+            floorHours,
+            kitchenHours,
+            foodCost
+        );
+        double floorBudget = 0.0;
+        double kitchenBudget = 0.0;
+        double kitchenBudget = 0.0;
+        for (HoursInput floorHoursInput : floorHours) {
+            floorBudget += floorHoursInput.getHours() * employeeRepo.getEmployeeByName(
+                floorHoursInput.getName()
+            ).getWage();
+        }
+        for (HoursInput kitchenHoursInput : kitchenHours) {
+            kitchenBudget += kitchenHoursInput.getHours() * employeeRepo.getEmployeeByName(
+                kitchenHoursInput.getName()
+            ).getWage();
+        }
+    }
 }

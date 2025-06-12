@@ -1,93 +1,52 @@
+package com.lacipollina.budgeter;
+
+import java.time.LocalDate;
+
 public class DayReport {
-    public float foodCostInital=0;
-    public float kitchInital=0;
-    public float floorInital=0;
-    public float foodCostIncs=0;
-    public float kitchIncs=0;
-    public float floorIncs=0;
-    public float foodExps=0;
-    public float kitchExps=0;
-    public float floorExps=0;
-    public float foodCostFinal=0;
-    public float kitchFinal=0;
-    public float floorFinal=0;
+    private LocalDate id;
+    private double floorBudgetStart;
+    private double kitchenBudgetStart;
+    private double foodCostStart;
+    private double floorBudgetFinal;
+    private double kitchenBudgetFinal;
+    private double foodCostFinal;
 
-    public DayReport () 
-    {
-
-    }
-
-    public void setFoodCostInital(float n){
-        foodCostInital=n;
-    }
-    public void setKitchInital(float n){
-        kitchInital=n;
-    }
-    public void setFloorInital(float n){
-        floorInital=n;
-    }
-    public void setFoodCostIncs(float n){
-        foodCostIncs=n;
-    }
-    public void setKitchIncs(float n){
-        kitchIncs=n;
-    }
-    public void setFloorIncs(float n){
-        floorIncs=n;
-    }
-    public void setFoodExps(float n){
-        foodExps=n;
-    }
-    public void setKitchExps(float n){
-        kitchExps=n;
-    }
-    public void setFloorExps(float n){
-        floorExps=n;
-    }
-    public void setFoodCostFinal(float n){
-        foodCostFinal=n;
-    }
-    public void setKitchFinal(float n){
-        kitchFinal=n;
-    }
-    public void setFloorFinal(float n){
-        floorFinal=n;
+    public DayInput(
+        LocalDate id,
+        double floorBudgetStart,
+        double kitchenBudgetStart,
+        double foodCostStart,
+        double floorBudgetFinal,
+        double kitchenBudgetFinal,
+        double foodCostFinal
+    ) {
+        this.floorBudgetStart = floorBudgetStart;
+        this.kitchenBudgetStart = kitchenBudgetStart;
+        this.foodCostStart = foodCostStart;
+        this.floorBudgetFinal = floorBudgetFinal;
+        this.kitchenBudgetFinal = kitchenBudgetFinal;
+        this.foodCostFinal = foodCostFinal;
     }
 
-    public float getFoodCostInital(){
-        return foodCostInital;
+    public LocalDate getId() {
+        return id;
     }
-    public float getKitchInital(){
-        return kitchInital;
+    public double getFloorBudgetStart() {
+        return getFloorBudgetStart;
     }
-    public float getFloorInital(){
-        return floorInital;
+    public double getKitchenBudgetStart() {
+        return kitchenBudgetStart;
     }
-    public float setFoodCostIncs(){
-        return foodCostIncs;
+    public double getFoodCostStart() {
+        return foodCostStart;
     }
-    public float setKitchIncs(){
-        return kitchIncs;
+    public double getFloorBudgetFinal() {
+        return floorBudgetFinal;
     }
-    public float setFloorIncs(){
-        return floorIncs;
+    public double getKitchenBudgetFinal() {
+        return kitchenBudgetFinal;
     }
-    public float setFoodExps(){
-        return foodExps;
-    }
-    public float setKitchExps(){
-        return kitchExps;
-    }
-    public float setFloorExps(){
-        return floorExps;
-    }
-    public float setFoodCostFinal(){
+    public double getFoodCostFinal() {
         return foodCostFinal;
-    }
-    public float setKitchFinal(){
-        return kitchFinal;
-    }
-    public float setFloorFinal(){
-        return floorFinal;
     }
 }
