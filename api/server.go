@@ -12,12 +12,16 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/vektah/gqlparser/v2/ast"
+    "github.com/joho/godotenv"
 )
 
 const defaultPort = "3000"
 
 func main() {
-	godotenv.Load()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort

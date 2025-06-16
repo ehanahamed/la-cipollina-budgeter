@@ -20,11 +20,20 @@ func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
 	panic(fmt.Errorf("not implemented: Todos - todos"))
 }
 
+// User is the resolver for the user field.
+func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
+	panic(fmt.Errorf("not implemented: User - user"))
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Todo returns TodoResolver implementation.
+func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type todoResolver struct{ *Resolver }

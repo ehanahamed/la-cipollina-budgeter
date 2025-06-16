@@ -4,6 +4,7 @@ go 1.24.4
 
 require (
 	github.com/99designs/gqlgen v0.17.74
+	github.com/joho/godotenv v1.5.1
 	github.com/vektah/gqlparser/v2 v2.5.27
 )
 
