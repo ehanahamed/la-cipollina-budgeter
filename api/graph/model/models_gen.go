@@ -2,18 +2,88 @@
 
 package model
 
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
+)
+
+type Employee struct {
+	Name string     `json:"name"`
+	Type WorkerType `json:"type"`
+	Wage *float64   `json:"wage,omitempty"`
+}
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NewEmployee struct {
+	Name string     `json:"name"`
+	Type WorkerType `json:"type"`
+	Wage float64    `json:"wage"`
 }
 
 type Query struct {
 }
 
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type UpdateEmployee struct {
+	Name string     `json:"name"`
+	Type WorkerType `json:"type"`
+	Wage float64    `json:"wage"`
+}
+
+type WorkerType string
+
+const (
+	WorkerTypeFloor   WorkerType = "FLOOR"
+	WorkerTypeKitchen WorkerType = "KITCHEN"
+)
+
+var AllWorkerType = []WorkerType{
+	WorkerTypeFloor,
+	WorkerTypeKitchen,
+}
+
+func (e WorkerType) IsValid() bool {
+	switch e {
+	case WorkerTypeFloor, WorkerTypeKitchen:
+		return true
+	}
+	return false
+}
+
+func (e WorkerType) String() string {
+	return string(e)
+}
+
+func (e *WorkerType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkerType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkerType", str)
+	}
+	return nil
+}
+
+func (e WorkerType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WorkerType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WorkerType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

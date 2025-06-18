@@ -5,10 +5,9 @@ package graph
 //
 // It serves as dependency injection for your app, add any dependencies you require here.
 import (
-	"la-cipollina-budgeter-api/graph/model"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Resolver struct{
-	todos []*model.Todo
-
+	DB *pgxpool.Pool
 }

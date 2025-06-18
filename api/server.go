@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"la-cipollina-budgeter-api/db"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -26,6 +27,9 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+
+	db.Init()
+	defer db.Close()
 
 	srv := handler.New(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
 

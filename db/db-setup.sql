@@ -54,6 +54,19 @@ as $$
 delete from auth.sessions where expire_at < (select now())
 $$;
 
+create type worker_type as enum ('floor', 'kitchen');
+
+create table employees (
+    name text primary key,
+    type worker_type,
+    wage numeric
+);
+
+grant select on public.employees to budgeter_api;
+grant insert on public.employees to budgeter_api;
+grant update on public.employees to budgeter_api;
+grant delete on public.employees to budgeter_api;
+
 create table day_inputs (
     id date primary key,
     floor_hours jsonb,

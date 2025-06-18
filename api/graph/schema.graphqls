@@ -2,27 +2,36 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
-  id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+enum WorkerType {
+  FLOOR
+  KITCHEN
 }
 
-type User {
-  id: ID!
+type Employee {
   name: String!
+  type: WorkerType!
+  wage: Float
 }
 
 type Query {
-  todos: [Todo!]!
+  employees: [Employee]
+  floorWorkers: [Employee]
+  kitchenWorkers: [Employee]
 }
 
-input NewTodo {
-  text: String!
-  userId: String!
+input NewEmployee {
+  name: String!
+  type: WorkerType!
+  wage: Float!
+}
+
+input UpdateEmployee {
+  name: String!
+  type: WorkerType!
+  wage: Float!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  addEmployee(input: NewEmployee!): Employee
+  updateEmployee(name: String!, input: UpdateEmployee): Employee
 }

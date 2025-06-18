@@ -10,19 +10,29 @@ import (
 	"la-cipollina-budgeter-api/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// AddEmployee is the resolver for the addEmployee field.
+func (r *mutationResolver) AddEmployee(ctx context.Context, input model.NewEmployee) (*model.Employee, error) {
+	panic(fmt.Errorf("not implemented: AddEmployee - addEmployee"))
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// UpdateEmployee is the resolver for the updateEmployee field.
+func (r *mutationResolver) UpdateEmployee(ctx context.Context, name string, input *model.UpdateEmployee) (*model.Employee, error) {
+	panic(fmt.Errorf("not implemented: UpdateEmployee - updateEmployee"))
 }
 
-// User is the resolver for the user field.
-func (r *todoResolver) User(ctx context.Context, obj *model.Todo) (*model.User, error) {
-	panic(fmt.Errorf("not implemented: User - user"))
+// Employees is the resolver for the employees field.
+func (r *queryResolver) Employees(ctx context.Context) ([]*model.Employee, error) {
+	panic(fmt.Errorf("not implemented: Employees - employees"))
+}
+
+// FloorWorkers is the resolver for the floorWorkers field.
+func (r *queryResolver) FloorWorkers(ctx context.Context) ([]*model.Employee, error) {
+	panic(fmt.Errorf("not implemented: FloorWorkers - floorWorkers"))
+}
+
+// KitchenWorkers is the resolver for the kitchenWorkers field.
+func (r *queryResolver) KitchenWorkers(ctx context.Context) ([]*model.Employee, error) {
+	panic(fmt.Errorf("not implemented: KitchenWorkers - kitchenWorkers"))
 }
 
 // Mutation returns MutationResolver implementation.
@@ -31,9 +41,5 @@ func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
-// Todo returns TodoResolver implementation.
-func (r *Resolver) Todo() TodoResolver { return &todoResolver{r} }
-
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
-type todoResolver struct{ *Resolver }
