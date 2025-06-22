@@ -1,13 +1,14 @@
 package main
 
 import (
-	"context"
-	"fmt"
+	"log"
 	"os"
 
     "github.com/joho/godotenv"
  	"github.com/gofiber/fiber/v2"
-	"github.com/jackc/pgx/v5/pgxpool"
+
+	"la-cipollina-budgeter-api/db"
+	"la-cipollina-budgeter-api/handlers"
 )
 
 const defaultPort = "3000"
@@ -17,45 +18,32 @@ func main() {
 
 	dbUrl := os.Getenv("DB_URL")
 	if dbUrl == "" {
-		fmt.Fprint(
-			os.Stderr,
+		log.Fatal(
 			`DB_URL is not set
 Copy .env.example to .env or
-make sure environment variables are set elsewhere`,
+just check your environment variables`,
 		)
-		os.Exit(1)
 	}
-	dbpool, dbpoolErr := pgxpool.New(
-		context.Background(),
-		dbUrl,
-	)
-	if dbpoolErr != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error creating database connection pool: %v\n",
-			dbpoolErr,
-		)
-		os.Exit(1)
-	}
-	defer dbpool.Close()
+	db.Init(dbUrl)
+	defer db.Pool.Close()
 
 	app := fiber.New()
 
 	app.Get("/hi", func(c *fiber.Ctx) error {
 		return c.SendString("hii world!")
 	})
+	app.Get("/employees", handlers.GetEmployees)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = defaultPort
 	}
 
-	appListenErr := app.Listen(":" + port)
-	if appListenErr != nil {
-		fmt.Fprintf(
-			os.Stderr,
-			"Error starting server: %v\n",
-			appListenErr,
+	err := app.Listen(":" + port)
+	if err != nil {
+		log.Fatal(
+			"Error starting server: ",
+			err,
 		)
 	}
 }
