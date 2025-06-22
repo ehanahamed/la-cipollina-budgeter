@@ -29,10 +29,9 @@ just check your environment variables`,
 
 	app := fiber.New()
 
-	app.Get("/hi", func(c *fiber.Ctx) error {
-		return c.SendString("hii world!")
-	})
 	app.Get("/employees", handlers.GetEmployees)
+	app.Post("/employees", handlers.AddEmployee)
+	app.Put("/employees", handlers.UpdateEmployee)
 
 	port := os.Getenv("PORT")
 	if port == "" {

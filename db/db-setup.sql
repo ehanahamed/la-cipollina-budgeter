@@ -82,13 +82,14 @@ create table employees (
         this employee won't appear in the menu where hours/days are recorded on thursday or friday
     */
     created_at timestamptz default now(),
-    updated_at timestamptz default now(),
+    updated_at timestamptz default now()
 );
 
 grant select on public.employees to budgeter_api;
 grant insert on public.employees to budgeter_api;
 grant update on public.employees to budgeter_api;
 grant delete on public.employees to budgeter_api;
+grant usage, select on employees_id_seq to budgeter_api;
 
 create table days (
     id serial primary key,
@@ -103,6 +104,7 @@ grant select on public.days to budgeter_api;
 grant insert on public.days to budgeter_api;
 grant update on public.days to budgeter_api;
 grant delete on public.days to budgeter_api;
+grant usage, select on days_id_seq to budgeter_api;
 
 create table week_reports (
     id serial primary key,
@@ -117,5 +119,6 @@ create table week_reports (
     food_cost_expense numeric(10, 2),
     kitchen_pay_expense numeric(10, 2),
     floor_pay_expense numeric(10, 2)
-)
+);
+grant usage, select on week_reports_id_seq to budgeter_api;
 
