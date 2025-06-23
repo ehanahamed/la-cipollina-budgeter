@@ -1,23 +1,8 @@
 <script>
 import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import { base } from "$app/paths";
-let employees = $state([
-    {
-        name: "Carson",
-        type: "floor",
-        wage: 200
-    },
-    {
-        name: "Cristian",
-        type: "floor",
-        wage: 200
-    },
-    {
-        name: "Example",
-        type: "kitchen",
-        wage: 200
-    }
-]);
+let { data } = $props();
+let employees = $state(data.employees);
 </script>
 <div class="grid page">
     <div class="content">
