@@ -41,7 +41,11 @@ func AddEmployee(c *fiber.Ctx) error {
 		employee.Wage,
 		employee.Type,
 		employee.SpecialPay,
-	).Scan(&employee.ID)
+	).Scan(
+		&employee.ID,
+		&employee.CreatedAt,
+		&employee.UpdatedAt,
+	)
     if err != nil {
 		log.Print("Error in AddEmployee: ", err)
         return c.Status(500).JSON(fiber.Map{"error": "Database error while adding employee"})

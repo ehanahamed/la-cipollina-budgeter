@@ -30,7 +30,9 @@ just check your environment variables`,
 
 	app := fiber.New()
 
-	app.Use(AuthMiddleware) /* routes before this don't need auth,
+	app.Post("/log-in", auth.LoginHandler)
+
+	app.Use(auth.AuthMiddleware) /* routes before this don't need auth,
 	routes after this only run the handlers if the user is logged in */
 
 	app.Get("/employees", handlers.GetEmployees)

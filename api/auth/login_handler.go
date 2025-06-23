@@ -3,6 +3,8 @@ package auth
 import (
 	"context"
 	"log"
+
+ 	"github.com/gofiber/fiber/v2"
 	
     "la-cipollina-budgeter-api/db"
 )
@@ -20,7 +22,7 @@ func LoginHandler(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`INSERT INTO auth.sessions (user_id)
-SELECT user_id FROM auth.users
+SELECT id FROM auth.users
 WHERE username = $1 AND encrypted_password = crypt($2, encrypted_password)
 RETURNING token`,
 		creds.Username,
