@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"log"
 	
     "la-cipollina-budgeter-api/db"
 )
@@ -24,6 +25,7 @@ func AuthMiddleware(c *fiber.Ctx) error {
 		token,
 	).Scan(&isTokenValid)
     if err != nil {
+		log.Print("Error in AuthMiddleware: ", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Database error in auth middleware"})
     }
 	if isTokenValid {
