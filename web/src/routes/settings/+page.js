@@ -1,6 +1,6 @@
 import { PUBLIC_API_URL } from "$env/static/public";
 
-export async function load() {
+export async function load({ fetch }) {
     if (window.localStorage) {
         let authToken = localStorage.getItem("auth");
         if (!authToken) {
