@@ -32,13 +32,14 @@
 <p class="h4 header-text">Budgeter</p>
 {#if authed}
 <div class="flex center">
-    <div class="flex center" style="flex-direction: column;">
+    <div class="flex center no-child-clickable-effect" style="flex-direction: column;">
         <div class="combo-buttons">
             <a class="button left" href="{base}/edit-budget">Edit Budget</a>
             <a class="button mid" href="{base}/run-day">Run Day</a>
             <a class="button right" href="{base}/edit-day">Edit Day</a>
         </div>
         <a href="{base}/reports" class="button">Reports</a>
+        <a href="{base}/employees" class="button">Employees</a>
         <a href="{base}/settings" class="button">Settings</a>
     </div>
 </div>
