@@ -5,18 +5,19 @@ export async function load() {
         PUBLIC_API_URL: PUBLIC_API_URL
     }
     try {
-        // if (localStorage.getItem("auth")) {
-        //     const req = await fetch(PUBLIC_API_URL + "/la-cipollina-budgeter/graphql", {
+        // const authToken = localStorage.getItem("auth");
+        // if (authToken) {
+        //     const req = await fetch(PUBLIC_API_URL + "/users/", {
         //         method: "POST",
         //         headers: {
-        //             "Authorization": "Bearer " + 
-        //         }
+        //             "Authorization": "Bearer " + authToken
+        //         },
         //         body: JSON.stringify({
         //             query: "{ amAuthed }"
         //         })
         //     })
         //     if (req) {
-        //
+        // 
         //     }
         // }
     } finally {

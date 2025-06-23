@@ -72,6 +72,7 @@
                             localStorage.setItem("auth", res.token);
                             authed = true;
                         } else {
+                            console.log(res);
                             alert("wrong password?");
                         }
                     } catch (err) {
