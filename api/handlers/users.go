@@ -66,7 +66,7 @@ encrypted_password = $crypt($3, gen_salt('bf')),
 updated_at = now()
 WHERE id = $1
 RETURNING id, username, created_at, updated_at`,
-		updatedUser.ID,
+		c.Params("id"),
 		updatedUser.Username,
 		updatedUser.NewPassword,
 	).Scan(

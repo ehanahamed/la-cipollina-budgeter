@@ -63,13 +63,13 @@ func UpdateEmployee(c *fiber.Ctx) error {
 		`UPDATE employees SET name = $2,
 wage = $3, type = $4, special_pay = $5, updated_at = now()
 WHERE id = $1
-RETURNING created_at, updated_at`,
-		employee.ID,
+RETURNING id, created_at, updated_at`,
+		c.Params("id"),
 		employee.Name,
 		employee.Wage,
 		employee.Type,
 		employee.SpecialPay,
-	).Scan(&employee.CreatedAt, &employee.UpdatedAt)
+	).Scan(&employee.ID, &employee.CreatedAt, &employee.UpdatedAt)
     if err != nil {
 		log.Print("Error in UpdateEmployee: ", err)
         return c.Status(500).JSON(fiber.Map{"error": "Database error while updating employee"})

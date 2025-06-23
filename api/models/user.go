@@ -12,7 +12,6 @@ type User struct {
 }
 
 type NewUser struct {
-	ID          int    `db:"id" json:"id"`
     Username   	string `db:"name" json:"name"`
 	NewPassword string `json:"newPassword"`
 }
