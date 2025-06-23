@@ -16,7 +16,7 @@ web/.env
 web/.env.*
 web/!.env.example
 web/!.env.test
-web/!.env.deploy
+web/!.env.public.deploy
 # Vite
 web/vite.config.js.timestamp-*
 web/vite.config.ts.timestamp-*

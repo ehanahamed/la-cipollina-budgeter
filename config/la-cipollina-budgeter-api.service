@@ -1,0 +1,13 @@
+[Unit]
+Description=La Cipollina Budgeter API
+After=network.target
+
+[Service]
+User=lacipollinabudgeter
+WorkingDirectory=/home/lacipollinabudgeter/budgeter-api/
+EnvironmentFile=/home/lacipollinabudgeter/budgeter-api/.env
+ExecStart=/home/lacipollinabudgeter/budgeter-api/api-server
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
