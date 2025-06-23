@@ -30,7 +30,7 @@ FROM employees ORDER BY created_at`,
 func AddEmployee(c *fiber.Ctx) error {
 	var employee models.Employee
 	if err := c.BodyParser(&employee); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid input for employee"})
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
 	}
 	err := db.Pool.QueryRow(
 		context.Background(),
@@ -51,7 +51,7 @@ func AddEmployee(c *fiber.Ctx) error {
 func UpdateEmployee(c *fiber.Ctx) error {
 	var employee models.Employee
 	if err := c.BodyParser(&employee); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid input for employee"})
+		return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
 	}
 	err := db.Pool.QueryRow(
 		context.Background(),

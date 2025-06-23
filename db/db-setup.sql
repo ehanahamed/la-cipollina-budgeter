@@ -7,27 +7,25 @@ create schema auth;
 grant usage on schema auth to budgeter_api;
 
 create table auth.users (
-  username text primary key,
-  encrypted_password text
+    id serial primary key,
+    username text not null unique,
+    encrypted_password text
 );
 
 grant select on auth.users to budgeter_api;
 grant insert on auth.users to budgeter_api;
 grant update on auth.users to budgeter_api;
 grant delete on auth.users to budgeter_api;
+grant usage, select on auth.users_id_seq to budgeter_api;
 
 insert into auth.users (username, encrypted_password)
 values ('admin', crypt('admin', gen_salt('bf')));
 
-create view public.usernames as select
-username from auth.users;
-
-grant select on public.usernames to budgeter_api;
-
 create table auth.sessions (
-  token text primary key default encode(gen_random_bytes(32), 'base64'),
-  username text not null,
-  expire_at timestamptz default now() + '10 days'::interval
+    token text primary key default encode(gen_random_bytes(32), 'base64'),
+    user_id int not null,
+    expire_at timestamptz default now() + '10 days'::interval,
+    foreign key(user_id) references auth.users(id)
 );
 
 grant select on auth.sessions to budgeter_api;
@@ -45,7 +43,7 @@ create function auth.verify_session(session_token text)
 returns table(username text)
 language sql
 as $$
-select username from auth.sessions where token = $1 and expire_at > (select now())
+select user_id from auth.sessions where token = $1 and expire_at > (select now())
 $$;
 
 create procedure auth.delete_expired_sessions()
