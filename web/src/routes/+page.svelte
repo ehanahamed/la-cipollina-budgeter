@@ -54,36 +54,27 @@
             <input type="password" placeholder="Password" bind:value={enteredPassword}>
             </div>
             <div class="flex">
-                <button onclick={function () {
-//                     fetch(data.PUBLIC_API_URL + "/graphql", {
-//                         method: "POST",
-//                         body: JSON.stringify({
-//                             query: `query signIn($username: String!, $password: String!){
-//     signIn(username: $username, password: $password)
-// }`,
-//                             variables: {
-//                                 username: enteredUsername,
-//                                 password: enteredPassword
-//                             }
-//                         })
-//                     }).then(function (result) {
-//                         result.json().then(function (resultjson) {
-//                             if (resultjson?.data?.signIn) {
-//                                 localStorage.setItem("auth", resultjson.data.signIn)
-//                             } else {
-//                                 alert("wrong password?")
-//                             }
-//                         }).catch(function (error) {
-//                             console.error("Error in signIn req json", error);
-//                             alert("API Error")
-//
-//                         })
-//                     }).catch(function (error) {
-//                         console.error("Error in signIn req", error);
-//                         alert("API Error")
-//                     });
-                    localStorage.setItem("auth", Math.random())
-                    authed = true;
+                <button onclick={async function () {
+                    try {
+                        const res = await (
+                            await fetch(data.PUBLIC_API_URL + "/log-in", {
+                               method: "POST",
+                               body: JSON.stringify({
+                                  username: enteredUsername,
+                                  password: enteredPassword
+                               })
+                           })
+                        ).json();
+                        if (res?.token) {
+                            localStorage.setItem("auth", res.token);
+                            authed = true;
+                        } else {
+                            alert("wrong password?");
+                        }
+                    } catch (err) {
+                        console.err("Error in logging in req: ", err);
+                        alert("There was an error while logging in :( try again mabye");
+                    }
                 }}>Continue</button>
             </div>
         </div>
