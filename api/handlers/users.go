@@ -81,3 +81,16 @@ RETURNING id, username, created_at, updated_at`,
     }
 	return c.Status(200).JSON(user)
 }
+
+func DeleteUser(c *fiber.Ctx) error {
+	_, err := db.Pool.Exec(
+		context.Background(),
+		`DELETE FROM auth.users WHERE id = $1 LIMIT 1`,
+		c.Params("id"),
+	)
+	if err != nil {
+		log.Print("Error in DeleteUser: ", err)
+        return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting user"})
+    }
+	return c.Status(200).JSON(fiber.Map{"success": true})
+}

@@ -76,3 +76,16 @@ RETURNING id, created_at, updated_at`,
     }
 	return c.Status(200).JSON(employee)
 }
+
+func RemoveEmployee(c *fiber.Ctx) error {
+	_, err := db.Pool.Exec(
+		context.Background(),
+		`DELETE FROM employees WHERE id = $1 LIMIT 1`,
+		c.Params("id"),
+	)
+    if err != nil {
+		log.Print("Error in RemoveEmployee: ", err)
+        return c.Status(500).JSON(fiber.Map{"error": "Database error while removing employee"})
+    }
+	return c.Status(200).JSON(fiber.Map{"success": true})
+}

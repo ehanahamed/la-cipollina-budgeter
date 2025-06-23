@@ -44,9 +44,11 @@ just check your environment variables`,
 	app.Get("/employees", handlers.GetEmployees)
 	app.Post("/employees", handlers.AddEmployee)
 	app.Put("/employees/:id", handlers.UpdateEmployee)
+	app.Delete("/employees/:id", handlers.RemoveEmployee)
 	app.Get("/users", handlers.GetUsers)
 	app.Post("/users", handlers.AddUser)
 	app.Put("/users/:id", handlers.UpdateUser)
+	app.Delete("/users/:id", handlers.DeleteUser)
 
 	port := os.Getenv("PORT")
 	if port == "" {
