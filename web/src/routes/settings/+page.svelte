@@ -56,6 +56,7 @@ Add/Edit Employees
                             if (res?.id) {
                                 employee.id = res.id;
                             } else {
+                                console.log(res);
                                 console.error("id not returned?")
                             }
                         } catch (err) {
