@@ -2,7 +2,7 @@
 import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import { base } from "$app/paths";
 let { data } = $props();
-let employees = $state(data.employees);
+let employees = $state(data.employees ?? []);
 </script>
 <div class="grid page">
     <div class="content">
