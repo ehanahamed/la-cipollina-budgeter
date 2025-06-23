@@ -58,11 +58,14 @@
                     try {
                         const res = await (
                             await fetch(data.PUBLIC_API_URL + "/log-in", {
-                               method: "POST",
-                               body: JSON.stringify({
-                                  username: enteredUsername,
-                                  password: enteredPassword
-                               })
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                   username: enteredUsername,
+                                   password: enteredPassword
+                                })
                            })
                         ).json();
                         if (res?.token) {
