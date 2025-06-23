@@ -26,9 +26,12 @@ Add/Edit Employees
                 <td><input type="text" placeholder="Name" bind:value={employee.name} style="width: 8rem;"></td>
                 <td>
                     <div class="select-wrapper" style="width: 8rem;">
-                        <select bind:value={employee.type}>
-                            <option value="floor">Floor</option>
-                            <option value="kitchen">Kitchen</option>
+                        <select bind:value={
+                            () => employee.type.toLowerCase(), /* get */
+                            (newType) => employee.type = newType.toUpperCase() /* set */
+                        }>
+                            <option value="floor">floor</option>
+                            <option value="kitchen">kitchen</option>
                         </select>
                     </div>
                 </td>
@@ -49,7 +52,7 @@ Add/Edit Employees
                                     body: JSON.stringify({
                                         name: employee.name,
                                         type: employee.type.toUpperCase(),
-                                        wage: employee.wage
+                                        wage: parseFloat(employee.wage)
                                     })
                                 })
                             ).json();
@@ -75,7 +78,7 @@ Add/Edit Employees
                                     body: JSON.stringify({
                                         name: employee.name,
                                         type: employee.type.toUpperCase(),
-                                        wage: employee.wage
+                                        wage: parseFloat(employee.wage)
                                     })
                                 })
                             ).json();
@@ -87,7 +90,7 @@ Add/Edit Employees
                 }}>Save</button></td>
                 {:else}
                 <td>{employee.name}</td>
-                <td>{employee.type}</td>
+                <td>{employee.type.toLowerCase()}</td>
                 <td>${employee.wage}/hr</td>
                 <td><button class="alt" onclick={function () {
                     employee.edit = true
