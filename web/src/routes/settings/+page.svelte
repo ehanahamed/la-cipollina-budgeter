@@ -35,8 +35,54 @@ Add/Edit Employees
                 <td>
                     <input type="text" placeholder="Name" bind:value={employee.wage} style="width: 8rem;">
                 </td>
-                <td><button class="alt" onclick={function () {
+                <td><button class="alt" onclick={async function () {
                     employee.edit = false
+                    if (employee.id == null) {
+                        try {
+                            const res = await (
+                                await fetch(data.PUBLIC_API_URL + "/employees", {
+                                    method: "POST",
+                                    headers: {
+                                        "Authorization": "Bearer " + localStorage.getItem("auth"),
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        name: employee.name,
+                                        type: employee.type.toUpperCase(),
+                                        wage: employee.wage
+                                    })
+                                })
+                            ).json();
+                            if (res?.id) {
+                                employee.id = res.id;
+                            } else {
+                                console.error("id not returned?")
+                            }
+                        } catch (err) {
+                            console.error("Error adding employee: ", err);
+                            alert("Error while adding employee :( ");
+                        }
+                    } else {
+                        try {
+                            const res = await (
+                                await fetch(data.PUBLIC_API_URL + "/employees/" + employee.id, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Authorization": "Bearer " + localStorage.getItem("auth"),
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({
+                                        name: employee.name,
+                                        type: employee.type.toUpperCase(),
+                                        wage: employee.wage
+                                    })
+                                })
+                            ).json();
+                        } catch (err) {
+                            console.error("Error adding employee: ", err);
+                            alert("Error while adding employee :( ");
+                        }
+                    }
                 }}>Save</button></td>
                 {:else}
                 <td>{employee.name}</td>

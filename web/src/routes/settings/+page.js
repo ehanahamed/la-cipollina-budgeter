@@ -5,7 +5,8 @@ export async function load() {
         let authToken = localStorage.getItem("auth");
         if (!authToken) {
             return {
-                authed: false
+                authed: false,
+                PUBLIC_API_URL: PUBLIC_API_URL
             };
         }
         try{
@@ -19,13 +20,15 @@ export async function load() {
             ).json();
             return {
                 authed: true,
-                employees: res
+                employees: res,
+                PUBLIC_API_URL: PUBLIC_API_URL
             };
         } catch (err) {
             console.error("Error while getting employees in settings' load func: ", err);
             return {
                 authed: false,
-                error: true
+                error: true,
+                PUBLIC_API_URL: PUBLIC_API_URL
             };
         }
     }
