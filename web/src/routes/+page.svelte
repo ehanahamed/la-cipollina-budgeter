@@ -72,7 +72,7 @@
                             alert("wrong password?");
                         }
                     } catch (err) {
-                        console.err("Error in logging in req: ", err);
+                        console.error("Error in log-in req: ", err);
                         alert("There was an error while logging in :( try again mabye");
                     }
                 }}>Continue</button>
