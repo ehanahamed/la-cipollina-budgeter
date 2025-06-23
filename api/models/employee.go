@@ -38,7 +38,7 @@ type Employee struct {
     Name       string      `db:"name" json:"name"`
     Type       string      `db:"type" json:"type"` // "FLOOR" or "KITCHEN"
     Wage       *float64    `db:"wage" json:"wage"` // can be nil if only special pay
-    SpecialPay SpecialPay  `db:"special_pay" json:"special_pay"`
-    CreatedAt  time.Time   `db:"created_at" json:"created_at"`
-    UpdatedAt  time.Time   `db:"updated_at" json:"updated_at"`
+    SpecialPay SpecialPay  `db:"special_pay" json:"specialPay"`
+    CreatedAt  time.Time   `db:"created_at" json:"createdAt"`
+    UpdatedAt  time.Time   `db:"updated_at" json:"updatedAt"`
 }

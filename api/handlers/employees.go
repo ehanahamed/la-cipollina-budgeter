@@ -43,7 +43,8 @@ func AddEmployee(c *fiber.Ctx) error {
 		employee.SpecialPay,
 	).Scan(&employee.ID)
     if err != nil {
-        return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		log.Print("Error in AddEmployee: ", err)
+        return c.Status(500).JSON(fiber.Map{"error": "Database error while adding employee"})
     }
 	return c.Status(201).JSON(employee)
 }
@@ -66,7 +67,8 @@ RETURNING created_at, updated_at`,
 		employee.SpecialPay,
 	).Scan(&employee.CreatedAt, &employee.UpdatedAt)
     if err != nil {
-        return c.Status(500).JSON(fiber.Map{"error": err.Error()})
+		log.Print("Error in UpdateEmployee: ", err)
+        return c.Status(500).JSON(fiber.Map{"error": "Database error while updating employee"})
     }
-	return c.Status(201).JSON(employee)
+	return c.Status(200).JSON(employee)
 }

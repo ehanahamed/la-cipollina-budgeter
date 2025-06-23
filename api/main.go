@@ -8,6 +8,7 @@ import (
  	"github.com/gofiber/fiber/v2"
 
 	"la-cipollina-budgeter-api/db"
+	"la-cipollina-budgeter-api/auth"
 	"la-cipollina-budgeter-api/handlers"
 )
 
@@ -28,6 +29,9 @@ just check your environment variables`,
 	defer db.Pool.Close()
 
 	app := fiber.New()
+
+	app.Use(AuthMiddleware) /* routes before this don't need auth,
+	routes after this only run the handlers if the user is logged in */
 
 	app.Get("/employees", handlers.GetEmployees)
 	app.Post("/employees", handlers.AddEmployee)
