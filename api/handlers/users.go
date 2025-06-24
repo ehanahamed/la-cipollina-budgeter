@@ -83,8 +83,9 @@ RETURNING id, username, created_at, updated_at`,
 }
 
 func DeleteUser(c *fiber.Ctx) error {
+	ctx := context.Background()
 	_, err := db.Pool.Exec(
-		context.Background(),
+		ctx,
 		`DELETE FROM auth.users WHERE id = $1`,
 		c.Params("id"),
 	)
@@ -92,5 +93,23 @@ func DeleteUser(c *fiber.Ctx) error {
 		log.Print("Error in DeleteUser: ", err)
         return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting user"})
     }
+
+	/* after deleting user, check if there's no users and recreate the default admin user/login if there's no users/logins */
+	var count int
+	err = db.Pool.QueryRow(ctx, `SELECT COUNT(*) FROM auth.users`).Scan(&count)
+	if err != nil {
+		log.Print("Error checking user count after successfully deleting a user: ", err)
+	}
+	if count == 0 {
+		_, err := db.Pool.Exec(
+			ctx,
+			`INSERT INTO auth.users (username, encrypted_password)
+VALUES ('admin', crypt('admin', gen_salt('bf')))`,
+		)
+		if err != nil {
+			log.Print("Error inserting new default admin user: ", err)
+		}
+	}
+
 	return c.Status(200).JSON(fiber.Map{"success": true})
 }
