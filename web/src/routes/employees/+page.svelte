@@ -8,6 +8,7 @@ import { base } from "$app/paths";
 let { data } = $props();
 let employees = $state(data.employees ?? []);
 let showDeleteEmployeeConfirmation = $state(false);
+let employeeToDeleteIndex = $state(-1);
 </script>
 <div class="grid page">
     <div class="content">
@@ -107,46 +108,15 @@ Add/Edit Employees
                                     <MoreDotsIcon></MoreDotsIcon>
                                 </button>
                                 <div class="content">
-                                    <button class="ohno" onclick={() => showDeleteEmployeeConfirmation = true}>
+                                    <button class="ohno" onclick={() => {
+                                        showDeleteEmployeeConfirmation = true;
+                                        employeeToDeleteIndex = employeeIndex;
+                                    }}>
                                         <TrashIcon></TrashIcon> Delete
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        {#if showDeleteEmployeeConfirmation}
-                            <div class="modal">
-                                <div class="content">
-                                    <p>Are you sure you want to remove "{employee.name}"?</p>
-                                    <div class="flex">
-                                        <button class="ohno" onclick={async function () {
-                                            try {
-                                                const res = await (
-                                                    await fetch(data.PUBLIC_API_URL + "/employees/" + employee.id, {
-                                                        method: "DELETE",
-                                                        headers: {
-                                                            "Authorization": "Bearer " + localStorage.getItem("auth")
-                                                        }
-                                                    })
-                                                ).json();
-                                                if (res?.success) {
-                                                    employees.splice(employeeIndex, 1);
-                                                    employees = employees; /* to update state/trigger reactivity after splice-ing */
-                                                } else {
-                                                    console.log(res);
-                                                    alert("Error, couldn't delete ???");
-                                                }
-                                            } catch (err) {
-                                                console.error("Error while deleting employee: ", err);
-                                                alert("Error deleting employee :( ");
-                                            } finally {
-                                                showDeleteEmployeeConfirmation = false;
-                                            }
-                                        }}><TrashIcon></TrashIcon> Remove</button>
-                                        <button class="alt" onclick={() => showDeleteEmployeeConfirmation = false}>Cancel</button>
-                                    </div>
-                                </div>
-                            </div>
-                        {/if}
                     </td>
                 {/if}
             </tr>
@@ -169,3 +139,41 @@ Add/Edit Employees
 </table>
 </div>
 </div>
+{#if showDeleteEmployeeConfirmation}
+    <div class="modal">
+        <div class="content">
+            <p>Are you sure you want to remove "{employees[employeeToDeleteIndex].name}"?</p>
+            <div class="flex">
+                <button class="ohno" onclick={async function () {
+                    try {
+                        const res = await (
+                            await fetch(data.PUBLIC_API_URL + "/employees/" + employees[employeeToDeleteIndex].id, {
+                                method: "DELETE",
+                                headers: {
+                                    "Authorization": "Bearer " + localStorage.getItem("auth")
+                                }
+                            })
+                        ).json();
+                        if (res?.success) {
+                            employees.splice(employeeToDeleteIndex, 1);
+                            employees = employees; /* to update state/trigger reactivity after splice-ing */
+                        } else {
+                            console.log(res);
+                            alert("Error, couldn't delete ???");
+                        }
+                    } catch (err) {
+                        console.error("Error while deleting employee: ", err);
+                        alert("Error deleting employee :( ");
+                    } finally {
+                        showDeleteEmployeeConfirmation = false;
+                        employeeToDeleteIndex = -1;
+                    }
+                }}><TrashIcon></TrashIcon> Remove</button>
+                <button class="alt" onclick={() => {
+                    showDeleteEmployeeConfirmation = false;
+                    employeeToDeleteIndex = -1;
+                }}>Cancel</button>
+            </div>
+        </div>
+    </div>
+{/if}
