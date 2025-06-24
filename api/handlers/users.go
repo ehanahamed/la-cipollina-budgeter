@@ -85,7 +85,7 @@ RETURNING id, username, created_at, updated_at`,
 func DeleteUser(c *fiber.Ctx) error {
 	_, err := db.Pool.Exec(
 		context.Background(),
-		`DELETE FROM auth.users WHERE id = $1 LIMIT 1`,
+		`DELETE FROM auth.users WHERE id = $1`,
 		c.Params("id"),
 	)
 	if err != nil {

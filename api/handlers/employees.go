@@ -80,7 +80,7 @@ RETURNING id, created_at, updated_at`,
 func RemoveEmployee(c *fiber.Ctx) error {
 	_, err := db.Pool.Exec(
 		context.Background(),
-		`DELETE FROM employees WHERE id = $1 LIMIT 1`,
+		`DELETE FROM employees WHERE id = $1`,
 		c.Params("id"),
 	)
     if err != nil {
