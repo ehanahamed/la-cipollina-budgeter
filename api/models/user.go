@@ -11,7 +11,7 @@ type User struct {
     UpdatedAt  time.Time `db:"updated_at" json:"updatedAt"`
 }
 
-type NewUser struct {
-    Username   	string `db:"username" json:"username"`
-	NewPassword string `json:"newPassword"`
+type UserInput struct {
+    Username    *string `db:"username" json:"username"`
+    NewPassword *string `json:"newPassword"`
 }
