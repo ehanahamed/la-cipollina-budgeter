@@ -29,7 +29,7 @@ Add/Edit Employees
         {#each employees as employee, employeeIndex}
             <tr>
                 {#if employee.edit}
-                    <td><input type="text" placeholder="Name" bind:value={employee.name} style="width: 8rem;"></td>
+                    <td><input type="text" placeholder="Name" bind:value={employee.name} style="min-width: 6rem; field-sizing: content;"></td>
                     <td>
                         <div class="select-wrapper" style="width: 8rem;">
                             <select bind:value={
@@ -42,7 +42,7 @@ Add/Edit Employees
                         </div>
                     </td>
                     <td>
-                        <input type="text" placeholder="Name" bind:value={employee.wage} style="width: 8rem;">
+                        <input type="text" placeholder="Name" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;">
                     </td>
                     <td><button onclick={async function () {
                         employee.edit = false
@@ -99,7 +99,7 @@ Add/Edit Employees
                     <td>{employee.type.toLowerCase()}</td>
                     <td>${employee.wage}/hr</td>
                     <td>
-                        <div class="flex">
+                        <div class="flex" style="flex-wrap: nowrap;">
                             <button class="alt" onclick={function () {
                                 employee.edit = true
                             }}><PencilIcon></PencilIcon> Edit</button>
