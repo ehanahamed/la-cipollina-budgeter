@@ -2,7 +2,7 @@ on:
   workflow_dispatch:
 jobs:
   build:
-    name: Update site
+    name: Build and Update Site
     runs-on: ubuntu-latest
     steps:
       - name: Clone La Cipollina Budgeter
