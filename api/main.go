@@ -47,7 +47,7 @@ just check your environment variables`,
 	app.Delete("/employees/:id", handlers.RemoveEmployee)
 	app.Get("/users", handlers.GetUsers)
 	app.Post("/users", handlers.AddUser)
-	app.Put("/users/:id", handlers.UpdateUser)
+	app.Patch("/users/:id", handlers.UpdateUser)
 	app.Delete("/users/:id", handlers.DeleteUser)
 
 	port := os.Getenv("PORT")
