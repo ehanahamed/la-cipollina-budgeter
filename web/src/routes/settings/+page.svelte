@@ -6,9 +6,9 @@ import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import TrashIcon from "$lib/icons/Trash.svelte";
 import { base } from "$app/paths";
 let { data } = $props();
-let users = $state(data.employees ?? []);
-let showDeleteEmployeeConfirmation = $state(false);
-let employeeToDeleteIndex = $state(-1);
+let users = $state(data.users);
+let showDeleteUserConfirmation = $state(false);
+let userToDeleteIndex = $state(-1);
 </script>
 <div class="grid page">
     <div class="content">
@@ -25,21 +25,10 @@ let employeeToDeleteIndex = $state(-1);
                 </tr>
             </thead>
             <tbody>
-                {#each employees as employee, employeeIndex}
+                {#each users as user, userIndex}
                     <tr>
-                        {#if employee.edit}
-                            <td><input type="text" placeholder="Name" bind:value={employee.name} style="min-width: 6rem; field-sizing: content;"></td>
-                            <td>
-                                <div class="select-wrapper" style="width: 8rem;">
-                                    <select bind:value={
-                                        () => employee.type.toLowerCase(), /* get */
-                                        (newType) => employee.type = newType.toUpperCase() /* set */
-                                    }>
-                                        <option value="floor">floor</option>
-                                        <option value="kitchen">kitchen</option>
-                                    </select>
-                                </div>
-                            </td>
+                        {#if employee.editUsername}
+                            <td><input type="text" placeholder="Name" bind:value={user.name} style="min-width: 6rem; field-sizing: content;"></td>
                             <td>
                                 <input type="text" placeholder="Name" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;">
                             </td>
