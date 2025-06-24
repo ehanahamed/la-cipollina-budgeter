@@ -3,6 +3,7 @@ package handlers
 import (
     "context"
 	"log"
+	"fmt"
 
     "github.com/gofiber/fiber/v2"
     "github.com/georgysavva/scany/v2/pgxscan"
@@ -28,7 +29,7 @@ FROM auth.users ORDER BY created_at`,
 }
 
 func AddUser(c *fiber.Ctx) error {
-	var newUser models.NewUser
+	var newUser models.UserInput
 	if err := c.BodyParser(&newUser); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
 	}
@@ -38,8 +39,8 @@ func AddUser(c *fiber.Ctx) error {
 		`INSERT INTO auth.users (username, encrypted_password) VALUES (
 	$1, crypt($2, gen_salt('bf'))
 ) RETURNING id, username, created_at, updated_at`,
-		newUser.Username,
-		newUser.NewPassword,
+		*newUser.Username,
+		*newUser.NewPassword,
 	).Scan(
 		&user.ID,
 		&user.Username,
@@ -54,31 +55,56 @@ func AddUser(c *fiber.Ctx) error {
 }
 
 func UpdateUser(c *fiber.Ctx) error {
-	var updatedUser models.NewUser
-	if err := c.BodyParser(&updatedUser); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
+	var updatedUser models.UserInput
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}
-	var user models.User
-	err := db.Pool.QueryRow(
-		context.Background(),
-		`UPDATE auth.users SET username = $2,
-encrypted_password = $crypt($3, gen_salt('bf')),
-updated_at = now()
-WHERE id = $1
+
+	/* Send an error if they're not updating anything */
+	if input.Username == nil && input.NewPassword == nil {
+	    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No fields to update"})
+	}
+
+	/* Add to/build the query */
+	setParts := []string{}
+	args := []interface{}{}
+	argNum := 1
+
+	if input.Username != nil {
+	    setParts = append(setParts, fmt.Sprintf("username = $%d", argNum))
+	    args = append(args, *input.Username)
+	    argNum++
+	}
+
+	if input.NewPassword != nil {
+	    setParts = append(setParts, fmt.Sprintf("encrypted_password = crypt($%d, gen_salt('bf'))", argNum))
+	    args = append(args, *input.NewPassword)
+	    argNum++
+	}
+
+	// Always update updated_at
+	setParts = append(setParts, "updated_at = now()")
+
+	// Add WHERE clause
+	args = append(args, c.Params("id"))
+	query := fmt.Sprintf(
+		`UPDATE auth.users
+SET %s
+WHERE id = $%d
 RETURNING id, username, created_at, updated_at`,
-		c.Params("id"),
-		updatedUser.Username,
-		updatedUser.NewPassword,
-	).Scan(
-		&user.ID,
-		&user.Username,
-		&user.CreatedAt,
-		&user.UpdatedAt,
+		strings.Join(setParts, ", "),
+		argNum,
 	)
-    if err != nil {
-		log.Print("Error in UpdateUser: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error while updating user"})
-    }
+
+	var user models.User
+	err := db.Pool.QueryRow(context.Background(), query, args...).Scan(
+	    &user.ID, &user.Username, &user.CreatedAt, &user.UpdatedAt,
+	)
+	if err != nil {
+	    log.Print("Error in UpdateUser: ", err)
+	    return c.Status(500).JSON(fiber.Map{"error": "Database error while updating user"})
+	}
+
 	return c.Status(200).JSON(user)
 }
 
