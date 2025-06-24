@@ -9,7 +9,9 @@ grant usage on schema auth to budgeter_api;
 create table auth.users (
     id serial primary key,
     username text not null unique,
-    encrypted_password text
+    encrypted_password text,
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
 );
 
 grant select on auth.users to budgeter_api;
