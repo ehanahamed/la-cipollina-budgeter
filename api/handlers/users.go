@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"strings"
     "context"
 	"log"
 	"fmt"
@@ -55,7 +56,7 @@ func AddUser(c *fiber.Ctx) error {
 }
 
 func UpdateUser(c *fiber.Ctx) error {
-	var updatedUser models.UserInput
+	var input models.UserInput
 	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}

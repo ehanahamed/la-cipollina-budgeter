@@ -27,7 +27,7 @@ create table auth.sessions (
     token text primary key default encode(gen_random_bytes(32), 'base64'),
     user_id int not null,
     expire_at timestamptz default now() + '10 days'::interval,
-    foreign key(user_id) references auth.users(id)
+    foreign key(user_id) references auth.users(id) on delete cascade
 );
 
 grant select on auth.sessions to budgeter_api;
