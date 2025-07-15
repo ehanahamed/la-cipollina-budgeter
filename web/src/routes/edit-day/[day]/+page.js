@@ -2,7 +2,7 @@ import { PUBLIC_API_URL } from "$env/static/public";
 
 export async function load() {
     // if (window.localStorage) {
-    //     let token = localStorage.getItem("auth");
+    //     let token = localStorage.getItem("budgeter:auth");
     //     if (token) {
     //         fetch(PUBLIC_API_URL + "/graphql", {
     //             method: "POST",

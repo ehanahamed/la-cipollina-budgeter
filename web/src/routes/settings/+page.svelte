@@ -40,7 +40,7 @@ let userToDeleteIndex = $state(-1);
                                             await fetch(data.PUBLIC_API_URL + "/employees", {
                                                 method: "POST",
                                                 headers: {
-                                                    "Authorization": "Bearer " + localStorage.getItem("auth"),
+                                                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
                                                     "Content-Type": "application/json"
                                                 },
                                                 body: JSON.stringify({
@@ -66,7 +66,7 @@ let userToDeleteIndex = $state(-1);
                                             await fetch(data.PUBLIC_API_URL + "/employees/" + employee.id, {
                                                 method: "PUT",
                                                 headers: {
-                                                    "Authorization": "Bearer " + localStorage.getItem("auth"),
+                                                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
                                                     "Content-Type": "application/json"
                                                 },
                                                 body: JSON.stringify({
@@ -138,7 +138,7 @@ let userToDeleteIndex = $state(-1);
                             await fetch(data.PUBLIC_API_URL + "/employees/" + employees[employeeToDeleteIndex].id, {
                                 method: "DELETE",
                                 headers: {
-                                    "Authorization": "Bearer " + localStorage.getItem("auth")
+                                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
                                 }
                             })
                         ).json();
