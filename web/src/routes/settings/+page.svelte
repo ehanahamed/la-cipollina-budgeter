@@ -27,8 +27,8 @@ let userToDeleteIndex = $state(-1);
             <tbody>
                 {#each users as user, userIndex}
                     <tr>
-                        {#if employee.editUsername}
-                            <td><input type="text" placeholder="Name" bind:value={user.name} style="min-width: 6rem; field-sizing: content;"></td>
+                        {#if user.editUsername}
+                            <td><input type="text" placeholder="Username" bind:value={user.username} style="min-width: 6rem; field-sizing: content;"></td>
                             <td>
                                 <input type="text" placeholder="Name" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;">
                             </td>

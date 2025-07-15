@@ -12,6 +12,33 @@
             }
         }
     })
+    async function loginButton() {
+        try {
+            const res = await (
+                await fetch(data.PUBLIC_API_URL + "/log-in", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                       username: enteredUsername,
+                       password: enteredPassword
+                    })
+               })
+            ).json();
+            if (res?.token) {
+                localStorage.setItem("budgeter:auth", res.token);
+                authed = true;
+            } else {
+                console.log(res);
+                alert("wrong password?");
+            }
+        } catch (err) {
+            console.error("Error in log-in req: ", err);
+            alert("There was an error while logging in :( try again mabye");
+        }
+    }
+    let passwordTextbox;
 </script>
 <style>
     .header-text {
@@ -49,38 +76,22 @@
         <div class="content">
             <div class="separator">Login</div>
             <div>
-            <input type="text" placeholder="Username" bind:value={enteredUsername}>
+            <input type="text" placeholder="Username" bind:value={enteredUsername} onkeydown={function (event) {
+                if (event.key === "Enter") {
+                    passwordTextbox.focus();
+                }
+            }}>
             </div>
             <div>
-            <input type="password" placeholder="Password" bind:value={enteredPassword}>
+            <input type="password" placeholder="Password" bind:this={passwordTextbox} bind:value={enteredPassword} onkeydown={function (event) {
+                if (event.key === "Enter") {
+                    /* hitting enter in the password textbox makes it try to log in just like hitting the login button */
+                    loginButton();
+                }
+            }}>
             </div>
             <div class="flex">
-                <button onclick={async function () {
-                    try {
-                        const res = await (
-                            await fetch(data.PUBLIC_API_URL + "/log-in", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify({
-                                   username: enteredUsername,
-                                   password: enteredPassword
-                                })
-                           })
-                        ).json();
-                        if (res?.token) {
-                            localStorage.setItem("budgeter:auth", res.token);
-                            authed = true;
-                        } else {
-                            console.log(res);
-                            alert("wrong password?");
-                        }
-                    } catch (err) {
-                        console.error("Error in log-in req: ", err);
-                        alert("There was an error while logging in :( try again mabye");
-                    }
-                }}>Continue</button>
+                <button onclick={loginButton}>Continue</button>
             </div>
         </div>
     </div>
