@@ -5,7 +5,7 @@ export async function load() {
         PUBLIC_API_URL: PUBLIC_API_URL
     }
     try {
-        // const authToken = localStorage.getItem("auth");
+        // const authToken = localStorage.getItem("budgeter:auth");
         // if (authToken) {
         //     const req = await fetch(PUBLIC_API_URL + "/users/", {
         //         method: "POST",

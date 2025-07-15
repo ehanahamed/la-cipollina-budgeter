@@ -7,7 +7,7 @@
     let enteredPassword = $state("");
     onMount(function () {
         if (window.localStorage) {
-            if (localStorage.getItem("auth")) {
+            if (localStorage.getItem("budgeter:auth")) {
                 authed = true;
             }
         }
@@ -70,7 +70,7 @@
                            })
                         ).json();
                         if (res?.token) {
-                            localStorage.setItem("auth", res.token);
+                            localStorage.setItem("budgeter:auth", res.token);
                             authed = true;
                         } else {
                             console.log(res);
