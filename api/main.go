@@ -49,6 +49,7 @@ just check your environment variables`,
 	app.Post("/users", handlers.AddUser)
 	app.Patch("/users/:id", handlers.UpdateUser)
 	app.Delete("/users/:id", handlers.DeleteUser)
+	app.Get("/authed-user/", auth.GetAuthedUser)
 
 	port := os.Getenv("PORT")
 	if port == "" {

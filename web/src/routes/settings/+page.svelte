@@ -16,6 +16,7 @@ let userToDeleteIndex = $state(-1);
             <BackArrowIcon></BackArrowIcon>
             Back
         </a></div>
+        Currently logged in as <code>{username}</code>
         Manage Users & Logins
         <table>
             <thead>
