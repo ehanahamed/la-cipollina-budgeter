@@ -4,11 +4,14 @@ import PencilIcon from "$lib/icons/Pencil.svelte";
 import MoreDotsIcon from "$lib/icons/MoreDotsVertical.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import TrashIcon from "$lib/icons/Trash.svelte";
+import IconPlus from "$lib/icons/Plus.svelte";
 import { base } from "$app/paths";
 let { data } = $props();
 let employees = $state(data.employees ?? []);
 let showDeleteEmployeeConfirmation = $state(false);
+let showSpecialWageEditing = $state(false);
 let employeeToDeleteIndex = $state(-1);
+let employeeSpecialWageEditingIndex = $state(-1);
 </script>
 <div class="grid page">
     <div class="content">
@@ -42,7 +45,7 @@ Add/Edit Employees
                         </div>
                     </td>
                     <td>
-                        <input type="text" placeholder="Name" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;">
+                        <input type="text" placeholder="123.45" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;">
                     </td>
                     <td><button onclick={async function () {
                         employee.edit = false
@@ -126,11 +129,12 @@ Add/Edit Employees
                 <button onclick={function () {
                     employees.push({
                         name: "",
-                        type: "",
-                        wage: 0,
+                        type: "floor",
+                        wage: "",
                         edit: true
                     })
                 }}>
+                    <IconPlus></IconPlus>
                     Add
                 </button>
             </td>
@@ -174,6 +178,14 @@ Add/Edit Employees
                     employeeToDeleteIndex = -1;
                 }}>Cancel</button>
             </div>
+        </div>
+    </div>
+{/if}
+{#if showDeleteEmployeeConfirmation}
+    <div class="modal">
+        <div class="content">
+            <p>Edit Special Wage</p>
+
         </div>
     </div>
 {/if}
