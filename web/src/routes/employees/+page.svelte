@@ -81,7 +81,10 @@ Add/Edit Employees
                                         body: JSON.stringify({
                                             name: employee.name,
                                             type: employee.type.toUpperCase(),
-                                            wage: parseFloat(employee.wage)
+                                            wage: isNaN(employee.wage) ?
+                                                null :
+                                                parseFloat(employee.wage),
+                                            specialPay: employee.specialPay
                                         })
                                     })
                                 ).json();
@@ -107,7 +110,10 @@ Add/Edit Employees
                                         body: JSON.stringify({
                                             name: employee.name,
                                             type: employee.type.toUpperCase(),
-                                            wage: parseFloat(employee.wage)
+                                            wage: isNaN(employee.wage) ?
+                                                null :
+                                                parseFloat(employee.wage),
+                                            specialPay: employee.specialPay
                                         })
                                     })
                                 ).json();
