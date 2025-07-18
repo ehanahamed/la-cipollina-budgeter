@@ -220,7 +220,7 @@ Add/Edit Employees
     <div class="modal">
         <div class="content">
             {#if employees[specialPayEditingEmployeeIndex].name}
-                <p>Settings for {employees[specialPayEditingEmployeeIndex].name}</p>
+                <p>Special Pay Settings for {employees[specialPayEditingEmployeeIndex].name}</p>
             {:else}
                 <p>Edit Special Pay Settings</p>
             {/if}
