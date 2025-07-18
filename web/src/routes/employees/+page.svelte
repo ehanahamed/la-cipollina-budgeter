@@ -56,7 +56,7 @@ Add/Edit Employees
                                     Special pay
                                 </button>
                             {:else}
-                            <input type="text" placeholder="123.45" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;">
+                            <div class="flex compact-gap nowrap" style="align-items: center; align-content: center;"><span>$</span><input type="text" placeholder="123.45" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;"></div>
                             <button class="alt" onclick={() => {
                                 showSpecialPayEditing = true;
                                 specialPayEditingEmployeeIndex = employeeIndex;
@@ -69,6 +69,13 @@ Add/Edit Employees
                     </td>
                     <td style="vertical-align: top;"><button onclick={async function () {
                         employee.edit = false
+                        if (employee.specialPay) {
+                            employee.wage = null;
+                        } else if (isNaN(employee.wage)) {
+                            employee.wage = 0;
+                        } else {
+                            employee.wage = parseFloat(employee.wage).toFixed(2);
+                        }
                         if (employee.id == null) {
                             try {
                                 const res = await (
@@ -81,8 +88,7 @@ Add/Edit Employees
                                         body: JSON.stringify({
                                             name: employee.name,
                                             type: employee.type.toUpperCase(),
-                                            wage: employee.specialPay || isNaN(employee.wage) ?
-                                                null : parseFloat(employee.wage),
+                                            wage: employee.wage,
                                             specialPay: employee.specialPay
                                         })
                                     })
@@ -109,8 +115,7 @@ Add/Edit Employees
                                         body: JSON.stringify({
                                             name: employee.name,
                                             type: employee.type.toUpperCase(),
-                                            wage: employee.specialPay || isNaN(employee.wage) ?
-                                                null : parseFloat(employee.wage),
+                                            wage: employee.wage,
                                             specialPay: employee.specialPay
                                         })
                                     })
@@ -128,7 +133,7 @@ Add/Edit Employees
                     {#if employee.specialPay}
                         <span class="fg0">special pay</span>
                     {:else}
-                        ${employee.wage}
+                        ${parseFloat(employee.wage).toFixed(2)}
                     {/if}
                     </td>
                     <td>
