@@ -48,7 +48,7 @@ Add/Edit Employees
                     <td>
                         <div class="flex col">
                             {#if employee.specialPay}
-                                <button class="alt" style="min-width: 6rem;" onclick={() => {
+                                <button class="alt" style="min-width: 9rem;" onclick={() => {
                                     showSpecialPayEditing = true;
                                     specialPayEditingEmployeeIndex = employeeIndex;
                                 }}>
@@ -81,9 +81,8 @@ Add/Edit Employees
                                         body: JSON.stringify({
                                             name: employee.name,
                                             type: employee.type.toUpperCase(),
-                                            wage: isNaN(employee.wage) ?
-                                                null :
-                                                parseFloat(employee.wage),
+                                            wage: employee.specialPay || isNaN(employee.wage) ?
+                                                null : parseFloat(employee.wage),
                                             specialPay: employee.specialPay
                                         })
                                     })
@@ -110,9 +109,8 @@ Add/Edit Employees
                                         body: JSON.stringify({
                                             name: employee.name,
                                             type: employee.type.toUpperCase(),
-                                            wage: isNaN(employee.wage) ?
-                                                null :
-                                                parseFloat(employee.wage),
+                                            wage: employee.specialPay || isNaN(employee.wage) ?
+                                                null : parseFloat(employee.wage),
                                             specialPay: employee.specialPay
                                         })
                                     })
@@ -130,7 +128,7 @@ Add/Edit Employees
                     {#if employee.specialPay}
                         <span class="fg0">special pay</span>
                     {:else}
-                        ${employee.wage}/h
+                        ${employee.wage}
                     {/if}
                     </td>
                     <td>
