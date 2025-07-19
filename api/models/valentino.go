@@ -1,5 +1,9 @@
 package models
 
+import (
+    "time"
+)
+
 type Valentino struct {
     ID         int     	`db:"id" json:"id"`
     Name       string  	`db:"name" json:"name"`
