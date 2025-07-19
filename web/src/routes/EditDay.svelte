@@ -9,13 +9,13 @@ let floorHoursArray = $state([]);
 let kitchenHoursArray = $state([]);
 if (data.new) {
     data.employees.forEach(function (employee) {
-        if (employee?.type == "floor") {
+        if (employee?.type == "FLOOR") {
             floorHoursArray.push({
                 name: employee.name,
                 hours: ""
             })
         }
-        if (employee?.type == "kitchen") {
+        if (employee?.type == "KITCHEN") {
             kitchenHoursArray.push({
                 name: employee.name,
                 hours: ""
@@ -122,7 +122,7 @@ onMount(function () {
     
 }
 </style>
-<div class="grid page" style="margin-top: 2rem;">
+<div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
         <div class="areainfo">
             <div class="centerbutnotonmobile">

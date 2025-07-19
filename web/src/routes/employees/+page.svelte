@@ -74,7 +74,7 @@ Add/Edit Employees
                         } else if (isNaN(employee.wage)) {
                             employee.wage = 0;
                         } else {
-                            employee.wage = parseFloat(employee.wage).toFixed(2);
+                            employee.wage = parseFloat(employee.wage);
                         }
                         if (employee.id == null) {
                             try {
@@ -104,6 +104,7 @@ Add/Edit Employees
                                 alert("Error while adding employee :( ");
                             }
                         } else {
+                            console.log(employee)
                             try {
                                 const res = await (
                                     await fetch(data.PUBLIC_API_URL + "/employees/" + employee.id, {
@@ -176,6 +177,16 @@ Add/Edit Employees
         </tr>
     </tbody>
 </table>
+<table style="margin-top: 4rem;">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Weekly Pay</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
 </div>
 </div>
 {#if showDeleteEmployeeConfirmation}
@@ -222,7 +233,7 @@ Add/Edit Employees
             {#if employees[specialPayEditingEmployeeIndex].name}
                 <p>Special Pay Settings for {employees[specialPayEditingEmployeeIndex].name}</p>
             {:else}
-                <p>Edit Special Pay Settings</p>
+                <p>Special Pay Settings</p>
             {/if}
             <div class="combo-select">
                 <button class="left {

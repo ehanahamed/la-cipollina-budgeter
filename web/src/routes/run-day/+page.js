@@ -1,28 +1,34 @@
 import { PUBLIC_API_URL } from "$env/static/public";
-export function load() {
-    return {
-        PUBLIC_API_URL: PUBLIC_API_URL,
-        employees: [
-            {
-                "name": "Carson",
-                "type": "floor"
-            },
-            {
-                "name": "Cristian",
-                "type": "floor"
-            },
-            {
-                "name": "Renato",
-                "type": "kitchen"
-            },
-            {
-                "name": "Manuel",
-                "type": "kitchen"
-            },
-            {
-                "name": "Caitlyn",
-                "type": "floor"
-            },
-        ]
+export async function load({ fetch }) {
+    if (window.localStorage) {
+        let authToken = localStorage.getItem("budgeter:auth");
+        if (!authToken) {
+            return {
+                authed: false,
+                PUBLIC_API_URL: PUBLIC_API_URL
+            };
+        }
+        try{
+            const res = await (
+                await fetch(PUBLIC_API_URL + "/employees", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + authToken
+                    }
+                })
+            ).json();
+            return {
+                authed: true,
+                employees: res,
+                PUBLIC_API_URL: PUBLIC_API_URL
+            };
+        } catch (err) {
+            console.error("Error while getting employees in settings' load func: ", err);
+            return {
+                authed: false,
+                error: true,
+                PUBLIC_API_URL: PUBLIC_API_URL
+            };
+        }
     }
 }
