@@ -72,7 +72,7 @@ Add/Edit Employees
                         employee.edit = false
                         if (employee.specialPay) {
                             employee.wage = null;
-                        } else if (isNaN(employee.wage)) {
+                        } else if (isNaN(parseFloat(employee.wage))) {
                             employee.wage = 0;
                         } else {
                             employee.wage = parseFloat(employee.wage);
@@ -227,7 +227,7 @@ Add/Edit Employees
                         employee.edit = false
                         if (employee.specialPay) {
                             employee.wage = null;
-                        } else if (isNaN(employee.wage)) {
+                        } else if (isNaN(parseFloat(employee.wage))) {
                             employee.wage = 0;
                         } else {
                             employee.wage = parseFloat(employee.wage);
@@ -422,7 +422,7 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.mon.perHour,
+                                    ].specialPay.mon.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -432,14 +432,14 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.tue.perDay,
+                                    ].specialPay.tue.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.tue.perHour,
+                                    ].specialPay.tue.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -449,14 +449,14 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.wed.perDay,
+                                    ].specialPay.wed.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.wed.perHour,
+                                    ].specialPay.wed.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -466,14 +466,14 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.thu.perDay,
+                                    ].specialPay.thu.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.thu.perHour,
+                                    ].specialPay.thu.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -483,14 +483,14 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.fri.perDay,
+                                    ].specialPay.fri.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.fri.perHour,
+                                    ].specialPay.fri.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -500,14 +500,14 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.sat.perDay,
+                                    ].specialPay.sat.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.sat.perHour,
+                                    ].specialPay.sat.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -517,14 +517,14 @@ Add/Edit Employees
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.sun.perDay,
+                                    ].specialPay.sun.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
                                     employees[
                                         specialPayEditingEmployeeIndex
-                                    ].specialPay.sun.perHour,
+                                    ].specialPay.sun.perHour
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -547,12 +547,12 @@ Add/Edit Employees
                             specialPayEditingEmployeeIndex
                         ].specialPay[day]; /* reference to the object,
                         so the og array & obj gets updated correctly */
-                        if (isNaN(dayObj.perDay)) {
+                        if (isNaN(parseFloat(dayObj.perDay))) {
                             dayObj.perDay = null;
                         } else {
                             dayObj.perDay = parseFloat(dayObj.perDay);
                         }
-                        if (isNaN(dayObj.perHour)) {
+                        if (isNaN(parseFloat(dayObj.perHour))) {
                             dayObj.perHour = null;
                         } else {
                             dayObj.perHour = parseFloat(dayObj.perHour);
