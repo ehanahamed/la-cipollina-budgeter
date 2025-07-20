@@ -9,6 +9,7 @@ import IconSettings from "$lib/icons/SettingsCogGear.svelte";
 import { base } from "$app/paths";
 let { data } = $props();
 let employees = $state(data.employees ?? []);
+let valentinos = $state(data.valentinos ?? []);
 let showDeleteEmployeeConfirmation = $state(false);
 let employeeToDeleteIndex = $state(-1);
 let showSpecialPayEditing = $state(false);
@@ -185,6 +186,122 @@ Add/Edit Employees
         </tr>
     </thead>
     <tbody>
+        {#each valentinos as valentino, valentinoIndex}
+            <tr>
+                {#if valentino.edit}
+                    <td style="vertical-align: top;"><input type="text" placeholder="Name" bind:value={valentino.name} style="min-width: 6rem; field-sizing: content;"></td>
+                    <td style="vertical-align: top;">
+                        <div class="select-wrapper" style="width: 7rem;">
+                            <select bind:value={
+                                () => employee.type.toLowerCase(), /* get */
+                                (newType) => employee.type = newType.toUpperCase() /* set */
+                            }>
+                                <option value="floor">floor</option>
+                                <option value="kitchen">kitchen</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex col">
+                            {#if employee.specialPay}
+                                <button class="alt" style="min-width: 9rem;" onclick={() => {
+                                    showSpecialPayEditing = true;
+                                    specialPayEditingEmployeeIndex = employeeIndex;
+                                }}>
+                                    <IconSettings></IconSettings>
+                                    Special pay
+                                </button>
+                            {:else}
+                            <div class="flex compact-gap nowrap" style="align-items: center; align-content: center;"><span>$</span><input type="text" placeholder="123.45" bind:value={employee.wage} style="min-width: 6rem; field-sizing: content;"></div>
+                            <button class="alt" onclick={() => {
+                                showSpecialPayEditing = true;
+                                specialPayEditingEmployeeIndex = employeeIndex;
+                            }}>
+                                <IconSettings></IconSettings>
+                                Settings
+                            </button>
+                            {/if}
+                        </div>
+                    </td>
+                    <td style="vertical-align: top;"><button onclick={async function () {
+                        employee.edit = false
+                        if (employee.specialPay) {
+                            employee.wage = null;
+                        } else if (isNaN(employee.wage)) {
+                            employee.wage = 0;
+                        } else {
+                            employee.wage = parseFloat(employee.wage);
+                        }
+                        if (employee.id == null) {
+                            try {
+                                const res = await (
+                                    await fetch(data.PUBLIC_API_URL + "/employees", {
+                                        method: "POST",
+                                        headers: {
+                                            "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            name: employee.name,
+                                            type: employee.type.toUpperCase(),
+                                            wage: employee.wage,
+                                            specialPay: employee.specialPay
+                                        })
+                                    })
+                                ).json();
+                                if (res?.id) {
+                                    employee.id = res.id;
+                                } else {
+                                    console.log(res);
+                                    console.error("id not returned?")
+                                }
+                            } catch (err) {
+                                console.error("Error adding employee: ", err);
+                                alert("Error while adding employee :( ");
+                            }
+                        } else {
+                            console.log(employee)
+                            try {
+                                const res = await (
+                                    await fetch(data.PUBLIC_API_URL + "/employees/" + employee.id, {
+                                        method: "PUT",
+                                        headers: {
+                                            "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            name: employee.name,
+                                            type: employee.type.toUpperCase(),
+                                            wage: employee.wage,
+                                            specialPay: employee.specialPay
+                                        })
+                                    })
+                                ).json();
+                            } catch (err) {
+                                console.error("Error adding employee: ", err);
+                                alert("Error while adding employee :( ");
+                            }
+                        }
+                    }}><CheckmarkIcon></CheckmarkIcon> Save</button></td>
+                {:else}
+                    <td>{valentino.name}</td>
+                {/if}
+            </tr>
+        {/each}
+        <tr>
+            <td>
+                <button onclick={function () {
+                    valentinos.push({
+                        name: "",
+                        weeklyPay: "",
+                        edit: true
+                    })
+                }}>
+                    <IconPlus></IconPlus>
+                    Add
+                </button>
+            </td>
+        </tr>
     </tbody>
 </table>
 </div>
@@ -296,14 +413,16 @@ Add/Edit Employees
                             <td>Monday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.mon.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.mon.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.mon.perDay
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.mon.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.mon.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.mon.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -311,14 +430,16 @@ Add/Edit Employees
                             <td>Tuesday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.tue.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.tue.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.tue.perDay,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.tue.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.tue.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.tue.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -326,14 +447,16 @@ Add/Edit Employees
                             <td>Wednesday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.wed.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.wed.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.wed.perDay,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.wed.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.wed.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.wed.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -341,14 +464,16 @@ Add/Edit Employees
                             <td>Thursday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.thu.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.thu.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.thu.perDay,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.thu.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.thu.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.thu.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -356,14 +481,16 @@ Add/Edit Employees
                             <td>Friday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.fri.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.fri.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.fri.perDay,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.fri.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.fri.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.fri.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -371,14 +498,16 @@ Add/Edit Employees
                             <td>Saturday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.sat.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.sat.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.sat.perDay,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.sat.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.sat.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.sat.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -386,14 +515,16 @@ Add/Edit Employees
                             <td>Sunday</td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.sun.perDay,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.sun.perDay = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.sun.perDay,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                             <td>
                                 <input type="text" placeholder="" bind:value={
-                                    () => employees[specialPayEditingEmployeeIndex].specialPay.sun.perHour,
-                                    (newValue) => employees[specialPayEditingEmployeeIndex].specialPay.sun.perHour = parseFloat(newValue)
+                                    employees[
+                                        specialPayEditingEmployeeIndex
+                                    ].specialPay.sun.perHour,
                                 } style="min-width: 6rem; field-sizing: content;">
                             </td>
                         </tr>
@@ -402,6 +533,32 @@ Add/Edit Employees
             {/if}
             <div class="flex">
                 <button onclick={() => {
+                    [
+                        "mon",
+                        "tue",
+                        "wed",
+                        "thu",
+                        "fri",
+                        "sat",
+                        "sun"
+                    ].forEach(function (day) {
+                    /* parse strings as floats when done is pressed */
+                        const dayObj = employees[
+                            specialPayEditingEmployeeIndex
+                        ].specialPay[day]; /* reference to the object,
+                        so the og array & obj gets updated correctly */
+                        if (isNaN(dayObj.perDay)) {
+                            dayObj.perDay = null;
+                        } else {
+                            dayObj.perDay = parseFloat(dayObj.perDay);
+                        }
+                        if (isNaN(dayObj.perHour)) {
+                            dayObj.perHour = null;
+                        } else {
+                            dayObj.perHour = parseFloat(dayObj.perHour);
+                        }
+                    })
+
                     showSpecialPayEditing = false;
                 }}>Done</button>
             </div>
