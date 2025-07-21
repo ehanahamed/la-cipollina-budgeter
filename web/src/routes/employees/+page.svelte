@@ -131,9 +131,9 @@ async function removeValentino() {
     }
 }
 </script>
-<div class="grid page">
+<div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
-                <div style="margin-top: 1rem; margin-bottom: 1rem;"><a href={base} class="button faint">
+                <div style="margin-bottom: 1rem;"><a href={base} class="button faint">
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a></div>
