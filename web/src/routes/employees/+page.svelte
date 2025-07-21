@@ -80,6 +80,56 @@ async function saveEmployee(employee) {
         }
     }
 }
+async function removeEmployee() {
+    try {
+        const res = await (
+            await fetch(data.PUBLIC_API_URL + "/employees/" + employees[employeeToDeleteIndex].id, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+                }
+            })
+        ).json();
+        if (res?.success) {
+            employees.splice(employeeToDeleteIndex, 1);
+            employees = employees; /* to update state/trigger reactivity after splice-ing */
+        } else {
+            console.log(res);
+            alert("Error, couldn't delete ???");
+        }
+    } catch (err) {
+        console.error("Error while deleting employee: ", err);
+        alert("Error deleting employee :( ");
+    } finally {
+        showDeleteEmployeeConfirmation = false;
+        employeeToDeleteIndex = -1;
+    }
+}
+async function removeValentino() {
+    try {
+        const res = await (
+            await fetch(data.PUBLIC_API_URL + "/valentinos/" + valentinos[valentinoToDeleteIndex].id, {
+                method: "DELETE",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+                }
+            })
+        ).json();
+        if (res?.success) {
+            valentinos.splice(valentinoToDeleteIndex, 1);
+            valentinos = valentinos; /* to update state/trigger reactivity after splice-ing */
+        } else {
+            console.log(res);
+            alert("Error, couldn't delete ???");
+        }
+    } catch (err) {
+        console.error("Error while deleting valentino: ", err);
+        alert("Error deleting valentino :( ");
+    } finally {
+        showDeleteValentinoConfirmation = false;
+        valentinoToDeleteIndex = -1;
+    }
+}
 </script>
 <div class="grid page">
     <div class="content">
@@ -162,8 +212,14 @@ Add/Edit Employees
                                 </button>
                                 <div class="content">
                                     <button class="ohno" onclick={() => {
-                                        showDeleteEmployeeConfirmation = true;
                                         employeeToDeleteIndex = employeeIndex;
+                                        if (employee.name) {
+                                            showDeleteEmployeeConfirmation = true;
+                                        } else {
+                                            /* don't show confirmation modal/alert
+                                            if name is blank, just directly delete it */
+                                            removeEmployee();
+                                        }
                                     }}>
                                         <TrashIcon></TrashIcon> Delete
                                     </button>
@@ -289,8 +345,14 @@ Add/Edit Employees
                                 </button>
                                 <div class="content">
                                     <button class="ohno" onclick={() => {
-                                        showDeleteValentinoConfirmation = true;
                                         valentinoToDeleteIndex = valentinoIndex;
+                                        if (valentino.name) {
+                                            showDeleteValentinoConfirmation = true;
+                                        } else {
+                                            /* if name is blank, delete directly,
+                                            don't show confirmation alert/modal/popup */
+                                            removeValentino();
+                                        }
                                     }}>
                                         <TrashIcon></TrashIcon> Delete
                                     </button>
@@ -324,31 +386,10 @@ Add/Edit Employees
         <div class="content">
             <p>Are you sure you want to remove "{employees[employeeToDeleteIndex].name}"?</p>
             <div class="flex">
-                <button class="ohno" onclick={async function () {
-                    try {
-                        const res = await (
-                            await fetch(data.PUBLIC_API_URL + "/employees/" + employees[employeeToDeleteIndex].id, {
-                                method: "DELETE",
-                                headers: {
-                                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
-                                }
-                            })
-                        ).json();
-                        if (res?.success) {
-                            employees.splice(employeeToDeleteIndex, 1);
-                            employees = employees; /* to update state/trigger reactivity after splice-ing */
-                        } else {
-                            console.log(res);
-                            alert("Error, couldn't delete ???");
-                        }
-                    } catch (err) {
-                        console.error("Error while deleting employee: ", err);
-                        alert("Error deleting employee :( ");
-                    } finally {
-                        showDeleteEmployeeConfirmation = false;
-                        employeeToDeleteIndex = -1;
-                    }
-                }}><TrashIcon></TrashIcon> Remove</button>
+                <button class="ohno" onclick={removeEmployee}>
+                    <TrashIcon></TrashIcon>
+                    Remove
+                </button>
                 <button class="alt" onclick={() => {
                     showDeleteEmployeeConfirmation = false;
                     employeeToDeleteIndex = -1;
@@ -362,31 +403,10 @@ Add/Edit Employees
         <div class="content">
             <p>Are you sure you want to remove "{valentinos[valentinoToDeleteIndex].name}"?</p>
             <div class="flex">
-                <button class="ohno" onclick={async function () {
-                    try {
-                        const res = await (
-                            await fetch(data.PUBLIC_API_URL + "/valentinos/" + valentinos[valentinoToDeleteIndex].id, {
-                                method: "DELETE",
-                                headers: {
-                                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
-                                }
-                            })
-                        ).json();
-                        if (res?.success) {
-                            valentinos.splice(valentinoToDeleteIndex, 1);
-                            valentinos = valentinos; /* to update state/trigger reactivity after splice-ing */
-                        } else {
-                            console.log(res);
-                            alert("Error, couldn't delete ???");
-                        }
-                    } catch (err) {
-                        console.error("Error while deleting valentino: ", err);
-                        alert("Error deleting valentino :( ");
-                    } finally {
-                        showDeleteValentinoConfirmation = false;
-                        valentinoToDeleteIndex = -1;
-                    }
-                }}><TrashIcon></TrashIcon> Remove</button>
+                <button class="ohno" onclick={removeValentino}>
+                    <TrashIcon></TrashIcon>
+                    Remove
+                </button>
                 <button class="alt" onclick={() => {
                     showDeleteValentinoConfirmation = false;
                     valentinoToDeleteIndex = -1;
