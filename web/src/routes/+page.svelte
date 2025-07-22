@@ -2,16 +2,9 @@
     import { onMount } from "svelte";
     import { base } from "$app/paths";
     let { data } = $props();
-    let authed = $state(false);
+    let authed = $state(data.authed);
     let enteredUsername = $state("");
     let enteredPassword = $state("");
-    onMount(function () {
-        if (window.localStorage) {
-            if (localStorage.getItem("budgeter:auth")) {
-                authed = true;
-            }
-        }
-    })
     async function loginButton() {
         try {
             const res = await (
