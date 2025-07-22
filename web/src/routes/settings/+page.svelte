@@ -15,7 +15,7 @@ let userToDeleteIndex = $state(-1);
 let showAddNewUserMenu = $state(false);
 let newUserUsername;
 let newUserPassword;
-async function newUser(username, password) {
+async function createUser(username, password) {
     try {
         const res = await (
             await fetch(data.PUBLIC_API_URL + "/users", {
@@ -31,9 +31,8 @@ async function newUser(username, password) {
             })
         ).json();
         if (res?.id) {
-            employee.id = res.id;
             users.push({
-                id: id,
+                id: res.id,
                 username: username
             })
         } else {
@@ -48,7 +47,7 @@ async function newUser(username, password) {
 async function deleteUser() {
     try {
         const res = await (
-            await fetch(data.PUBLIC_API_URL + "/employees/" + employees[employeeToDeleteIndex].id, {
+            await fetch(data.PUBLIC_API_URL + "/users/" + users[userToDeleteIndex].id, {
                 method: "DELETE",
                 headers: {
                     "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
@@ -56,18 +55,18 @@ async function deleteUser() {
             })
         ).json();
         if (res?.success) {
-            employees.splice(employeeToDeleteIndex, 1);
-            employees = employees; /* to update state/trigger reactivity after splice-ing */
+            users.splice(userToDeleteIndex, 1);
+            users = users; /* to update state/trigger reactivity after splice-ing */
         } else {
             console.log(res);
             alert("Error, couldn't delete ???");
         }
     } catch (err) {
-        console.error("Error while deleting employee: ", err);
-        alert("Error deleting employee :( ");
+        console.error("Error while deleting user: ", err);
+        alert("Error deleting user :( ");
     } finally {
-        showDeleteEmployeeConfirmation = false;
-        employeeToDeleteIndex = -1;
+        showDeleteUserConfirmation = false;
+        userToDeleteIndex = -1;
     }
 }
 </script>
@@ -97,7 +96,10 @@ async function deleteUser() {
                                 <LockIcon></LockIcon>
                                 Edit Password
                             </button>
-                            <button class="ohno">
+                            <button class="ohno" onclick={() => {
+                                userToDeleteIndex = userIndex;
+                                showDeleteUserConfirmation = true;
+                            }}>
                                 <TrashIcon></TrashIcon>
                                 Delete
                             </button>
@@ -111,7 +113,19 @@ async function deleteUser() {
                 <td><div class="flex col">
                     <input type="text" placeholder="Username" bind:value={newUserUsername} style="width: 14rem;">
                     <input type="password" placeholder="Password" bind:value={newUserPassword} style="width: 14rem;">
-                    <button style="width: 14rem;">
+                    <button style="width: 14rem;" onclick={() => {
+                        if (newUserUsername == "" ||
+                        newUserPassword == "") {
+                            return;
+                        }
+                        createUser(
+                            newUserUsername,
+                            newUserPassword
+                        );
+                        showAddNewUserMenu = false;
+                        newUserUsername = "";
+                        newUserPassword = "";
+                    }}>
                         <CheckmarkIcon></CheckmarkIcon>
                         Add
                     </button>
