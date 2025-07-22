@@ -86,7 +86,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		sign user out on all devices
 		by deleting all sessions for that user */
 		_, err := db.Pool.Exec(
-			ctx,
+			context.Background(),
 			`DELETE FROM auth.sessions
 WHERE user_id = $1`,
 			c.Params("id"),

@@ -7,11 +7,16 @@ import TrashIcon from "$lib/icons/Trash.svelte";
 import IconPlus from "$lib/icons/Plus.svelte";
 import IconSettings from "$lib/icons/SettingsCogGear.svelte";
 import LockIcon from "$lib/icons/Lock.svelte";
+import ExitIcon from "$lib/icons/Exit.svelte";
 import { base } from "$app/paths";
+import { goto } from "$app/navigation";
 let { data } = $props();
 let users = $state(data.users);
 let showDeleteUserConfirmation = $state(false);
 let userToDeleteIndex = $state(-1);
+let showSetNewPasswordMenu = $state(false);
+let setNewPasswordUserIndex = $state(-1);
+let setNewPasswordPassword;
 let showAddNewUserMenu = $state(false);
 let newUserUsername;
 let newUserPassword;
@@ -76,6 +81,18 @@ async function deleteUser() {
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a></div>
+<div class="box">
+    <p>Currently logged in as "{data?.authedUser?.username}"</p>
+    <div class="flex">
+        <button class="ohno alt" onclick={() => {
+            localStorage.removeItem("budgeter:auth");
+            goto(base);
+        }}>
+            <ExitIcon></ExitIcon>
+            Sign Out
+        </button>
+    </div>
+</div>
 <p>Add/Edit Users</p>
 <table style="min-width: 17rem;">
     <tbody>
@@ -88,11 +105,16 @@ async function deleteUser() {
                             <MoreDotsIcon></MoreDotsIcon>
                         </button>
                         <div class="content">
-                            <button>
+                            <button onclick={() => {
+                                user.editUsername = true;
+                            }}>
                                 <PencilIcon></PencilIcon>
                                 Edit Username
                             </button>
-                            <button>
+                            <button onclick={() => {
+                                setNewPasswordUserIndex = userIndex;
+                                showSetNewPasswordMenu = true;
+                            }}>
                                 <LockIcon></LockIcon>
                                 Edit Password
                             </button>
@@ -170,6 +192,57 @@ async function deleteUser() {
                     userToDeleteIndex = -1;
                 }}>Cancel</button>
             </div>
+        </div>
+    </div>
+{/if}
+{#if showSetNewPasswordMenu}
+    <div class="modal">
+        <div class="content">
+            <p>New password for "{users[setNewPasswordUserIndex].username}"</p>
+            <input type="password" placeholder="New Password" bind:value={setNewPasswordPassword}>
+            <div class="flex">
+                <button onclick={async function () {
+                    try {
+                        const res = await (
+                            await fetch(data.PUBLIC_API_URL + "/users/" + users[setNewPasswordUserIndex].id, {
+                                method: "PATCH",
+                                headers: {
+                                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({
+                                    newPassword: setNewPasswordPassword
+                                })
+                            })
+                        ).json();
+                        if (res.error) {
+                            console.log(res);
+                            alert("Error, couldn't update ???");
+                        }
+                    } catch (err) {
+                        console.error("Error while updating user password: ", err);
+                        alert("Error updating user password :( ");
+                    } finally {
+                        if (users[setNewPasswordUserIndex].id == data?.authedUser?.id) {
+                            /* if user just edited their own password, bring them to the sign in screen,
+                            because the server just signed them out from all devices, including the one they're on rn*/
+                            goto(base);
+                        }
+                        showSetNewPasswordMenu = false;
+                        setNewPasswordUserIndex = -1;
+                        setNewPasswordPassword = "";
+                    }
+                }}>
+                    <CheckmarkIcon></CheckmarkIcon>
+                    Save
+                </button>
+                <button class="alt" onclick={() => {
+                    showSetNewPasswordMenu = false;
+                    setNewPasswordUserIndex = -1;
+                    setNewPasswordPassword = "";
+                }}>Cancel</button>
+            </div>
+            <p class="fg0"><LockIcon></LockIcon> Changing this user's password will also sign them out on all devices</p>
         </div>
     </div>
 {/if}

@@ -18,9 +18,18 @@ export async function load({ fetch }) {
                     }
                 })
             ).json();
+            const authedUserRes = await (
+                await fetch(PUBLIC_API_URL + "/authed-user", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + authToken
+                    }
+                })
+            ).json();
             return {
                 authed: true,
                 users: res,
+                authedUser: authedUserRes,
                 PUBLIC_API_URL: PUBLIC_API_URL
             };
         } catch (err) {
