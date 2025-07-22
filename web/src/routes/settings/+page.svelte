@@ -98,36 +98,70 @@ async function deleteUser() {
     <tbody>
         {#each users as user, userIndex}
             <tr>
-                <td><div class="flex" style="justify-content: space-between; align-items: center; align-content: center;">
-                    <span>{user.username}</span>
-                    <div class="dropdown">
-                        <button class="icon-only-button">
-                            <MoreDotsIcon></MoreDotsIcon>
+                {#if user.editUsername}
+                    <td><div class="flex">
+                        <input type="text" placeholder="Username" bind:value={user.username} style="width: 14rem;">
+                        <button onclick={async function () {
+                            try {
+                                const res = await (
+                                    await fetch(data.PUBLIC_API_URL + "/users/" + user.id, {
+                                        method: "PATCH",
+                                        headers: {
+                                            "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
+                                            "Content-Type": "application/json"
+                                        },
+                                        body: JSON.stringify({
+                                            username: user.username
+                                        })
+                                    })
+                                ).json();
+                                if (res.error) {
+                                    console.log(res);
+                                    alert("Error, couldn't update ???");
+                                }
+                            } catch (err) {
+                                console.error("Error while updating username: ", err);
+                                alert("Error updating username :( ");
+                            } finally {
+                                user.editUsername = false;
+                            }
+                        }}>
+                            <CheckmarkIcon></CheckmarkIcon>
+                            Save
                         </button>
-                        <div class="content">
-                            <button onclick={() => {
-                                user.editUsername = true;
-                            }}>
-                                <PencilIcon></PencilIcon>
-                                Edit Username
+                    </div></td>
+                {:else}
+                    <td><div class="flex" style="justify-content: space-between; align-items: center; align-content: center;">
+                        <span>{user.username}</span>
+                        <div class="dropdown">
+                            <button class="icon-only-button">
+                                <MoreDotsIcon></MoreDotsIcon>
                             </button>
-                            <button onclick={() => {
-                                setNewPasswordUserIndex = userIndex;
-                                showSetNewPasswordMenu = true;
-                            }}>
-                                <LockIcon></LockIcon>
-                                Edit Password
-                            </button>
-                            <button class="ohno" onclick={() => {
-                                userToDeleteIndex = userIndex;
-                                showDeleteUserConfirmation = true;
-                            }}>
-                                <TrashIcon></TrashIcon>
-                                Delete
-                            </button>
+                            <div class="content">
+                                <button onclick={() => {
+                                    user.editUsername = true;
+                                }}>
+                                    <PencilIcon></PencilIcon>
+                                    Edit Username
+                                </button>
+                                <button onclick={() => {
+                                    setNewPasswordUserIndex = userIndex;
+                                    showSetNewPasswordMenu = true;
+                                }}>
+                                    <LockIcon></LockIcon>
+                                    Edit Password
+                                </button>
+                                <button class="ohno" onclick={() => {
+                                    userToDeleteIndex = userIndex;
+                                    showDeleteUserConfirmation = true;
+                                }}>
+                                    <TrashIcon></TrashIcon>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </div></td>
+                    </div></td>
+                {/if}
             </tr>
         {/each}
         {#if showAddNewUserMenu}
