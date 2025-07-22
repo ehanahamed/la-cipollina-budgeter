@@ -81,6 +81,19 @@ func UpdateUser(c *fiber.Ctx) error {
 	    setParts = append(setParts, fmt.Sprintf("encrypted_password = crypt($%d, gen_salt('bf'))", argNum))
 	    args = append(args, *input.NewPassword)
 	    argNum++
+
+		/* when we're updating password,
+		sign user out on all devices
+		by deleting all sessions for that user */
+		_, err := db.Pool.Exec(
+			ctx,
+			`DELETE FROM auth.sessions
+WHERE user_id = $1`,
+			c.Params("id"),
+		)
+		if err != nil {
+			log.Print("Error deleting sessions during password update: ", err)
+		}
 	}
 
 	// Always update updated_at
