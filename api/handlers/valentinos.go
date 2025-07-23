@@ -1,30 +1,30 @@
 package handlers
 
 import (
-    "context"
+	"context"
 	"log"
 
-    "github.com/gofiber/fiber/v2"
-    "github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/gofiber/fiber/v2"
 
-    "la-cipollina-budgeter-api/db"
-    "la-cipollina-budgeter-api/models"
+	"la-cipollina-budgeter-api/db"
+	"la-cipollina-budgeter-api/models"
 )
 
 func GetValentinos(c *fiber.Ctx) error {
-    var valentinos []models.Valentino
-    err := pgxscan.Select(
+	var valentinos []models.Valentino
+	err := pgxscan.Select(
 		context.Background(),
 		db.Pool,
 		&valentinos,
 		`SELECT id, name, weekly_pay, created_at, updated_at
 FROM valentinos ORDER BY created_at`,
 	)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in GetValentinos: ", err)
-        return c.Status(404).JSON(fiber.Map{"error": "Not sure why this is an error"})
-    }
-    return c.JSON(valentinos)
+		return c.Status(404).JSON(fiber.Map{"error": "Not sure why this is an error"})
+	}
+	return c.JSON(valentinos)
 }
 
 func AddValentino(c *fiber.Ctx) error {
@@ -44,10 +44,10 @@ func AddValentino(c *fiber.Ctx) error {
 		&valentino.CreatedAt,
 		&valentino.UpdatedAt,
 	)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in AddValentino: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error while adding valentino-type weekly-paid entity"})
-    }
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while adding valentino-type weekly-paid entity"})
+	}
 	return c.Status(201).JSON(valentino)
 }
 
@@ -66,10 +66,10 @@ RETURNING id, created_at, updated_at`,
 		valentino.Name,
 		valentino.WeeklyPay,
 	).Scan(&valentino.ID, &valentino.CreatedAt, &valentino.UpdatedAt)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in UpdateValentino: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error while updating valentino-type weekly-paid entity"})
-    }
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while updating valentino-type weekly-paid entity"})
+	}
 	return c.Status(200).JSON(valentino)
 }
 
@@ -79,9 +79,9 @@ func RemoveValentino(c *fiber.Ctx) error {
 		`DELETE FROM valentinos WHERE id = $1`,
 		c.Params("id"),
 	)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in RemoveValentino: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error while removing valentino-type weekly-paid entity"})
-    }
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while removing valentino-type weekly-paid entity"})
+	}
 	return c.Status(200).JSON(fiber.Map{"success": true})
 }

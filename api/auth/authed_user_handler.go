@@ -4,14 +4,14 @@ import (
 	"context"
 	"log"
 
- 	"github.com/gofiber/fiber/v2"
-	
-    "la-cipollina-budgeter-api/db"
-    "la-cipollina-budgeter-api/models"
+	"github.com/gofiber/fiber/v2"
+
+	"la-cipollina-budgeter-api/db"
+	"la-cipollina-budgeter-api/models"
 )
 
 func GetAuthedUser(c *fiber.Ctx) error {
-    authHeader := c.Get("Authorization")
+	authHeader := c.Get("Authorization")
 	token := authHeader[7:] /* `Bearer ` prefix before actual token is 7 characters */
 
 	var authedUser models.User
@@ -28,9 +28,9 @@ WHERE s.token = $1`,
 		&authedUser.CreatedAt,
 		&authedUser.UpdatedAt,
 	)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in GetAuthedUser: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error when trying to fetch authed user"})
-    }
-    return c.JSON(authedUser)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error when trying to fetch authed user"})
+	}
+	return c.JSON(authedUser)
 }

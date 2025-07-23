@@ -4,12 +4,12 @@ import (
 	"log"
 	"os"
 
-    "github.com/joho/godotenv"
- 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 
-	"la-cipollina-budgeter-api/db"
 	"la-cipollina-budgeter-api/auth"
+	"la-cipollina-budgeter-api/db"
 	"la-cipollina-budgeter-api/handlers"
 )
 
@@ -32,8 +32,8 @@ just check your environment variables`,
 	app := fiber.New()
 
 	app.Use(cors.New(cors.Config{
-	    AllowOrigins: "*",
-	    AllowHeaders: "Authorization, Content-Type, Accept",
+		AllowOrigins: "*",
+		AllowHeaders: "Authorization, Content-Type, Accept",
 	}))
 
 	app.Post("/log-in", auth.LoginHandler)

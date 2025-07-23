@@ -1,32 +1,32 @@
 package handlers
 
 import (
-	"strings"
-    "context"
-	"log"
+	"context"
 	"fmt"
+	"log"
+	"strings"
 
-    "github.com/gofiber/fiber/v2"
-    "github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/georgysavva/scany/v2/pgxscan"
+	"github.com/gofiber/fiber/v2"
 
-    "la-cipollina-budgeter-api/db"
-    "la-cipollina-budgeter-api/models"
+	"la-cipollina-budgeter-api/db"
+	"la-cipollina-budgeter-api/models"
 )
 
 func GetUsers(c *fiber.Ctx) error {
-    var users []models.User
-    err := pgxscan.Select(
+	var users []models.User
+	err := pgxscan.Select(
 		context.Background(),
 		db.Pool,
 		&users,
 		`SELECT id, username, created_at, updated_at
 FROM auth.users ORDER BY created_at`,
 	)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in GetUsers: ", err)
-        return c.Status(404).JSON(fiber.Map{"error": "Database error while getting users"})
-    }
-    return c.JSON(users)
+		return c.Status(404).JSON(fiber.Map{"error": "Database error while getting users"})
+	}
+	return c.JSON(users)
 }
 
 func AddUser(c *fiber.Ctx) error {
@@ -48,10 +48,10 @@ func AddUser(c *fiber.Ctx) error {
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in AddUser: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error when trying create user"})
-    }
+		return c.Status(500).JSON(fiber.Map{"error": "Database error when trying create user"})
+	}
 	return c.Status(201).JSON(user)
 }
 
@@ -63,7 +63,7 @@ func UpdateUser(c *fiber.Ctx) error {
 
 	/* Send an error if they're not updating anything */
 	if input.Username == nil && input.NewPassword == nil {
-	    return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No fields to update"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No fields to update"})
 	}
 
 	/* Add to/build the query */
@@ -72,15 +72,15 @@ func UpdateUser(c *fiber.Ctx) error {
 	argNum := 1
 
 	if input.Username != nil {
-	    setParts = append(setParts, fmt.Sprintf("username = $%d", argNum))
-	    args = append(args, *input.Username)
-	    argNum++
+		setParts = append(setParts, fmt.Sprintf("username = $%d", argNum))
+		args = append(args, *input.Username)
+		argNum++
 	}
 
 	if input.NewPassword != nil {
-	    setParts = append(setParts, fmt.Sprintf("encrypted_password = crypt($%d, gen_salt('bf'))", argNum))
-	    args = append(args, *input.NewPassword)
-	    argNum++
+		setParts = append(setParts, fmt.Sprintf("encrypted_password = crypt($%d, gen_salt('bf'))", argNum))
+		args = append(args, *input.NewPassword)
+		argNum++
 
 		/* when we're updating password,
 		sign user out on all devices
@@ -112,11 +112,11 @@ RETURNING id, username, created_at, updated_at`,
 
 	var user models.User
 	err := db.Pool.QueryRow(context.Background(), query, args...).Scan(
-	    &user.ID, &user.Username, &user.CreatedAt, &user.UpdatedAt,
+		&user.ID, &user.Username, &user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
-	    log.Print("Error in UpdateUser: ", err)
-	    return c.Status(500).JSON(fiber.Map{"error": "Database error while updating user"})
+		log.Print("Error in UpdateUser: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while updating user"})
 	}
 
 	return c.Status(200).JSON(user)
@@ -131,8 +131,8 @@ func DeleteUser(c *fiber.Ctx) error {
 	)
 	if err != nil {
 		log.Print("Error in DeleteUser: ", err)
-        return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting user"})
-    }
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting user"})
+	}
 
 	/* after deleting user, check if there's no users and recreate the default admin user/login if there's no users/logins */
 	var count int

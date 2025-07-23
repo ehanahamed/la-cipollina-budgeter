@@ -4,9 +4,9 @@ import (
 	"context"
 	"log"
 
- 	"github.com/gofiber/fiber/v2"
-	
-    "la-cipollina-budgeter-api/db"
+	"github.com/gofiber/fiber/v2"
+
+	"la-cipollina-budgeter-api/db"
 )
 
 func LoginHandler(c *fiber.Ctx) error {
@@ -14,10 +14,10 @@ func LoginHandler(c *fiber.Ctx) error {
 		Username string `json:"username"`
 		Password string `json:"password"`
 	}
-    if err := c.BodyParser(&creds); err != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
-    }
-	
+	if err := c.BodyParser(&creds); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+	}
+
 	var genToken string
 	err := db.Pool.QueryRow(
 		context.Background(),
@@ -28,9 +28,9 @@ RETURNING token`,
 		creds.Username,
 		creds.Password,
 	).Scan(&genToken)
-    if err != nil {
+	if err != nil {
 		log.Print("Error in LoginHandler: ", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while logging in"})
-    }
+	}
 	return c.Status(200).JSON(fiber.Map{"token": genToken})
 }
