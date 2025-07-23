@@ -16,6 +16,24 @@ let showDeleteValentinoConfirmation = $state(false);
 let valentinoToDeleteIndex = $state(-1);
 let showSpecialPayEditing = $state(false);
 let specialPayEditingEmployeeIndex = $state(-1);
+let floorEmployeesCount = $derived.by(() => {
+    let count = 0;
+    employees.forEach((employee) => {
+        if (employee.type == "FLOOR") {
+            count++;
+        }
+    });
+    return count;
+});
+let kitchenEmployeesCount = $derived.by(() => {
+    let count = 0;
+    employees.forEach((employee) => {
+        if (employee.type == "KITCHEN") {
+            count++;
+        }
+    });
+    return count;
+});
 async function saveEmployee(employee) {
     if (employee.specialPay) {
         employee.wage = null;
@@ -137,7 +155,11 @@ async function removeValentino() {
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a></div>
-Add/Edit Employees
+<div style="display: inline-block;">
+<div class="flex" style="justify-content: space-between;">
+    <p>Add/Edit Employees</p>
+    <p class="fg0">{employees.length} total, {floorEmployeesCount} floor, {kitchenEmployeesCount} kitchen</p>
+</div>
 <table>
     <thead>
         <tr>
@@ -247,7 +269,12 @@ Add/Edit Employees
         </tr>
     </tbody>
 </table>
-<table style="margin-top: 4rem;">
+</div>
+<div style="display: inline-block; margin-top: 4rem;">
+<div class="flex" style="justify-items: end; justify-content: end;">
+    <p class="fg0">{valentinos.length} total</p>
+</div>
+<table>
     <thead>
         <tr>
             <th>Name</th>
@@ -379,6 +406,7 @@ Add/Edit Employees
         </tr>
     </tbody>
 </table>
+</div>
 </div>
 </div>
 {#if showDeleteEmployeeConfirmation}
