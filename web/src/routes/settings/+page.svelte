@@ -276,7 +276,7 @@ async function deleteUser() {
                     setNewPasswordPassword = "";
                 }}>Cancel</button>
             </div>
-            <p class="fg0"><LockIcon></LockIcon> Changing this user's password will also sign them out on all devices</p>
+            <p class="fg0"><LockIcon></LockIcon> Changing this user's password will also sign them out (on all devices)</p>
         </div>
     </div>
 {/if}
