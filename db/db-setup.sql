@@ -120,7 +120,7 @@ grant update on public.days to budgeter_api;
 grant delete on public.days to budgeter_api;
 grant usage, select on days_id_seq to budgeter_api;
 
-create table week_reports (
+create table weeks (
     id serial primary key,
     start_date date not null unique,
     end_date date not null unique,
@@ -134,5 +134,5 @@ create table week_reports (
     kitchen_pay_expense numeric(10, 2),
     floor_pay_expense numeric(10, 2)
 );
-grant usage, select on week_reports_id_seq to budgeter_api;
+grant usage, select on weeks_id_seq to budgeter_api;
 
