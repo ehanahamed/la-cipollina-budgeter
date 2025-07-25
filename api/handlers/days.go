@@ -72,32 +72,24 @@ func UpdateDay(c *fiber.Ctx) error {
 	}
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`UPDATE employees SET name = $2,
-wage = $3, type = $4, special_pay = $5, updated_at = now()
-WHERE id = $1
-RETURNING id, created_at, updated_at`,
+		`UPDATE days SET hours_worked = $1,
+worked_today = $2, current_employees = $3,
+food_costs = $4, updated_at = now()
+WHERE id = $5
+RETURNING date, created_at, updated_at`,
+		day.HoursWorked,
+		day.WorkedToday,
+		day.CurrentEmployees,
+		day.FoodCosts,
 		c.Params("id"),
-		employee.Name,
-		employee.Wage,
-		employee.Type,
-		employee.SpecialPay,
-	).Scan(&employee.ID, &employee.CreatedAt, &employee.UpdatedAt)
-	if err != nil {
-		log.Print("Error in UpdateEmployee: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while updating employee"})
-	}
-	return c.Status(200).JSON(employee)
-}
-
-func RemoveEmployee(c *fiber.Ctx) error {
-	_, err := db.Pool.Exec(
-		context.Background(),
-		`DELETE FROM employees WHERE id = $1`,
-		c.Params("id"),
+	).Scan(
+		&day.Date,
+		&day.CreatedAt,
+		&day.UpdatedAt,
 	)
 	if err != nil {
-		log.Print("Error in RemoveEmployee: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while removing employee"})
+		log.Print("Error in UpdateDay: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while updating day"})
 	}
-	return c.Status(200).JSON(fiber.Map{"success": true})
+	return c.Status(200).JSON(day)
 }
