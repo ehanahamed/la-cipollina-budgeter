@@ -108,10 +108,10 @@ grant usage, select on valentinos_id_seq to budgeter_api;
 create table days (
     id serial primary key,
     date date not null unique,
-    floor_hours jsonb,
-    kitchen_hours jsonb,
-    food_costs jsonb,
-    wages jsonb
+    hours_worked jsonb,
+    worked_today jsonb,
+    current_employees jsonb,
+    food_costs jsonb
 );
 
 grant select on public.days to budgeter_api;
