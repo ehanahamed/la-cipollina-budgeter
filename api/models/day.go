@@ -21,10 +21,9 @@ type FoodCostsItem struct {
 
 type Day struct {
 	ID               int              `db:"id" json:"id"`
-	Date             time.Time        `db:"date" json:"date"`
+	Date             string        `db:"date" json:"date"`
 	HoursWorked      []EmployeeHours  `db:"hours_worked" json:"hoursWorked"`
 	WorkedToday      []EmployeeWorked `db:"worked_today" json:"workedToday"`
-	CurrentEmployees []Employee       `db:"current_employees" json:"currentEmployees"`
 	FoodCosts        []FoodCostsItem  `db:"food_costs" json:"foodCosts"`
 	CreatedAt        time.Time        `db:"created_at" json:"createdAt"`
 	UpdatedAt        time.Time        `db:"updated_at" json:"updatedAt"`
