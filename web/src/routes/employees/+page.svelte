@@ -675,41 +675,43 @@ async function removeValentino() {
             {/if}
             <div class="flex">
                 <button onclick={() => {
-                    [
-                        "mon",
-                        "tue",
-                        "wed",
-                        "thu",
-                        "fri",
-                        "sat",
-                        "sun"
-                    ].forEach(function (day) {
-                    /* parse strings as floats when done is pressed */
-                        const dayObj = employees[
-                            specialPayEditingEmployeeIndex
-                        ].specialPay[day]; /* reference to the object,
-                        so the og array & obj gets updated correctly */
-                        if (isNaN(parseFloat(dayObj.perDay))) {
-                            /* isNaN(null) returns false
-                            isNaN(parseFloat(null)) returns true */
-                            dayObj.perDay = null;
-                        } else {
-                            if (typeof dayObj.perDay === "string") {
-                                /* remove any user-inputted commas for thousands */
-                                dayObj.perDay = dayObj.perDay.replaceAll(",", "");
+                    if (employees[specialPayEditingEmployeeIndex].specialPay) {
+                        [
+                            "mon",
+                            "tue",
+                            "wed",
+                            "thu",
+                            "fri",
+                            "sat",
+                            "sun"
+                        ].forEach(function (day) {
+                        /* parse strings as floats when done is pressed */
+                            const dayObj = employees[
+                                specialPayEditingEmployeeIndex
+                            ].specialPay[day]; /* reference to the object,
+                            so the og array & obj gets updated correctly */
+                            if (isNaN(parseFloat(dayObj.perDay))) {
+                                /* isNaN(null) returns false
+                                isNaN(parseFloat(null)) returns true */
+                                dayObj.perDay = null;
+                            } else {
+                                if (typeof dayObj.perDay === "string") {
+                                    /* remove any user-inputted commas for thousands */
+                                    dayObj.perDay = dayObj.perDay.replaceAll(",", "");
+                                }
+                                dayObj.perDay = parseFloat(dayObj.perDay);
                             }
-                            dayObj.perDay = parseFloat(dayObj.perDay);
-                        }
-                        if (isNaN(parseFloat(dayObj.perHour))) {
-                            dayObj.perHour = null;
-                        } else {
-                            if (typeof dayObj.perHour === "string") {
-                                /* remove any user-inputted commas for thousands */
-                                dayObj.perHour = dayObj.perHour.replaceAll(",", "");
+                            if (isNaN(parseFloat(dayObj.perHour))) {
+                                dayObj.perHour = null;
+                            } else {
+                                if (typeof dayObj.perHour === "string") {
+                                    /* remove any user-inputted commas for thousands */
+                                    dayObj.perHour = dayObj.perHour.replaceAll(",", "");
+                                }
+                                dayObj.perHour = parseFloat(dayObj.perHour);
                             }
-                            dayObj.perHour = parseFloat(dayObj.perHour);
-                        }
-                    })
+                        })
+                    }
 
                     showSpecialPayEditing = false;
                     saveEmployee(employees[specialPayEditingEmployeeIndex]);
