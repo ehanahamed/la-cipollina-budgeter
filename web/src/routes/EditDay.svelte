@@ -12,8 +12,8 @@ let kitchenHoursArray = $state([]);
 let kitchenWorkedTodayArray = $state([]);
 const date = new Date()
 const weekDayName = [
-    "Monday", "Tuesday", "Wednesday", "Thrusday",
-    "Friday", "Saturday", "Sunday"
+    "Sunday", "Monday", "Tuesday", "Wednesday",
+    "Thrusday", "Friday", "Saturday"
 ][date.getDay()]
 const weekDayKey = [
     "mon", "tue", "wed", "thu",
@@ -341,66 +341,6 @@ let foodCostsTotal = $derived.by(() => {
                 </div>
             </div>
             <div class="areasave">
-                <button onclick={() => {
-                    for (let index = 0; index < floorHoursArray.length; index++) {
-                        if (isNaN(parseFloat(floorHoursArray[index].hours))) {
-                            floorHoursArray[index].hours = 0;
-                        } else {
-                            floorHoursArray[index].hours = parseFloat(
-                                floorHoursArray[index].hours
-                            );
-                        }
-                    }
-                    for (let index = 0; index < kitchenHoursArray.length; index++) {
-                        if (isNaN(parseFloat(kitchenHoursArray[index].hours))) {
-                            kitchenHoursArray[index].hours = 0;
-                        } else {
-                            kitchenHoursArray[index].hours = parseFloat(
-                                kitchenHoursArray[index].hours
-                            );
-                        }
-                    }
-                    const hoursWorked = floorHoursArray.concat(kitchenHoursArray);
-
-                    const workedToday = floorWorkedTodayArray.concat(kitchenWorkedTodayArray);
-                    for (let index = 0; index < foodCostsArray.length; index++) {
-                        foodCostsArray[index].cost = foodCostsArray[index].cost.replaceAll(
-                            ",", "" /* remove commas for thousands before parsing as float */
-                        )
-                        if (isNaN(parseFloat(foodCostsArray[index].cost))) {
-                            foodCostsArray[index].cost = 0;
-                        } else {
-                            foodCostsArray[index].cost = parseFloat(
-                                foodCostsArray[index].cost
-                            );
-                        }
-                    }
-
-                    console.log(JSON.stringify({
-                            date: date.getFullYear() + "-" +
-                                (date.getMonth() + 1).toString().padStart(2, "0") + "-" +
-                                date.getDate().toString().padStart(2, "0"),
-                            hoursWorked: hoursWorked,
-                            workedToday: workedToday,
-                            foodCosts: foodCostsArray
-                    }))
-                    fetch(data.PUBLIC_API_URL + "/days", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
-                        },
-                        body: JSON.stringify({
-                            date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-                            hoursWorked: hoursWorked,
-                            workedToday: workedToday,
-                            foodCosts: foodCostsArray
-                        })
-                    })
-                }}>
-                    <CheckmarkIcon></CheckmarkIcon>
-                    Save
-                </button>
             </div>
         </div>
     </div>

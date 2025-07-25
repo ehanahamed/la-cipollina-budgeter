@@ -32,7 +32,7 @@ FROM days WHERE date = $1`,
 		if err == pgx.ErrNoRows {
 			/* if not found */
 			return c.Status(404).JSON(fiber.Map{
-				"error": "Day not found"
+				"error": "Day not found",
 			})
 		}
 		/* if other database error */
