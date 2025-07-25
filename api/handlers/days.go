@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/georgysavva/scany/v2/pgxscan"
+	// "github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/gofiber/fiber/v2"
 
 	"la-cipollina-budgeter-api/db"
