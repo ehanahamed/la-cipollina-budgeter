@@ -16,7 +16,7 @@ func GetDayByDate(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`SELECT id, date, hours_worked, worked_today,
-current_employees, food_costs, created_at, updated_at
+food_costs, created_at, updated_at
 FROM days WHERE date = $1`,
 		c.Params("Date"),
 	).Scan(
@@ -24,7 +24,6 @@ FROM days WHERE date = $1`,
 		&day.Date,
 		&day.HoursWorked,
 		&day.WorkedToday,
-		&day.CurrentEmployees,
 		&day.FoodCosts,
 		&day.CreatedAt,
 		&day.UpdatedAt,
@@ -44,14 +43,13 @@ func RecordDay(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`INSERT INTO days (
-	date, hours_worked, worked_today, current_employees, food_costs
+	date, hours_worked, worked_today, food_costs
 ) VALUES (
-	$1, $2, $3, $4, $5
+	$1, $2, $3, $4
 ) RETURNING id, created_at, updated_at`,
 		day.Date,
 		day.HoursWorked,
 		day.WorkedToday,
-		day.CurrentEmployees,
 		day.FoodCosts,
 	).Scan(
 		&day.ID,
@@ -73,13 +71,12 @@ func UpdateDay(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`UPDATE days SET hours_worked = $1,
-worked_today = $2, current_employees = $3,
-food_costs = $4, updated_at = now()
+worked_today = $2, food_costs = $3,
+updated_at = now()
 WHERE id = $5
 RETURNING date, created_at, updated_at`,
 		day.HoursWorked,
 		day.WorkedToday,
-		day.CurrentEmployees,
 		day.FoodCosts,
 		c.Params("id"),
 	).Scan(
