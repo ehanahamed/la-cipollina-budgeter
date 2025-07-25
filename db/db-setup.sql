@@ -110,8 +110,9 @@ create table days (
     date date not null unique,
     hours_worked jsonb,
     worked_today jsonb,
-    current_employees jsonb,
-    food_costs jsonb
+    food_costs jsonb,
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
 );
 
 grant select on public.days to budgeter_api;
