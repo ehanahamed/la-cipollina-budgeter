@@ -29,6 +29,13 @@ FROM days WHERE date = $1`,
 		&day.UpdatedAt,
 	)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			/* if not found */
+			return c.Status(404).JSON(fiber.Map{
+				"error": "Day not found"
+			})
+		}
+		/* if other database error */
 		log.Print("Error in GetDayByDate: ", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting row from days by date"})
 	}
