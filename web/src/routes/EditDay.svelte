@@ -105,7 +105,9 @@ let foodCostsTotal = $derived.by(() => {
     grid-template-rows: auto auto auto;
     grid-template-columns: auto auto auto;
     grid-template-areas:
+        "areainfo areainfo areainfo"
         "areaback areaback areaback"
+        "areabudget areabudget areabudget"
         "areafloor areakitchen areafood"
         "areasave areasave areasave";
 }
@@ -116,6 +118,10 @@ let foodCostsTotal = $derived.by(() => {
 .gridtablelayout > .areainfo {
     grid-area: areainfo;
     justify-self: center;
+}
+.gridtablelayout > .areabudget {
+    grid-area: areabudget;
+    justify-self: start;
 }
 .gridtablelayout > .areafloor {
     grid-area: areafloor;
@@ -133,9 +139,6 @@ let foodCostsTotal = $derived.by(() => {
     grid-area: areasave;
     justify-self: start;
 }
-.centerbutnotonmobile {
-    text-align: center;
-}
 .gridtablelayout table td {
     padding-top: 0px;
 }
@@ -144,50 +147,66 @@ let foodCostsTotal = $derived.by(() => {
         grid-template-rows: auto auto auto auto auto;
         grid-template-columns: auto;
         grid-template-areas:
-            "areaback"
             "areainfo"
+            "areaback"
+            "areabudget"
             "areafloor"
             "areakitchen"
             "areafood"
             "areasave";
     }
-    .gridtablelayout > .areainfo,
+    .gridtablelayout > .areabudget,
     .gridtablelayout > .areafloor,
     .gridtablelayout > .areakitchen,
     .gridtablelayout > .areafood {
         justify-self: start;
     }
-    .centerbutnotonmobile {
-        text-align: start;
-    }
-}
-.setbudgettable {
-    
 }
 </style>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
-        <div class="areainfo">
-            <div class="centerbutnotonmobile">
-                {#if data.new}
-                    <p>Run Day</p>
-                {:else}
-                    <p>Edit Day</p>
-                {/if}
-                <h3 style="margin-top: 0.2rem; margin-bottom: 0px;">{weekDayName}</h3>
-                <p style="margin-top: 0.2rem;">{[
-                    "January", "February", "March", "April",
-                    "May", "June", "July", "August", "September",
-                    "October", "November", "December"
-                ][date.getMonth()]} {date.getDate()}, {date.getFullYear()}</p>
-            </div>
-        </div>
         <div class="gridtablelayout">
-            <div class="areaback">
+            <div class="areainfo">
+                <div style="text-align: center;">
+                    {#if data.new}
+                        <p>Record Day</p>
+                    {:else}
+                        <p>Edit Day</p>
+                    {/if}
+                    <h3 style="margin-top: 0px; margin-bottom: 0px;">{weekDayName}</h3>
+                    <p style="margin-top: 0.2rem;">{[
+                        "January", "February", "March", "April",
+                        "May", "June", "July", "August", "September",
+                        "October", "November", "December"
+                    ][date.getMonth()]} {date.getDate()}, {date.getFullYear()}</p>
+                </div>
+            </div>
+            <div class="areaback" style="margin-top: 0px">
                 <a href={base} class="button faint">
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a>
+            </div>
+            <div class="areabudget" style="margin-bottom: 2rem;">
+                Budget
+                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; margin-top: 1rem;">
+                    <table style="border: none;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Floor Pay</th>
+                                <th>Kitchen Pay</th>
+                                <th>Food Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Start</td>
+                                <td>{data.week.}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="areafloor">
                 <div class="flex" style="justify-content: space-between;">

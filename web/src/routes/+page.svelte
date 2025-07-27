@@ -55,7 +55,7 @@
     <div class="flex center no-child-clickable-effect" style="flex-direction: column;">
         <div class="combo-buttons">
             <a class="button left" href="{base}/edit-budget">Edit Budget</a>
-            <a class="button mid" href="{base}/run-day">Run Day</a>
+            <a class="button mid" href="{base}/record-day">Record Day</a>
             <a class="button right" href="{base}/edit-day">Edit Day</a>
         </div>
         <a href="{base}/reports" class="button">Reports</a>
