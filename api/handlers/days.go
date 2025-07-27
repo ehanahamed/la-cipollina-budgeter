@@ -97,3 +97,16 @@ RETURNING date, created_at, updated_at`,
 	}
 	return c.Status(200).JSON(day)
 }
+
+func DeleteDay(c *fiber.Ctx) error {
+	_, err := db.Pool.Exec(
+		context.Background(),
+		`DELETE FROM days WHERE id = $1`,
+		c.Params("id"),
+	)
+	if err != nil {
+		log.Print("Error in DeleteDay: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting day"})
+	}
+	return c.Status(200).JSON(fiber.Map{"success": true})
+}
