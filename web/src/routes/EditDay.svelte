@@ -193,7 +193,7 @@ let foodCostsTotal = $derived.by(() => {
                 <div class="flex" style="justify-content: space-between;">
                     <p>Floor Workers</p>
                     <p class="fg0">
-                        {floorHoursArray.length + floorWorkedTodayArray.length} total
+                        {floorEmployeesCount} employees
                     </p>
                 </div>
                 <table>
@@ -247,7 +247,7 @@ let foodCostsTotal = $derived.by(() => {
                 <div class="flex" style="justify-content: space-between;">
                     <p>Kitchen Workers</p>
                     <p class="fg0">
-                        {kitchenHoursArray.length + kitchenWorkedTodayArray.length} total
+                        {kitchenEmployeesCount} employees
                     </p>
                 </div>
                 <table>
