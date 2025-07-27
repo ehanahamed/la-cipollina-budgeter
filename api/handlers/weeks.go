@@ -37,7 +37,7 @@ LIMIT 1`,
 			/* if not found */
 			return c.Status(404).JSON(fiber.Map{
 				"error": "Week not found",
-				"statusCode": 404
+				"statusCode": 404,
 			})
 		}
 		/* if other database error */
