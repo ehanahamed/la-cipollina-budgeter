@@ -22,6 +22,9 @@ const date = (() => {
     }
     return new Date()
 })();
+const dateYMD = date.getFullYear() + "-" +
+    (date.getMonth() + 1).toString().padStart(2, "0") + "-" +
+    date.getDate().toString().padStart(2, "0")
 const weekDayName = [
     "Sunday", "Monday", "Tuesday", "Wednesday",
     "Thrusday", "Friday", "Saturday"
@@ -97,6 +100,34 @@ let foodCostsTotal = $derived.by(() => {
     })
     return total;
 })
+let weekData = $state(null);
+let showWeekBudget = $state(false);
+let startingWeek = $state(false);
+try {
+    const weekRes = await fetch(
+        data.PUBLIC_API_URL + `/weeks/${dateYMD}`,
+        {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+            }
+        }
+    );
+    const weekResJson = await weekRes.json();
+    if (weekResJson.errorCode == 404) {
+        startingWeek = true;
+        showWeekBudget = true;
+    } else if (weekResJson) {
+        weekData = weekResJson;
+        showWeekBudget = true;
+    } else {
+        console.log(weekResJson);
+        alert("something didn't work idk 💀");
+    }
+} catch (error) {
+    console.error(error);
+    alert("something went wrong idk 💀");
+}
 </script>
 <style>
 .gridtablelayout {
