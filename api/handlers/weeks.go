@@ -59,15 +59,15 @@ func AddWeek(c *fiber.Ctx) error {
 	start_kitchen_budget, start_food_budget
 ) VALUES ($1, $2, $3, $4, $5)
 RETURNING id, created_at, updated_at`,
-		day.StartDate,
-		day.EndDate,
-		day.StartFloorBudget,
-		day.StartKitchenBudget,
-		day.StartFoodBudget,
+		week.StartDate,
+		week.EndDate,
+		week.StartFloorBudget,
+		week.StartKitchenBudget,
+		week.StartFoodBudget,
 	).Scan(
-		&day.ID,
-		&day.CreatedAt,
-		&day.UpdatedAt,
+		&week.ID,
+		&week.CreatedAt,
+		&week.UpdatedAt,
 	)
 	if err != nil {
 		log.Print("Error in AddWeek: ", err)
