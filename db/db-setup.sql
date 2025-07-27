@@ -125,15 +125,15 @@ create table weeks (
     id serial primary key,
     start_date date not null unique,
     end_date date not null unique,
-    start_food_cost_budget numeric(10, 2) not null,
-    start_kitchen_pay_budget numeric(10, 2) not null,
-    start_floor_pay_budget numeric(10, 2) not null,
-    end_food_cost_budget numeric(10, 2),
-    end_kitchen_pay_budget numeric(10, 2),
-    end_floor_pay_budget numeric(10, 2),
-    food_cost_expense numeric(10, 2),
-    kitchen_pay_expense numeric(10, 2),
-    floor_pay_expense numeric(10, 2)
+    start_food_budget numeric(10, 2) not null,
+    start_kitchen_budget numeric(10, 2) not null,
+    start_floor_budget numeric(10, 2) not null,
+    created_at timestamptz default now(),
+    updated_at timestamptz default now()
 );
-grant usage, select on weeks_id_seq to budgeter_api;
 
+grant select on public.weeks to budgeter_api;
+grant insert on public.weeks to budgeter_api;
+grant update on public.weeks to budgeter_api;
+grant delete on public.weeks to budgeter_api;
+grant usage, select on weeks_id_seq to budgeter_api;
