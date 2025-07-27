@@ -1,11 +1,12 @@
 import { PUBLIC_API_URL } from "$env/static/public";
-export async function load({ fetch }) {
+export async function load({ fetch, url }) {
     if (window.localStorage) {
         let authToken = localStorage.getItem("budgeter:auth");
         if (!authToken) {
             return {
                 authed: false,
-                PUBLIC_API_URL: PUBLIC_API_URL
+                PUBLIC_API_URL: PUBLIC_API_URL,
+                date: url.searchParams.get("d")
             };
         }
         try{
@@ -20,14 +21,16 @@ export async function load({ fetch }) {
             return {
                 authed: true,
                 employees: res,
-                PUBLIC_API_URL: PUBLIC_API_URL
+                PUBLIC_API_URL: PUBLIC_API_URL,
+                date: url.searchParams.get("d")
             };
         } catch (err) {
             console.error("Error while getting employees in settings' load func: ", err);
             return {
                 authed: false,
                 error: true,
-                PUBLIC_API_URL: PUBLIC_API_URL
+                PUBLIC_API_URL: PUBLIC_API_URL,
+                date: url.searchParams.get("d")
             };
         }
     }

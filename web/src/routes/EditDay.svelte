@@ -10,7 +10,18 @@ let floorHoursArray = $state([]);
 let floorWorkedTodayArray = $state([]);
 let kitchenHoursArray = $state([]);
 let kitchenWorkedTodayArray = $state([]);
-const date = new Date()
+let floorEmployeesCount = $state(0);
+let kitchenEmployeesCount = $state(0);
+const date = (() => {
+    if (data.date) {
+        const [year, month, day] = data.date.split("-");
+        const d = new Date(year, month - 1, day);
+        if (!isNaN(d)) {
+            return d;
+        }
+    }
+    return new Date()
+})();
 const weekDayName = [
     "Sunday", "Monday", "Tuesday", "Wednesday",
     "Thrusday", "Friday", "Saturday"
@@ -22,6 +33,7 @@ const weekDayKey = [
 if (data.new) {
     data.employees.forEach(function (employee) {
         if (employee?.type == "FLOOR") {
+            floorEmployeesCount++;
             if (employee?.specialPay) {
                 if (employee.specialPay[weekDayKey]?.perDay != null) {
                     floorWorkedTodayArray.push({
@@ -42,6 +54,7 @@ if (data.new) {
                 });
             }
         } else if (employee?.type == "KITCHEN") {
+            kitchenEmployeesCount++;
             if (employee?.specialPay) {
                 if (employee.specialPay[weekDayKey]?.perDay != null) {
                     kitchenWorkedTodayArray.push({
