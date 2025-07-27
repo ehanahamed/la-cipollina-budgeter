@@ -15,98 +15,76 @@ func GetWeekByDate(c *fiber.Ctx) error {
 	var week models.Week
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`SELECT id, date, hours_worked, worked_today,
-food_costs, created_at, updated_at
-FROM days WHERE date = $1`,
+`SELECT id, start_date, end_date,
+	start_floor_budget, start_kitchen_budget,
+	start_food_budget, created_at, updated_at
+FROM weeks
+WHERE $1::date BETWEEN start_date AND end_date
+LIMIT 1`,
 		c.Params("Date"),
 	).Scan(
-		&day.ID,
-		&day.Date,
-		&day.HoursWorked,
-		&day.WorkedToday,
-		&day.FoodCosts,
-		&day.CreatedAt,
-		&day.UpdatedAt,
+		&week.ID,
+		&week.StartDate,
+		&week.EndDate,
+		&week.StartFloorBudget,
+		&week.StartKitchenBudget,
+		&week.StartFoodBudget,
+		&week.CreatedAt,
+		&week.UpdatedAt,
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			/* if not found */
 			return c.Status(404).JSON(fiber.Map{
-				"error": "Day not found",
+				"error": "Week not found",
+				"statusCode": 404
 			})
 		}
 		/* if other database error */
-		log.Print("Error in GetDayByDate: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting row from days by date"})
+		log.Print("Error in GetWeekByDate: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting week by date"})
 	}
-	return c.JSON(day)
+	return c.JSON(week)
 }
 
-func RecordDay(c *fiber.Ctx) error {
-	var day models.Day
-	if err := c.BodyParser(&day); err != nil {
+func AddWeek(c *fiber.Ctx) error {
+	var week models.Week
+	if err := c.BodyParser(&week); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
 	}
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`INSERT INTO days (
-	date, hours_worked, worked_today, food_costs
-) VALUES (
-	$1, $2, $3, $4
-) RETURNING id, created_at, updated_at`,
-		day.Date,
-		day.HoursWorked,
-		day.WorkedToday,
-		day.FoodCosts,
+`INSERT INTO weeks (
+	start_date, end_date, start_floor_budget,
+	start_kitchen_budget, start_food_budget
+) VALUES ($1, $2, $3, $4, $5)
+RETURNING id, created_at, updated_at`,
+		day.StartDate,
+		day.EndDate,
+		day.StartFloorBudget,
+		day.StartKitchenBudget,
+		day.StartFoodBudget,
 	).Scan(
 		&day.ID,
 		&day.CreatedAt,
 		&day.UpdatedAt,
 	)
 	if err != nil {
-		log.Print("Error in RecordDay: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while adding day"})
+		log.Print("Error in AddWeek: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while adding week"})
 	}
-	return c.Status(201).JSON(day)
+	return c.Status(201).JSON(week)
 }
 
-func UpdateDay(c *fiber.Ctx) error {
-	var day models.Day
-	if err := c.BodyParser(&day); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid input"})
-	}
-	err := db.Pool.QueryRow(
-		context.Background(),
-		`UPDATE days SET hours_worked = $1,
-worked_today = $2, food_costs = $3,
-updated_at = now()
-WHERE id = $5
-RETURNING date, created_at, updated_at`,
-		day.HoursWorked,
-		day.WorkedToday,
-		day.FoodCosts,
-		c.Params("id"),
-	).Scan(
-		&day.Date,
-		&day.CreatedAt,
-		&day.UpdatedAt,
-	)
-	if err != nil {
-		log.Print("Error in UpdateDay: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while updating day"})
-	}
-	return c.Status(200).JSON(day)
-}
-
-func DeleteDay(c *fiber.Ctx) error {
+func DeleteWeek(c *fiber.Ctx) error {
 	_, err := db.Pool.Exec(
 		context.Background(),
-		`DELETE FROM days WHERE id = $1`,
+		`DELETE FROM weeks WHERE id = $1`,
 		c.Params("id"),
 	)
 	if err != nil {
-		log.Print("Error in DeleteDay: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting day"})
+		log.Print("Error in DeleteWeek: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting week"})
 	}
 	return c.Status(200).JSON(fiber.Map{"success": true})
 }
