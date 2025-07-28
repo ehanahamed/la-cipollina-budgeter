@@ -136,6 +136,17 @@ try {
     console.error(err);
     alert("something went wrong idk 💀");
 }
+(async function () {
+    await fetch(
+        `${data.PUBLIC_API_URL}/days/${dateYMD}`,
+        {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+            }
+        }
+    )
+})()
 </script>
 <style>
 .gridtablelayout {
@@ -364,7 +375,7 @@ try {
                         </div>
                     </div>
                 {:else if showWeekBudget}
-                    <p>Budget</p>
+                    <p>Do you want to increase any budget?</p>
                     <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem;">
                         <table style="border: none;">
                             <thead>
@@ -378,21 +389,21 @@ try {
                             <tbody>
                                 <tr>
                                     <td>Start</td>
-                                    <td>{weekData.startFloorBudget.toLocaleString(
+                                    <td>${weekData.startFloorBudget.toLocaleString(
                                         'en-US',
                                         {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2
                                         }
                                     )}</td>
-                                    <td>{weekData.startKitchenBudget.toLocaleString(
+                                    <td>${weekData.startKitchenBudget.toLocaleString(
                                         'en-US',
                                         {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2
                                         }
                                     )}</td>
-                                    <td>{weekData.startFoodBudget.toLocaleString(
+                                    <td>${weekData.startFoodBudget.toLocaleString(
                                         'en-US',
                                         {
                                             minimumFractionDigits: 2,
@@ -571,6 +582,10 @@ try {
             </div>
             <div class="areasave">
                 <button onclick={() => {
+                    if (startingNewWeek) {
+                        alert("Set this week's budget first (at the top of this page)")
+                        return;
+                    }
                     for (let index = 0; index < floorHoursArray.length; index++) {
                         if (isNaN(parseFloat(floorHoursArray[index].hours))) {
                             floorHoursArray[index].hours = 0;
