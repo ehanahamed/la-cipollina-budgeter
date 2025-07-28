@@ -102,9 +102,12 @@ let foodCostsTotal = $derived.by(() => {
 })
 let weekData = $state(null);
 let showWeekBudget = $state(false);
-let startingWeek = $state(false);
+let startingNewWeek = $state(false);
+let newWeekFloorBudget = $state("");
+let newWeekKitchenBudget = $state("");
+let newWeekFoodBudget = $state("");
 try {
-    const weekRes = await fetch(
+    fetch(
         data.PUBLIC_API_URL + `/weeks/${dateYMD}`,
         {
             method: "GET",
@@ -112,20 +115,22 @@ try {
                 "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
             }
         }
-    );
-    const weekResJson = await weekRes.json();
-    if (weekResJson.errorCode == 404) {
-        startingWeek = true;
-        showWeekBudget = true;
-    } else if (weekResJson) {
-        weekData = weekResJson;
-        showWeekBudget = true;
-    } else {
-        console.log(weekResJson);
-        alert("something didn't work idk 💀");
-    }
-} catch (error) {
-    console.error(error);
+    ).then((res) => {
+        res.json().then((resJson) => {
+            if (resJson.statusCode == 404) {
+                startingNewWeek = true;
+                showWeekBudget = true;
+            } else if (resJson) {
+                weekData = resJson;
+                showWeekBudget = true;
+            } else {
+                console.log(weekResJson);
+                alert("something didn't work idk 💀");
+            }
+        })
+    });
+} catch (err) {
+    console.error(err);
     alert("something went wrong idk 💀");
 }
 </script>
@@ -156,7 +161,7 @@ try {
 }
 .gridtablelayout > .areafloor {
     grid-area: areafloor;
-    justify-self: center;
+    justify-self: start;
 }
 .gridtablelayout > .areakitchen {
     grid-area: areakitchen;
@@ -172,6 +177,10 @@ try {
 }
 .gridtablelayout table td {
     padding-top: 0px;
+}
+.areabudget table input[type="text"] {
+    min-width: 8rem;
+    field-sizing: content;
 }
 @media only screen and (max-width: 1000px) {
     .gridtablelayout {
@@ -191,6 +200,17 @@ try {
     .gridtablelayout > .areakitchen,
     .gridtablelayout > .areafood {
         justify-self: start;
+    }
+    .areabudget table input[type="text"] {
+        min-width: 5rem;
+        max-width: 8rem;
+        field-sizing: content;
+    }
+    .areabudget table td+td,
+    .areabudget table th+th,
+    .areabudget table th+td,
+    .areabudget table td+th {
+        padding-left: 0px;
     }
 }
 </style>
@@ -218,26 +238,59 @@ try {
                     Back
                 </a>
             </div>
-            <div class="areabudget" style="margin-bottom: 2rem;">
-                Budget
-                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; margin-top: 1rem;">
-                    <table style="border: none;">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Floor Pay</th>
-                                <th>Kitchen Pay</th>
-                                <th>Food Cost</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Start</td>
-                                <td>{data.week.}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="areabudget" style="margin-top: 0px; margin-bottom: 1rem;">
+                {#if showWeekBudget && startingNewWeek}
+
+                    <div style="margin-top: 0px; border: 0.2rem solid var(--border); border-radius: 0.8rem;">
+                        <table style="border: none;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Floor Budget</th>
+                                    <th>Kitchen Budget</th>
+                                    <th>Food Budget</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Start</td>
+                                    <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
+                                        <span>$</span>
+                                        <input type="text" placeholder="0.00" bind:value={newWeekFloorBudget}>
+                                    </div></td>
+                                    <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
+                                        <span>$</span>
+                                        <input type="text" placeholder="0.00" bind:value={newWeekKitchenBudget}>
+                                    </div></td>
+                                    <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
+                                        <span>$</span>
+                                        <input type="text" placeholder="0.00" bind:value={newWeekFoodBudget}>
+                                    </div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {:else if showWeekBudget}
+                    Budget
+                    <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; margin-top: 1rem;">
+                        <table style="border: none;">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Floor Pay</th>
+                                    <th>Kitchen Pay</th>
+                                    <th>Food Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Start</td>
+                                    <td>{weekData.startFloorBudget}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {/if}
             </div>
             <div class="areafloor">
                 <div class="flex" style="justify-content: space-between;">
@@ -440,9 +493,7 @@ try {
                     }
 
                     console.log(JSON.stringify({
-                            date: date.getFullYear() + "-" +
-                                (date.getMonth() + 1).toString().padStart(2, "0") + "-" +
-                                date.getDate().toString().padStart(2, "0"),
+                            date: dateYMD,
                             hoursWorked: hoursWorked,
                             workedToday: workedToday,
                             foodCosts: foodCostsArray
@@ -454,7 +505,7 @@ try {
                             "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
                         },
                         body: JSON.stringify({
-                            date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+                            date: dateYMD,
                             hoursWorked: hoursWorked,
                             workedToday: workedToday,
                             foodCosts: foodCostsArray
