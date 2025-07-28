@@ -240,8 +240,8 @@ try {
             </div>
             <div class="areabudget" style="margin-top: 0px; margin-bottom: 1rem;">
                 {#if showWeekBudget && startingNewWeek}
-
-                    <div style="margin-top: 0px; border: 0.2rem solid var(--border); border-radius: 0.8rem;">
+                    <p>Set this week's starting budget</p>
+                    <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem;">
                         <table style="border: none;">
                             <thead>
                                 <tr>
@@ -269,6 +269,14 @@ try {
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="flex" style="padding-left: 1rem; padding-bottom: 1rem;">
+                            <button onclick={async () => {
+                                
+                            }}>
+                                <CheckmarkIcon></CheckmarkIcon>
+                                Save
+                            </button>
+                        </div>
                     </div>
                 {:else if showWeekBudget}
                     Budget
