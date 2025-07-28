@@ -15,7 +15,7 @@ func GetWeekByDate(c *fiber.Ctx) error {
 	var week models.Week
 	err := db.Pool.QueryRow(
 		context.Background(),
-`SELECT id, start_date, end_date,
+		`SELECT id, start_date::text, end_date::text,
 	start_floor_budget, start_kitchen_budget,
 	start_food_budget, created_at, updated_at
 FROM weeks

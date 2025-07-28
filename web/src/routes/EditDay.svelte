@@ -22,9 +22,12 @@ const date = (() => {
     }
     return new Date()
 })();
-const dateYMD = date.getFullYear() + "-" +
-    (date.getMonth() + 1).toString().padStart(2, "0") + "-" +
-    date.getDate().toString().padStart(2, "0")
+function dateToYMDString(dateObj) {
+    return dateObj.getFullYear() + "-" +
+        (dateObj.getMonth() + 1).toString().padStart(2, "0") + "-" +
+        dateObj.getDate().toString().padStart(2, "0")
+}
+const dateYMD = dateToYMDString(date);
 const weekDayName = [
     "Sunday", "Monday", "Tuesday", "Wednesday",
     "Thrusday", "Friday", "Saturday"
@@ -271,7 +274,89 @@ try {
                         </table>
                         <div class="flex" style="padding-left: 1rem; padding-bottom: 1rem;">
                             <button onclick={async () => {
-                                
+                                /* currentWeekDay is 0 to 6:
+                                sunday is 0 & saturday is 6,
+                                because that's how getDay() works.
+                                Normally, you're supposed to have 1 to 7:
+                                monday as 1 & sunday as 7 */
+                                const weekDay = date.getDay();
+
+                                /* clone current/selected date */
+                                let startDate = new Date(date);
+                                if (weekDay == 0) {
+                                    /* if sunday, subtract 6 to get this week's monday */
+                                    startDate.setDate(
+                                       date.getDate() - 6
+                                    )
+                                } else if (weekDay != 1) {
+                                    /* if not sunday and not monday,
+                                    add 1 - weekDay to get to this week's monday */
+                                    startDate.setDate(
+                                        date.getDate() +
+                                        1 - weekDay
+                                    );
+                                }
+                                /* clone startDate & add 6 to get sunday for endDate */
+                                let endDate = new Date(startDate);
+                                endDate.setDate(startDate.getDate() + 6);
+
+                                /* parse text inputted into textboxes as floats */
+                                if (typeof newWeekFloorBudget === "string") {
+                                    newWeekFloorBudget = newWeekFloorBudget.replaceAll(",", "");
+                                }
+                                if (isNaN(parseFloat(newWeekFloorBudget))) {
+                                    newWeekFloorBudget = 0;
+                                } else {
+                                    newWeekFloorBudget = parseFloat(
+                                        newWeekFloorBudget
+                                    );
+                                }
+                                if (typeof newWeekKitchenBudget === "string") {
+                                    newWeekKitchenBudget = newWeekKitchenBudget.replaceAll(",", "");
+                                }
+                                if (isNaN(parseFloat(newWeekKitchenBudget))) {
+                                    newWeekKitchenBudget = 0;
+                                } else {
+                                    newWeekKitchenBudget = parseFloat(
+                                        newWeekKitchenBudget
+                                    );
+                                }
+                                if (typeof newWeekFoodBudget === "string") {
+                                    newWeekFoodBudget = newWeekFoodBudget.replaceAll(",", "");
+                                }
+                                if (isNaN(parseFloat(newWeekFoodBudget))) {
+                                    newWeekFoodBudget = 0;
+                                } else {
+                                    newWeekFoodBudget = parseFloat(
+                                        newWeekFoodBudget
+                                    );
+                                }
+
+                                try {
+                                    const res = await fetch(
+                                        data.PUBLIC_API_URL + "/weeks",
+                                        {
+                                            method: "POST",
+                                            headers: {
+                                                "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
+                                                "Content-Type": "application/json"
+                                            },
+                                            body: JSON.stringify({
+                                                startDate: dateToYMDString(startDate),
+                                                endDate: dateToYMDString(endDate),
+                                                startFloorBudget: newWeekFloorBudget,
+                                                startKitchenBudget: newWeekKitchenBudget,
+                                                startFoodBudget: newWeekFoodBudget
+                                            })
+                                        }
+                                    );
+                                    const resJson = await res.json();
+                                    weekData = resJson;
+                                    startingNewWeek = false;
+                                } catch (err) {
+                                    console.log(err)
+                                    alert("idk something went wrong check ur wifi first")
+                                }
                             }}>
                                 <CheckmarkIcon></CheckmarkIcon>
                                 Save
@@ -279,21 +364,41 @@ try {
                         </div>
                     </div>
                 {:else if showWeekBudget}
-                    Budget
-                    <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; margin-top: 1rem;">
+                    <p>Budget</p>
+                    <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem;">
                         <table style="border: none;">
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>Floor Pay</th>
-                                    <th>Kitchen Pay</th>
-                                    <th>Food Cost</th>
+                                    <th>Floor Budget</th>
+                                    <th>Kitchen Budget</th>
+                                    <th>Food Budget</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
                                     <td>Start</td>
-                                    <td>{weekData.startFloorBudget}</td>
+                                    <td>{weekData.startFloorBudget.toLocaleString(
+                                        'en-US',
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }
+                                    )}</td>
+                                    <td>{weekData.startKitchenBudget.toLocaleString(
+                                        'en-US',
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }
+                                    )}</td>
+                                    <td>{weekData.startFoodBudget.toLocaleString(
+                                        'en-US',
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2
+                                        }
+                                    )}</td>
                                 </tr>
                             </tbody>
                         </table>
