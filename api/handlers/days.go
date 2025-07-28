@@ -15,8 +15,8 @@ func GetDayByDate(c *fiber.Ctx) error {
 	var day models.Day
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`SELECT id, date, hours_worked, worked_today,
-food_costs, created_at, updated_at
+		`SELECT id, date::text, hours_worked,
+worked_today, food_costs, created_at, updated_at
 FROM days WHERE date = $1`,
 		c.Params("Date"),
 	).Scan(
@@ -81,7 +81,7 @@ func UpdateDay(c *fiber.Ctx) error {
 worked_today = $2, food_costs = $3,
 updated_at = now()
 WHERE id = $5
-RETURNING date, created_at, updated_at`,
+RETURNING date::text, created_at, updated_at`,
 		day.HoursWorked,
 		day.WorkedToday,
 		day.FoodCosts,
