@@ -8,9 +8,9 @@ type Week struct {
 	ID          int              `db:"id" json:"id"`
 	StartDate        string           `db:"start_date" json:"startDate"`
 	EndDate        string           `db:"end_date" json:"endDate"`
-	StartFloorBudget float64  `db:"start_floor_budget" json:"startFloorBudget"`
-	StartKitchenBudget float64 `db:"start_kitchen_budget" json:"startKitchenBudget"`
-	StartFoodBudget   float64  `db:"start_food_budget" json:"startFoodBudget"`
+	StartFloorBudget *float64  `db:"start_floor_budget" json:"startFloorBudget"`
+	StartKitchenBudget *float64 `db:"start_kitchen_budget" json:"startKitchenBudget"`
+	StartFoodBudget   *float64  `db:"start_food_budget" json:"startFoodBudget"`
 	CreatedAt   time.Time        `db:"created_at" json:"createdAt"`
 	UpdatedAt   time.Time        `db:"updated_at" json:"updatedAt"`
 }

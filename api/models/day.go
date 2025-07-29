@@ -6,7 +6,7 @@ import (
 
 type EmployeeHours struct {
 	Employee Employee `json:"employee"`
-	Hours    float64  `json:"hours"`
+	Hours    *float64  `json:"hours"`
 }
 
 type EmployeeWorked struct {
@@ -15,8 +15,8 @@ type EmployeeWorked struct {
 }
 
 type FoodCostsItem struct {
-	Cost  float64 `json:"cost"`
-	Notes string  `json:"notes"`
+	Cost  *float64 `json:"cost"`
+	Notes *string  `json:"notes"`
 }
 
 type Day struct {
@@ -25,9 +25,9 @@ type Day struct {
 	HoursWorked []EmployeeHours  `db:"hours_worked" json:"hoursWorked"`
 	WorkedToday []EmployeeWorked `db:"worked_today" json:"workedToday"`
 	FoodCosts   []FoodCostsItem  `db:"food_costs" json:"foodCosts"`
-	FoodBudgetIncrease float64 `db:"food_budget_increase" json:"foodBudgetIncrease`
-	KitchenBudgetIncrease float64 `db:"kitchen_budget_increase" json:"kitchenBudgetIncrease`
-	FloorBudgetIncrease float64 `db:"floor_budget_increase" json:"floorBudgetIncrease`
+	FoodBudgetIncrease *float64 `db:"food_budget_increase" json:"foodBudgetIncrease"`
+	KitchenBudgetIncrease *float64 `db:"kitchen_budget_increase" json:"kitchenBudgetIncrease"`
+	FloorBudgetIncrease *float64 `db:"floor_budget_increase" json:"floorBudgetIncrease"`
 	CreatedAt   time.Time        `db:"created_at" json:"createdAt"`
 	UpdatedAt   time.Time        `db:"updated_at" json:"updatedAt"`
 }
