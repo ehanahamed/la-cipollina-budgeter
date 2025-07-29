@@ -111,6 +111,9 @@ create table days (
     hours_worked jsonb,
     worked_today jsonb,
     food_costs jsonb,
+    food_budget_increase numeric(10, 2),
+    kitchen_budget_increase numeric(10, 2),
+    floor_budget_increase numeric(10, 2),
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );

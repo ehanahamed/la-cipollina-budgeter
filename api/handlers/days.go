@@ -17,7 +17,9 @@ func GetDayByDate(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`SELECT id, date::text, hours_worked,
-worked_today, food_costs, created_at, updated_at
+worked_today, food_costs, food_budget_increase,
+kitchen_budget_increase, floor_budget_increase,
+created_at, updated_at
 FROM days WHERE date = $1`,
 		c.Params("date"),
 	).Scan(
@@ -26,6 +28,9 @@ FROM days WHERE date = $1`,
 		&day.HoursWorked,
 		&day.WorkedToday,
 		&day.FoodCosts,
+		&day.FoodBudgetIncrease,
+		&day.KitchenBudgetIncrease,
+		&day.FloorBudgetIncrease,
 		&day.CreatedAt,
 		&day.UpdatedAt,
 	)
@@ -51,7 +56,8 @@ func GetDaysInWeekByDate(c *fiber.Ctx) error {
 		&days,
 `SELECT d.id, d.date::text,
 	d.hours_worked, d.worked_today, d.food_costs,
-	d.created_at, d.updated_at
+	d.food_budget_increase, d.kitchen_budget_increase,
+	d.floor_budget_increase, d.created_at, d.updated_at
 FROM days d
 JOIN weeks w
 	ON d.date BETWEEN w.start_date AND w.end_date
@@ -74,14 +80,19 @@ func RecordDay(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`INSERT INTO days (
-	date, hours_worked, worked_today, food_costs
+	date, hours_worked, worked_today, food_costs,
+	food_budget_increase, kitchen_budget_increase,
+	floor_budget_increase
 ) VALUES (
-	$1, $2, $3, $4
+	$1, $2, $3, $4, $5, $6, $7
 ) RETURNING id, created_at, updated_at`,
 		day.Date,
 		day.HoursWorked,
 		day.WorkedToday,
 		day.FoodCosts,
+		day.FoodBudgetIncrease,
+		day.KitchenBudgetIncrease,
+		day.FloorBudgetIncrease,
 	).Scan(
 		&day.ID,
 		&day.CreatedAt,
@@ -101,15 +112,21 @@ func UpdateDay(c *fiber.Ctx) error {
 	}
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`UPDATE days SET hours_worked = $1,
-worked_today = $2, food_costs = $3,
+		`UPDATE days SET hours_worked = $2,
+worked_today = $3, food_costs = $4,
+food_budget_increase = $5,
+kitchen_budget_increase = $6,
+floor_budget_increase = $7
 updated_at = now()
-WHERE id = $5
+WHERE id = $1
 RETURNING date::text, created_at, updated_at`,
+		c.Params("id"),
 		day.HoursWorked,
 		day.WorkedToday,
 		day.FoodCosts,
-		c.Params("id"),
+		day.FoodBudgetIncrease,
+		day.KitchenBudgetIncrease,
+		day.FloorBudgetIncrease,
 	).Scan(
 		&day.Date,
 		&day.CreatedAt,
