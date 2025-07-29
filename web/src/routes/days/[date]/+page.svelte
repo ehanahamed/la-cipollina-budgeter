@@ -141,54 +141,11 @@ let startingNewWeek = $state(false);
 let newWeekFloorBudget = $state("");
 let newWeekKitchenBudget = $state("");
 let newWeekFoodBudget = $state("");
-try {
-    fetch(
-        data.PUBLIC_API_URL + `/weeks/${dateYMD}`,
-        {
-            method: "GET",
-            headers: {
-                "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
-            }
-        }
-    ).then((res) => {
-        res.json().then((resJson) => {
-            if (resJson.statusCode == 404) {
-                startingNewWeek = true;
-                showWeekBudget = true;
-            } else if (resJson) {
-                weekData = resJson;
-                showWeekBudget = true;
-            } else {
-                console.log(weekResJson);
-                alert("something didn't work idk 💀");
-            }
-        })
-    });
-} catch (err) {
-    console.error(err);
-    alert("something went wrong idk 💀");
+if (!data?.days?.some(
+    day => day.date == data.date
+)) {
+    window.location = 
 }
-(async function () {
-    if (data.new) {
-        try {
-            const checkRes = await fetch(
-                `${data.PUBLIC_API_URL}/days/${dateYMD}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
-                    }
-                }
-            )
-            const checkJson = await checkRes.json();
-            if (checkJson.date == dateYMD) {
-                window.location = `${base}/edit-day/${dateYMD}`
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-})()
 </script>
 <style>
 .gridtablelayout {

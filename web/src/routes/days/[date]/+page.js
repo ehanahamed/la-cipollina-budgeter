@@ -10,8 +10,16 @@ export async function load({ fetch, params }) {
             };
         }
         try{
-            const res = await (
-                await fetch(`${PUBLIC_API_URL}/days/${params.date}`, {
+            const weekRes = await (
+                await fetch(`${PUBLIC_API_URL}/weeks/${params.date}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + authToken
+                    }
+                })
+            ).json();
+            const daysRes = await (
+                await fetch(`${PUBLIC_API_URL}/weeks/${params.date}/days`, {
                     method: "GET",
                     headers: {
                         "Authorization": "Bearer " + authToken
@@ -22,10 +30,11 @@ export async function load({ fetch, params }) {
                 authed: true,
                 PUBLIC_API_URL: PUBLIC_API_URL,
                 date: params.date,
-                dayData: res
+                week: weekRes,
+                days: daysRes
             };
         } catch (err) {
-            console.error("Error while getting day data: ", err);
+            console.error("Error while getting data: ", err);
             return {
                 authed: false,
                 error: true,
