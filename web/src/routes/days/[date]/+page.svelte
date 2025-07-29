@@ -10,8 +10,6 @@ let floorHourlyArray = $state([]);
 let floorSpecialArray = $state([]);
 let kitchenHourlyArray = $state([]);
 let kitchenSpecialArray = $state([]);
-let floorEmployeesCount = $state(0);
-let kitchenEmployeesCount = $state(0);
 const date = (() => {
     const [year, month, day] = data.date.split("-");
     const d = new Date(year, month - 1, day);
@@ -90,10 +88,8 @@ selectedDay.hoursWorked.forEach((row) => {
         }
     }
     if (row.employee.type == "FLOOR") {
-        floorEmployeesCount++;
         floorHourlyArray.push(row);
     } else if (row.employee.type == "KITCHEN") {
-        kitchenEmployeesCount++;
         kitchenHourlyArray.push(row);
     }
 })
@@ -140,6 +136,80 @@ selectedDay.workedToday.forEach((row) => {
         }
     }
 })
+let totalKitchenHourlyEarned = $state(0);
+let totalFloorHourlyEarned = $state(0);
+let totalKitchenSpecialEarned = $state(0);
+let totalFloorSpecialEarned = $state(0);
+kitchenHourlyArray.forEach((row) => {
+    totalKitchenHourlyEarned += (
+        row.hours * row.employee.wage
+    );
+})
+floorHourlyArray.forEach((row) => {
+    totalFloorHourlyEarned += (
+        row.hours * row.employee.wage
+    );
+})
+for (
+    let index = 0;
+    index < kitchenSpecialArray.length;
+    index++
+) {
+    const row = kitchenSpecialArray[index];
+    let earned = 0;
+    if (
+        row.workedToday &&
+        row?.employee?.specialPay?.[
+            weekDayKey
+        ]?.perDay != null
+    ) {
+        earned += row.employee.specialPay[
+            weekDayKey
+        ].perDay;
+    }
+    if (
+        row.hours != null &&
+        row?.employee?.specialPay?.[
+            weekDayKey
+        ]?.perHour != null
+    ) {
+        earned += hours * row.employee.specialPay[
+            weekDayKey
+        ].perDay;
+    }
+    kitchenSpecialArray[index].earned = earned;
+    totalKitchenSpecialEarned += earned;
+}
+for (
+    let index = 0;
+    index < floorSpecialArray.length;
+    index++
+) {
+    const row = floorSpecialArray[index];
+    let earned = 0;
+    if (
+        row.workedToday &&
+        row?.employee?.specialPay?.[
+            weekDayKey
+        ]?.perDay != null
+    ) {
+        earned += row.employee.specialPay[
+            weekDayKey
+        ].perDay;
+    }
+    if (
+        row.hours != null &&
+        row?.employee?.specialPay?.[
+            weekDayKey
+        ]?.perHour != null
+    ) {
+        earned += hours * row.employee.specialPay[
+            weekDayKey
+        ].perDay;
+    }
+    floorSpecialArray[index].earned = earned;
+    totalFloorSpecialEarned += earned;
+}
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -150,12 +220,12 @@ selectedDay.workedToday.forEach((row) => {
             </a>
         </div>
         <h3 style="margin-bottom: 0px;">{weekDayName}'s Report</h3>
-        <p style="margin-top: 0.4rem;">{monthName} {date.getDate()}, {date.getFullYear()}</p>
-        <div style="display: inline-block;">
+        <p style="margin-top: 0.4rem; margin-bottom: 2rem;">{monthName} {date.getDate()}, {date.getFullYear()}</p>
+        <div style="display: inline-block; margin-bottom: 2rem;">
             <div class="flex" style="justify-content: space-between;">
                 <p>Kitchen Workers</p>
                 <p class="fg0">
-                    {kitchenEmployeesCount} employees
+                    {kitchenHourlyArray.length} employees
                 </p>
             </div>
             <table>
@@ -166,11 +236,216 @@ selectedDay.workedToday.forEach((row) => {
                         <th>Amount Earned</th>
                     </tr>
                 </thead>
+                <tbody>
+                    {#each kitchenHourlyArray as row}
+                        <tr>
+                            <td>{row.employee.name}</td>
+                            <td>{row.hours}</td>
+                            <td>${
+                                (row.hours * row.employee.wage).toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</td>
+                        </tr>
+                    {/each}
+                    <tr>
+                        <th>Total</th>
+                        <th></th>
+                        <th>${
+                            totalKitchenHourlyEarned.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                        }</th>
+                    </tr>
+                </tbody>
             </table>
         </div>
-
-        <p style="white-space: pre-wrap;">
-            {JSON.stringify(selectedDay, null, 4)}
-        </p>
+        {#if kitchenSpecialArray.length >= 1}
+            <div style="display: inline-block; margin-bottom: 2rem;">
+                <div class="flex" style="justify-content: space-between;">
+                    <p>Kitchen Workers <span class="fg0">(Special Pay)</span></p>
+                    <p class="fg0">
+                        {#if kitchenSpecialArray.length == 1}
+                            1 employee
+                        {:else}
+                            {kitchenSpecialArray.length} employees
+                        {/if}
+                    </p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Worked Today</th>
+                            <th>Hours Worked</th>
+                            <th>Amount Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each kitchenSpecialArray as row}
+                            <tr>
+                                <td>{row.employee.name}</td>
+                                <td>
+                                    {#if row.workedToday === true}
+                                        <div class="flex compact-gap text yay" style="align-items: center; align-content: center;">
+                                            <CheckmarkIcon></CheckmarkIcon>
+                                            <span>Yes</span>
+                                        </div>
+                                    {:else if row.workedToday === false}
+                                        <div class="flex compact-gap text ohno" style="align-items: center; align-content: center;">
+                                            <XMarkIcon></XMarkIcon>
+                                            <span>No</span>
+                                        </div>
+                                    {:else if row.workedToday == null}
+                                        <span class="fg0">N/A</span>
+                                    {/if}
+                                </td>
+                                {#if row.hours == null}
+                                    <td><span class="fg0">N/A</span></td>
+                                {:else}
+                                    <td>{row.hours}</td>
+                                {/if}
+                                <td>${
+                                    row.earned.toLocaleString(
+                                        "en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })
+                                }</td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <th>Total</th>
+                            <th></th>
+                            <th></th>
+                            <th>${
+                                totalKitchenSpecialEarned.toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {/if}
+        <div style="display: inline-block; margin-bottom: 2rem;">
+            <div class="flex" style="justify-content: space-between;">
+                <p>Floor Workers</p>
+                <p class="fg0">
+                    {floorHourlyArray.length} employees
+                </p>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Hours Worked</th>
+                        <th>Amount Earned</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each floorHourlyArray as row}
+                        <tr>
+                            <td>{row.employee.name}</td>
+                            <td>{row.hours}</td>
+                            <td>${
+                                (row.hours * row.employee.wage).toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</td>
+                        </tr>
+                    {/each}
+                    <tr>
+                        <th>Total</th>
+                        <th></th>
+                        <th>${
+                            totalFloorHourlyEarned.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })
+                        }</th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        {#if floorSpecialArray.length >= 1}
+            <div style="display: inline-block; margin-bottom: 2rem;">
+                <div class="flex" style="justify-content: space-between;">
+                    <p>Floor Workers <span class="fg0">(Special Pay)</span></p>
+                    <p class="fg0">
+                        {#if floorSpecialArray.length == 1}
+                            1 employee
+                        {:else}
+                            {floorSpecialArray.length} employees
+                        {/if}
+                    </p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Worked Today</th>
+                            <th>Hours Worked</th>
+                            <th>Amount Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each floorSpecialArray as row}
+                            <tr>
+                                <td>{row.employee.name}</td>
+                                <td>
+                                    {#if row.workedToday === true}
+                                        <div class="flex compact-gap text yay" style="align-items: center; align-content: center;">
+                                            <CheckmarkIcon></CheckmarkIcon>
+                                            <span>Yes</span>
+                                        </div>
+                                    {:else if row.workedToday === false}
+                                        <div class="flex compact-gap text ohno" style="align-items: center; align-content: center;">
+                                            <XMarkIcon></XMarkIcon>
+                                            <span>No</span>
+                                        </div>
+                                    {:else if row.workedToday == null}
+                                        <span class="fg0">N/A</span>
+                                    {/if}
+                                </td>
+                                {#if row.hours == null}
+                                    <td><span class="fg0">N/A</span></td>
+                                {:else}
+                                    <td>{row.hours}</td>
+                                {/if}
+                                <td>${
+                                    row.earned.toLocaleString(
+                                        "en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })
+                                }</td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <th>Total</th>
+                            <th></th>
+                            <th></th>
+                            <th>${
+                                totalFloorSpecialEarned.toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        {/if}
     </div>
 </div>

@@ -679,7 +679,7 @@ try {
                             });
                             const addDayJson = await addDayRes.json();
                             if (addDayJson?.id != null) {
-                                window.location = `${base}/days/${dayYMD}`
+                                window.location = `${base}/days/${dateYMD}`
                             } else {
                                 console.log(addDayJson);
                                 alert("hmmm there's some kind of error, check ur internet connection mabye");
@@ -701,7 +701,7 @@ try {
                             })
                             const updateDayJson = await updateDayRes.json();
                             if (updateDayJson?.id != null) {
-                                window.location = `${base}/days/${dayYMD}`
+                                window.location = `${base}/days/${dateYMD}`
                             } else {
                                 console.log(updateDayJson);
                                 alert("hmm there's an error, check ur internet connection mabye")
