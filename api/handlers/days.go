@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/georgysavva/scany/v2/pgxscan"
 
 	"la-cipollina-budgeter-api/db"
 	"la-cipollina-budgeter-api/models"
@@ -18,7 +19,7 @@ func GetDayByDate(c *fiber.Ctx) error {
 		`SELECT id, date::text, hours_worked,
 worked_today, food_costs, created_at, updated_at
 FROM days WHERE date = $1`,
-		c.Params("Date"),
+		c.Params("date"),
 	).Scan(
 		&day.ID,
 		&day.Date,
@@ -40,6 +41,29 @@ FROM days WHERE date = $1`,
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting row from days by date"})
 	}
 	return c.JSON(day)
+}
+
+func GetDaysInWeekByDate(c *fiber.Ctx) error {
+	var days []models.Day
+	err := pgxscan.Select(
+		context.Background(),
+		db.Pool,
+		&days,
+`SELECT d.id, d.date::text,
+	d.hours_worked, d.worked_today, d.food_costs,
+	d.created_at, d.updated_at
+FROM days d
+JOIN weeks w
+	ON d.date BETWEEN w.start_date AND w.end_date
+WHERE $1::date BETWEEN w.start_date and w.end_date
+ORDER BY d.date`,
+		c.Params("date"),
+	)
+	if err != nil {
+		log.Print("Error in GetDaysInWeekByDate: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting days from week by date"})
+	}
+	return c.JSON(days)
 }
 
 func RecordDay(c *fiber.Ctx) error {

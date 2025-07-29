@@ -61,6 +61,7 @@ just check your environment variables`,
 	app.Get("/weeks/:date", handlers.GetWeekByDate)
 	app.Post("/weeks", handlers.AddWeek)
 	app.Delete("/weeks/:id", handlers.DeleteWeek)
+	app.Get("/weeks/:date/days", handlers.GetDaysInWeekByDate)
 
 	port := os.Getenv("PORT")
 	if port == "" {
