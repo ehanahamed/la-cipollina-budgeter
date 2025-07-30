@@ -7,6 +7,7 @@ import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
 import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
+import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 import { onMount } from "svelte";
 let { data } = $props();
 let floorHourlyArray = $state([]);
@@ -36,6 +37,7 @@ const monthName = [
     "June", "July", "August", "September",
     "October", "November", "December"
 ][date.getMonth()];
+const weekNum = dateGetWeekNum(date);
 let weekData = $state(null);
 let showWeekBudget = $state(false);
 let startingNewWeek = $state(false);
@@ -232,7 +234,10 @@ let dayFinalFloorBudget = $derived(
             </a>
         </div>
         <h3 style="margin-bottom: 0px;">{weekDayName}'s Report</h3>
-        <p style="margin-top: 0.4rem;">{monthName} {date.getDate()}, {date.getFullYear()}</p>
+        <p style="margin-top: 0.4rem;">{monthName} {date.getDate()}, {date.getFullYear()}{
+            localStorage.getItem("budgeter:showWeekNums") == "true" ?
+                `, W${weekNum}` : ""
+        }</p>
         <div class="flex">
             <a class="button alt" href="{base}/edit-day/{dateYMD}" style="margin-bottom: 2rem;">
                 <PencilIcon></PencilIcon>

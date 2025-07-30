@@ -8,6 +8,7 @@ import { onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
+import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 let { data } = $props();
 let floorHoursArray = $state([]);
 let floorWorkedTodayArray = $state([]);
@@ -34,6 +35,7 @@ const weekDayKey = [
     "sun", "mon", "tue", "wed",
     "thu", "fri", "sat"
 ][date.getDay()]
+const weekNum = dateGetWeekNum(date);
 if (data.new) {
     data.employees.forEach(function (employee) {
         if (employee?.type == "FLOOR") {
@@ -323,7 +325,10 @@ if (!data.new) {
                         "January", "February", "March", "April",
                         "May", "June", "July", "August", "September",
                         "October", "November", "December"
-                    ][date.getMonth()]} {date.getDate()}, {date.getFullYear()}</p>
+                    ][date.getMonth()]} {date.getDate()}, {date.getFullYear()}{
+                        localStorage.getItem("budgeter:showWeekNums") == "true" ?
+                            `, W${weekNum}` : ""
+                    }</p>
                 </div>
             </div>
             <div class="areaback" style="margin-top: 0px">
