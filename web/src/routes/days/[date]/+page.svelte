@@ -38,26 +38,6 @@ const monthName = [
     "June", "July", "August", "September",
     "October", "November", "December"
 ][date.getDay()];
-let foodCostsArray = $state([
-    {
-        cost: "",
-        notes: ""
-    }
-]);
-// let foodCostsTotal = $derived.by(() => {
-//     let total = 0;
-//     foodCostsArray.forEach((row) => {
-//         if (typeof row.cost === "string") {
-//             const cost = parseFloat(row.cost.replaceAll(",", ""));
-//             if (!isNaN(cost)) {
-//                 total += cost;
-//             }
-//         } else if (typeof row.cost === "number") {
-//             total += row.cost;
-//         }
-//     })
-//     return total;
-// })
 let weekData = $state(null);
 let showWeekBudget = $state(false);
 let startingNewWeek = $state(false);
@@ -79,6 +59,10 @@ data.days.forEach((day) => {
 if (!selectedDay) {
     window.location = `${base}/days/${data.date}/err/dayNotFound`
 }
+let foodCostsTotal = $state(0);
+selectedDay.foodCosts.forEach((row) => {
+    foodCostsTotal += row.cost;
+})
 selectedDay.hoursWorked.forEach((row) => {
     if (row.employee.specialPay) {
         if (row.employee.type == "FLOOR") {
@@ -210,6 +194,182 @@ for (
     floorSpecialArray[index].earned = earned;
     totalFloorSpecialEarned += earned;
 }
+
+let dayStartFoodBudget = data.week.startFoodBudget;
+let dayStartKitchenBudget = data.week.startKitchenBudget;
+let dayStartFloorBudget = data.week.startFloorBudget;
+prevDaysArray.forEach((day) => {
+    dayStartFoodBudget += day.foodBudgetIncrease;
+    dayStartKitchenBudget += day.kitchenBudgetIncrease;
+    dayStartFloorBudget += day.floorBudgetIncrease;
+
+    const iDate = (() => {
+        const [year, month, day] = data.date.split("-");
+        return new Date(year, month - 1, day);
+    })();
+    const iWeekDayKey = [
+        "mon", "tue", "wed", "thu",
+        "fri", "sat", "sun"
+    ][iDate.getDay()];
+
+
+    let iFoodCostsTotal = 0;
+    let iKitchenHourlyArray = [];
+    let iKitchenSpecialArray = [];
+    let iFloorHourlyArray = [];
+    let iFloorSpecialArray = [];
+
+    day.foodCosts.forEach((row) => {
+        iFoodCostsTotal += row.cost;
+    })
+
+    day.hoursWorked.forEach((row) => {
+        if (row.employee.specialPay) {
+            if (row.employee.type == "FLOOR") {
+                iFloorSpecialArray.push(row);
+            } else if (row.employee.type == "KITCHEN") {
+                iKitchenSpecialArray.push(row);
+            }
+        }
+        if (row.employee.type == "FLOOR") {
+            iFloorHourlyArray.push(row);
+        } else if (row.employee.type == "KITCHEN") {
+            iKitchenHourlyArray.push(row);
+        }
+    })
+    day.workedToday.forEach((row) => {
+        if (row.employee.type == "FLOOR") {
+            let found = false;
+            for (
+                let index = 0;
+                index < iFloorSpecialArray.length;
+                index++
+            ) {
+                if (
+                    iFloorSpecialArray[index].employee.id ==
+                    row.employee.id
+                ) {
+                    found = true;
+                    iFloorSpecialArray[
+                        index
+                    ].workedToday = row.workedToday;
+                }
+            }
+            if (!found) {
+                iFloorSpecialArray.push(row);
+            }
+        } else if (row.employee.type == "KITCHEN") {
+            let found = false;
+            for (
+                let index = 0;
+                index < iKitchenSpecialArray.length;
+                index++
+            ) {
+                if (
+                    iKitchenSpecialArray[index].employee.id ==
+                    row.employee.id
+                ) {
+                    found = true;
+                    iKitchenSpecialArray[
+                        index
+                    ].workedToday = row.workedToday;
+                }
+            }
+            if (!found) {
+                iKitchenSpecialArray.push(row);
+            }
+        }
+    })
+    let iTotalKitchenEarned = 0;
+    let iTotalFloorEarned = 0;
+    iKitchenHourlyArray.forEach((row) => {
+        iTotalKitchenEarned += (
+            row.hours * row.employee.wage
+        );
+    })
+    iFloorHourlyArray.forEach((row) => {
+        iTotalFloorEarned += (
+            row.hours * row.employee.wage
+        );
+    })
+    for (
+        let index = 0;
+        index < iKitchenSpecialArray.length;
+        index++
+    ) {
+        const row = iKitchenSpecialArray[index];
+        if (
+            row.workedToday &&
+            row?.employee?.specialPay?.[
+                iWeekDayKey
+            ]?.perDay != null
+        ) {
+            iTotalKitchenEarned += row.employee.specialPay[
+                iWeekDayKey
+            ].perDay;
+        }
+        if (
+            row.hours != null &&
+            row?.employee?.specialPay?.[
+                iWeekDayKey
+            ]?.perHour != null
+        ) {
+            iTotalKitchenEarned += hours * row.employee.specialPay[
+                iWeekDayKey
+            ].perDay;
+        }
+    }
+    for (
+        let index = 0;
+        index < iFloorSpecialArray.length;
+        index++
+    ) {
+        const row = iFloorSpecialArray[index];
+        if (
+            row.workedToday &&
+            row?.employee?.specialPay?.[
+                iWeekDayKey
+            ]?.perDay != null
+        ) {
+            iTotalFloorEarned += row.employee.specialPay[
+                iWeekDayKey
+            ].perDay;
+        }
+        if (
+            row.hours != null &&
+            row?.employee?.specialPay?.[
+                weekDayKey
+            ]?.perHour != null
+        ) {
+            iTotalFloorEarned += hours * row.employee.specialPay[
+                iWeekDayKey
+            ].perDay;
+        }
+    }
+
+    dayStartFoodBudget -= iFoodCostsTotal;
+    dayStartKitchenBudget -= iTotalKitchenEarned;
+    dayStartFloorBudget -= iTotalFloorEarned;
+})
+let dayFinalFoodBudget = $derived(
+    dayStartFoodBudget +
+    (selectedDay.foodBudgetIncrease ?? 0) -
+    foodCostsTotal
+);
+let dayFinalKitchenBudget = $derived(
+    dayStartKitchenBudget +
+    (selectedDay.kitchenBudgetIncrease ?? 0) - (
+        totalKitchenHourlyEarned +
+        totalKitchenSpecialEarned
+    )
+);
+let dayFinalFloorBudget = $derived(
+    dayStartFloorBudget +
+    (selectedDay.floorBudgetIncrease ?? 0) - (
+        totalFloorHourlyEarned +
+        totalFloorSpecialEarned
+    )
+)
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -221,6 +381,142 @@ for (
         </div>
         <h3 style="margin-bottom: 0px;">{weekDayName}'s Report</h3>
         <p style="margin-top: 0.4rem; margin-bottom: 2rem;">{monthName} {date.getDate()}, {date.getFullYear()}</p>
+        <div>
+            <div style="display: inline-block; margin-bottom: 2rem;">
+                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
+                <table style="border: none;">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Food Budget</th>
+                            <th>Kitchen Budget</th>
+                            <th>Floor Budget</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Day Start</td>
+                            <td>${dayStartFoodBudget.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>${dayStartKitchenBudget.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>${dayStartFloorBudget.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                        </tr>
+                        <tr>
+                            <td>Increases</td>
+                            <td>+${(selectedDay.foodBudgetIncrease ?? 0).toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>+${(selectedDay.kitchenBudgetIncrease ?? 0).toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>+${(selectedDay.floorBudgetIncrease ?? 0).toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                        </tr>
+                        <tr>
+                            <td>Expenses</td>
+                            <td>-${foodCostsTotal.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>-${
+                                (
+                                    totalKitchenHourlyEarned +
+                                    totalKitchenSpecialEarned
+                                ).toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</td>
+                            <td>-${
+                                (
+                                    totalFloorHourlyEarned +
+                                    totalFloorSpecialEarned
+                                ).toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</td>
+                        </tr>
+                        <tr>
+                            <td>Day Final</td>
+                            <td>${dayFinalFoodBudget.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>${dayFinalKitchenBudget.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                            <td>${dayFinalFloorBudget.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div style="display: inline-block; margin-bottom: 2rem;">
+                <p>Food Cost</p>
+                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
+                <table style="border: none;">
+                    <thead>
+                        <tr>
+                            <th>Expense</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each selectedDay.foodCosts as row}
+                            <tr>
+                                <td>${row.cost.toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })}</td>
+                                <td>{row.notes}</td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <th>${foodCostsTotal.toLocaleString(
+                                "en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            })}</th>
+                            <th>Total</th>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+        <div>
         <div style="display: inline-block; margin-bottom: 2rem;">
             <div class="flex" style="justify-content: space-between;">
                 <p>Kitchen Workers</p>
@@ -264,7 +560,9 @@ for (
                 </tbody>
             </table>
         </div>
+        </div>
         {#if kitchenSpecialArray.length >= 1}
+            <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
                 <div class="flex" style="justify-content: space-between;">
                     <p>Kitchen Workers <span class="fg0">(Special Pay)</span></p>
@@ -333,7 +631,9 @@ for (
                     </tbody>
                 </table>
             </div>
+            </div>
         {/if}
+        <div>
         <div style="display: inline-block; margin-bottom: 2rem;">
             <div class="flex" style="justify-content: space-between;">
                 <p>Floor Workers</p>
@@ -377,7 +677,9 @@ for (
                 </tbody>
             </table>
         </div>
+        </div>
         {#if floorSpecialArray.length >= 1}
+            <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
                 <div class="flex" style="justify-content: space-between;">
                     <p>Floor Workers <span class="fg0">(Special Pay)</span></p>
@@ -445,6 +747,7 @@ for (
                         </tr>
                     </tbody>
                 </table>
+            </div>
             </div>
         {/if}
     </div>
