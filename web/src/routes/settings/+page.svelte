@@ -81,7 +81,30 @@ async function deleteUser() {
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a></div>
-<div class="box">
+<p>Show week numbers?</p>
+<div class="combo-select" style="margin-bottom: 2rem">
+    <button class="left {
+        localStorage.getItem("budgeter:showWeekNums") == "true" ?
+            "" : "selected"
+    }" onclick={() => {
+        localStorage.setItem("budgeter:showWeekNums", "false");
+        window.location.reload();
+    }}>
+        <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
+        Hide
+    </button>
+    <button class="right {
+        localStorage.getItem("budgeter:showWeekNums") == "true" ?
+            "selected" : ""
+    }" onclick={() => {
+        localStorage.setItem("budgeter:showWeekNums", "true");
+        window.location.reload();
+    }}>
+        <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
+        Show
+    </button>
+</div>
+<div class="box" style="margin-bottom: 2rem;">
     <p>Currently logged in as "{data?.authedUser?.username}"</p>
     <div class="flex">
         <button class="ohno alt" onclick={() => {

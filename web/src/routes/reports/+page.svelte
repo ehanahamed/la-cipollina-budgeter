@@ -4,6 +4,7 @@
     import BackArrowIcon from "$lib/icons/BackArrow.svelte";
     import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
     import { dateToYMDString } from "$lib/dateToYMDString.js";
+    import { goto } from "$app/navigation";
     let { data } = $props();
     let events = [];
     console.log(data)
@@ -18,6 +19,7 @@
             const firstDate = new Date(firstY, firstM - 1, firstD);
             const [lastY, lastM, lastD] = week.lastDate.split("-");
             const lastDate = new Date(lastY, lastM - 1, lastD);
+            lastDate.setDate(lastDate.getDate() + 1);
             events.push({
                 title: `Week of ${[
                     "Jan", "Feb", "Mar", "Apr",
@@ -25,9 +27,13 @@
                     "Sep", "Oct", "Nov", "Dec"
                 ][startDate.getMonth()]} ${startDate.getDate()}`,
                 start: firstDate,
-                end: lastDate
+                end: lastDate,
+                extendedProps: {
+                    startDateYMD: week.startDate
+                }
             });
         }
+        console.log(events)
     })
 
     let options = $state({
@@ -38,12 +44,15 @@
             center: "",
             end: "prev,next"
         },
+        eventClick: ({ event }) => {
+            goto(`${base}/reports/${
+                event.extendedProps.startDateYMD
+            }`);
+        },
+        eventBackgroundColor: "#242528",
         firstDay: localStorage.getItem("budgeter:calendar.firstWeekDay") == "mon" ?
             1 : 0,
-        eventClick: (info) => {
-            console.log(info.event)
-        },
-        eventBackgroundColor: "var(--main)"
+        weekNumbers: localStorage.getItem("budgeter:showWeekNums") == "true"
     });
 </script>
 <style>
@@ -100,6 +109,29 @@
         }}>
             <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
             Monday
+        </button>
+    </div>
+    <p>Show week numbers?</p>
+    <div class="combo-select">
+        <button class="left {
+            localStorage.getItem("budgeter:showWeekNums") == "true" ?
+                "" : "selected"
+        }" onclick={() => {
+            localStorage.setItem("budgeter:showWeekNums", "false");
+            window.location.reload();
+        }}>
+            <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
+            Hide
+        </button>
+        <button class="right {
+            localStorage.getItem("budgeter:showWeekNums") == "true" ?
+                "selected" : ""
+        }" onclick={() => {
+            localStorage.setItem("budgeter:showWeekNums", "true");
+            window.location.reload();
+        }}>
+            <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
+            Show
         </button>
     </div>
 </div>
