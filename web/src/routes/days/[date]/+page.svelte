@@ -32,14 +32,14 @@ const weekDayName = [
     "Thrusday", "Friday", "Saturday"
 ][date.getDay()];
 const weekDayKey = [
-    "mon", "tue", "wed", "thu",
-    "fri", "sat", "sun"
+    "sun", "mon", "tue", "wed",
+    "thu", "fri", "sat"
 ][date.getDay()];
 const monthName = [
     "January", "February", "March", "April", "May",
     "June", "July", "August", "September",
     "October", "November", "December"
-][date.getDay()];
+][date.getMonth()];
 let weekData = $state(null);
 let showWeekBudget = $state(false);
 let startingNewWeek = $state(false);
@@ -159,7 +159,7 @@ for (
             weekDayKey
         ]?.perHour != null
     ) {
-        earned += hours * row.employee.specialPay[
+        earned += row.hours * row.employee.specialPay[
             weekDayKey
         ].perDay;
     }
@@ -189,7 +189,7 @@ for (
             weekDayKey
         ]?.perHour != null
     ) {
-        earned += hours * row.employee.specialPay[
+        earned += row.hours * row.employee.specialPay[
             weekDayKey
         ].perDay;
     }

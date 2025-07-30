@@ -35,8 +35,8 @@ const weekDayName = [
     "Thrusday", "Friday", "Saturday"
 ][date.getDay()]
 const weekDayKey = [
-    "mon", "tue", "wed", "thu",
-    "fri", "sat", "sun"
+    "sun", "mon", "tue", "wed",
+    "thu", "fri", "sat"
 ][date.getDay()]
 if (data.new) {
     data.employees.forEach(function (employee) {
@@ -211,7 +211,7 @@ try {
     }
 })()
 let dayStartBudgets = $derived(
-    prevDays.length >= 1 ?
+    prevDays?.length >= 1 ?
         remainingBudgetFromDays(
             weekData.startFoodBudget,
             weekData.startKitchenBudget,
