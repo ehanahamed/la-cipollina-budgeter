@@ -6,6 +6,7 @@ import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
 import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
+import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { onMount } from "svelte";
 let { data } = $props();
 let floorHourlyArray = $state([]);
@@ -21,11 +22,6 @@ const date = (() => {
         window.location = `${base}/days/${data.date}/err/invalid-date`
     }
 })();
-function dateToYMDString(dateObj) {
-    return dateObj.getFullYear() + "-" +
-        (dateObj.getMonth() + 1).toString().padStart(2, "0") + "-" +
-        dateObj.getDate().toString().padStart(2, "0")
-}
 const dateYMD = dateToYMDString(date);
 const weekDayName = [
     "Sunday", "Monday", "Tuesday", "Wednesday",

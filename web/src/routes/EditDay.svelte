@@ -7,6 +7,7 @@ import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
+import { dateToYMDString } from "$lib/dateToYMDString.js";
 let { data } = $props();
 let floorHoursArray = $state([]);
 let floorWorkedTodayArray = $state([]);
@@ -24,11 +25,6 @@ const date = (() => {
     }
     return new Date()
 })();
-function dateToYMDString(dateObj) {
-    return dateObj.getFullYear() + "-" +
-        (dateObj.getMonth() + 1).toString().padStart(2, "0") + "-" +
-        dateObj.getDate().toString().padStart(2, "0")
-}
 const dateYMD = dateToYMDString(date);
 const weekDayName = [
     "Sunday", "Monday", "Tuesday", "Wednesday",

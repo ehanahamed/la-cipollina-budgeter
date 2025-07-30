@@ -3,6 +3,7 @@
     import {Calendar, DayGrid} from '@event-calendar/core';
     import BackArrowIcon from "$lib/icons/BackArrow.svelte";
     import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
+    import { dateToYMDString } from "$lib/dateToYMDString.js";
     let { data } = $props();
     let events = [];
     console.log(data)
@@ -38,7 +39,11 @@
             end: "prev,next"
         },
         firstDay: localStorage.getItem("budgeter:calendar.firstWeekDay") == "mon" ?
-            1 : 0
+            1 : 0,
+        eventClick: (info) => {
+            console.log(info.event)
+        },
+        eventBackgroundColor: "var(--main)"
     });
 </script>
 <style>
@@ -55,9 +60,12 @@
     .ec-event-title {
         font-size: 1rem;
     }
+    .ec-event-body {
+        cursor: pointer;
+    }
 }
 </style>
-<div class="grid page" style="margin-top: 2rem; margin-bottom: 8rem;">
+<div class="grid page" style="margin-top: 2rem; margin-bottom: 10rem;">
     <div class="content" style="padding-top: 2rem;">
     <div>
         <a href={base} class="button faint">
