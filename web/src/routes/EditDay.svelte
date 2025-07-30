@@ -687,7 +687,7 @@ try {
                             }
                         } else {
                             const updateDayRes = await fetch(
-                                `${data.PUBLIC_API_URL}/days/${dateYMD}`, {
+                                `${data.PUBLIC_API_URL}/days/${data.dayData.id}`, {
                                 method: "PUT",
                                 headers: {
                                     "Content-Type": "application/json",
