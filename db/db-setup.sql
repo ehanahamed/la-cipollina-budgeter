@@ -126,8 +126,13 @@ grant usage, select on days_id_seq to budgeter_api;
 
 create table weeks (
     id serial primary key,
-    start_date date not null unique,
-    end_date date not null unique,
+    start_date date not null unique, /* monday (start) */
+    end_date date not null unique, /* sunday (end)*/
+    first_date date, /* actual start/first day
+    start_date might not exist in the days table,
+    (if they're closed on monday for example)
+    so first_date is the real first day */
+    last_date date, /* actual end/last day */
     start_food_budget numeric(10, 2) not null,
     start_kitchen_budget numeric(10, 2) not null,
     start_floor_budget numeric(10, 2) not null,

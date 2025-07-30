@@ -102,6 +102,7 @@ func RecordDay(c *fiber.Ctx) error {
 		log.Print("Error in RecordDay: ", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while adding day"})
 	}
+	db.updateWeekDates()
 	return c.Status(201).JSON(day)
 }
 
@@ -149,5 +150,6 @@ func DeleteDay(c *fiber.Ctx) error {
 		log.Print("Error in DeleteDay: ", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while deleting day"})
 	}
+	db.updateWeekDates()
 	return c.Status(200).JSON(fiber.Map{"success": true})
 }
