@@ -4,6 +4,8 @@ import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import PlusIcon from "$lib/icons/Plus.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
+import PencilIcon from "$lib/icons/Pencil.svelte";
+import { remainingBudgetFromDays } from "$lib/remainingBudgetFromDays.js";
 import { onMount } from "svelte";
 let { data } = $props();
 let floorHourlyArray = $state([]);
@@ -195,162 +197,16 @@ for (
     totalFloorSpecialEarned += earned;
 }
 
-let dayStartFoodBudget = data.week.startFoodBudget;
-let dayStartKitchenBudget = data.week.startKitchenBudget;
-let dayStartFloorBudget = data.week.startFloorBudget;
-prevDaysArray.forEach((day) => {
-    dayStartFoodBudget += day.foodBudgetIncrease;
-    dayStartKitchenBudget += day.kitchenBudgetIncrease;
-    dayStartFloorBudget += day.floorBudgetIncrease;
-
-    const iDate = (() => {
-        const [year, month, day] = data.date.split("-");
-        return new Date(year, month - 1, day);
-    })();
-    const iWeekDayKey = [
-        "mon", "tue", "wed", "thu",
-        "fri", "sat", "sun"
-    ][iDate.getDay()];
-
-
-    let iFoodCostsTotal = 0;
-    let iKitchenHourlyArray = [];
-    let iKitchenSpecialArray = [];
-    let iFloorHourlyArray = [];
-    let iFloorSpecialArray = [];
-
-    day.foodCosts.forEach((row) => {
-        iFoodCostsTotal += row.cost;
-    })
-
-    day.hoursWorked.forEach((row) => {
-        if (row.employee.specialPay) {
-            if (row.employee.type == "FLOOR") {
-                iFloorSpecialArray.push(row);
-            } else if (row.employee.type == "KITCHEN") {
-                iKitchenSpecialArray.push(row);
-            }
-        }
-        if (row.employee.type == "FLOOR") {
-            iFloorHourlyArray.push(row);
-        } else if (row.employee.type == "KITCHEN") {
-            iKitchenHourlyArray.push(row);
-        }
-    })
-    day.workedToday.forEach((row) => {
-        if (row.employee.type == "FLOOR") {
-            let found = false;
-            for (
-                let index = 0;
-                index < iFloorSpecialArray.length;
-                index++
-            ) {
-                if (
-                    iFloorSpecialArray[index].employee.id ==
-                    row.employee.id
-                ) {
-                    found = true;
-                    iFloorSpecialArray[
-                        index
-                    ].workedToday = row.workedToday;
-                }
-            }
-            if (!found) {
-                iFloorSpecialArray.push(row);
-            }
-        } else if (row.employee.type == "KITCHEN") {
-            let found = false;
-            for (
-                let index = 0;
-                index < iKitchenSpecialArray.length;
-                index++
-            ) {
-                if (
-                    iKitchenSpecialArray[index].employee.id ==
-                    row.employee.id
-                ) {
-                    found = true;
-                    iKitchenSpecialArray[
-                        index
-                    ].workedToday = row.workedToday;
-                }
-            }
-            if (!found) {
-                iKitchenSpecialArray.push(row);
-            }
-        }
-    })
-    let iTotalKitchenEarned = 0;
-    let iTotalFloorEarned = 0;
-    iKitchenHourlyArray.forEach((row) => {
-        iTotalKitchenEarned += (
-            row.hours * row.employee.wage
-        );
-    })
-    iFloorHourlyArray.forEach((row) => {
-        iTotalFloorEarned += (
-            row.hours * row.employee.wage
-        );
-    })
-    for (
-        let index = 0;
-        index < iKitchenSpecialArray.length;
-        index++
-    ) {
-        const row = iKitchenSpecialArray[index];
-        if (
-            row.workedToday &&
-            row?.employee?.specialPay?.[
-                iWeekDayKey
-            ]?.perDay != null
-        ) {
-            iTotalKitchenEarned += row.employee.specialPay[
-                iWeekDayKey
-            ].perDay;
-        }
-        if (
-            row.hours != null &&
-            row?.employee?.specialPay?.[
-                iWeekDayKey
-            ]?.perHour != null
-        ) {
-            iTotalKitchenEarned += hours * row.employee.specialPay[
-                iWeekDayKey
-            ].perDay;
-        }
-    }
-    for (
-        let index = 0;
-        index < iFloorSpecialArray.length;
-        index++
-    ) {
-        const row = iFloorSpecialArray[index];
-        if (
-            row.workedToday &&
-            row?.employee?.specialPay?.[
-                iWeekDayKey
-            ]?.perDay != null
-        ) {
-            iTotalFloorEarned += row.employee.specialPay[
-                iWeekDayKey
-            ].perDay;
-        }
-        if (
-            row.hours != null &&
-            row?.employee?.specialPay?.[
-                weekDayKey
-            ]?.perHour != null
-        ) {
-            iTotalFloorEarned += hours * row.employee.specialPay[
-                iWeekDayKey
-            ].perDay;
-        }
-    }
-
-    dayStartFoodBudget -= iFoodCostsTotal;
-    dayStartKitchenBudget -= iTotalKitchenEarned;
-    dayStartFloorBudget -= iTotalFloorEarned;
-})
+let {
+    dayStartFoodBudget,
+    dayStartKitchenBudget,
+    dayStartFloorBudget
+} = remainingBudgetFromDays(
+    data.week.startFoodBudget,
+    data.week.startKitchenBudget,
+    data.week.startFloorBudget,
+    prevDaysArray
+)
 let dayFinalFoodBudget = $derived(
     dayStartFoodBudget +
     (selectedDay.foodBudgetIncrease ?? 0) -
@@ -380,7 +236,13 @@ let dayFinalFloorBudget = $derived(
             </a>
         </div>
         <h3 style="margin-bottom: 0px;">{weekDayName}'s Report</h3>
-        <p style="margin-top: 0.4rem; margin-bottom: 2rem;">{monthName} {date.getDate()}, {date.getFullYear()}</p>
+        <p style="margin-top: 0.4rem;">{monthName} {date.getDate()}, {date.getFullYear()}</p>
+        <div class="flex">
+            <a class="button alt" href="{base}/edit-day/{dateYMD}" style="margin-bottom: 2rem;">
+                <PencilIcon></PencilIcon>
+                Edit Day
+            </a>
+        </div>
         <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
                 <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">

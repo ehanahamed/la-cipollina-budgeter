@@ -5,6 +5,7 @@ import PlusIcon from "$lib/icons/Plus.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import { onMount } from "svelte";
+import { goto } from "$app/navigation";
 let { data } = $props();
 let floorHoursArray = $state([]);
 let floorWorkedTodayArray = $state([]);
@@ -182,7 +183,7 @@ try {
             )
             const checkJson = await checkRes.json();
             if (checkJson.date == dateYMD) {
-                window.location = `${base}/edit-day/${dateYMD}`
+                goto(`${base}/edit-day/${dateYMD}`);
             }
         } catch (err) {
             console.error(err);
@@ -453,6 +454,21 @@ try {
                                         }
                                     )}</td>
                                 </tr>
+                                <tr>
+                                    <td>Increase</td>
+                                    <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
+                                        <span>$</span>
+                                        <input type="text" placeholder="0.00" bind:value={newWeekFloorBudget}>
+                                    </div></td>
+                                    <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
+                                        <span>$</span>
+                                        <input type="text" placeholder="0.00" bind:value={newWeekKitchenBudget}>
+                                    </div></td>
+                                    <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
+                                        <span>$</span>
+                                        <input type="text" placeholder="0.00" bind:value={newWeekFoodBudget}>
+                                    </div></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -680,7 +696,7 @@ try {
                             });
                             const addDayJson = await addDayRes.json();
                             if (addDayJson?.id != null) {
-                                window.location = `${base}/days/${dateYMD}`
+                                goto(`${base}/days/${dateYMD}`);
                             } else {
                                 console.log(addDayJson);
                                 alert("hmmm there's some kind of error, check ur internet connection mabye");
@@ -702,7 +718,7 @@ try {
                             })
                             const updateDayJson = await updateDayRes.json();
                             if (updateDayJson?.id != null) {
-                                window.location = `${base}/days/${dateYMD}`
+                                goto(`${base}/days/${dateYMD}`);
                             } else {
                                 console.log(updateDayJson);
                                 alert("hmm there's an error, check ur internet connection mabye")
