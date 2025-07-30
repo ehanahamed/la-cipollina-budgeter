@@ -17,6 +17,7 @@ func GetWeekByDate(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`SELECT id, start_date::text, end_date::text,
+	first_date::text, last_date::text,
 	start_floor_budget, start_kitchen_budget,
 	start_food_budget, created_at, updated_at
 FROM weeks
@@ -27,6 +28,8 @@ LIMIT 1`,
 		&week.ID,
 		&week.StartDate,
 		&week.EndDate,
+		&week.FirstDate,
+		&week.LastDate,
 		&week.StartFloorBudget,
 		&week.StartKitchenBudget,
 		&week.StartFoodBudget,
@@ -55,6 +58,7 @@ func GetAllWeeks(c *fiber.Ctx) error {
 		db.Pool,
 		&weeks,
 		`SELECT id, start_date::text, end_date::text,
+first_date::text, last_date::text,
 start_floor_budget, start_kitchen_budget,
 start_food_budget, created_at, updated_at
 FROM weeks`,
