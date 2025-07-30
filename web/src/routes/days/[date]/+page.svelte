@@ -362,7 +362,7 @@ let dayFinalFloorBudget = $derived(
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
                                 })}</td>
-                                <td>{row.notes}</td>
+                                <td style="white-space: pre-wrap;">{row.notes}</td>
                             </tr>
                         {/each}
                         <tr>

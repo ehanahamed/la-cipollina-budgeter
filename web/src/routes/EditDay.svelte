@@ -223,6 +223,14 @@ let dayStartBudgets = $derived(
             floorBudget: weekData.startFloorBudget
         }
 );
+let floorBudgetIncrease = $state("");
+let kitchenBudgetIncrease = $state("");
+let foodBudgetIncrease = $state("");
+if (!data.new) {
+    floorBudgetIncrease = data.dayData.floorBudgetIncrease;
+    kitchenBudgetIncrease = data.dayData.kitchenBudgetIncrease;
+    foodBudgetIncrease = data.dayData.foodBudgetIncrease;
+}
 </script>
 <style>
 .gridtablelayout {
@@ -464,7 +472,7 @@ let dayStartBudgets = $derived(
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>Start</td>
+                                    <td>Day Start</td>
                                     <td>${dayStartBudgets.floorBudget.toLocaleString(
                                         'en-US',
                                         {
@@ -488,18 +496,18 @@ let dayStartBudgets = $derived(
                                     )}</td>
                                 </tr>
                                 <tr>
-                                    <td>Increase</td>
+                                    <td>Increases</td>
                                     <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
                                         <span>$</span>
-                                        <input type="text" placeholder="0.00" bind:value={newWeekFloorBudget}>
+                                        <input type="text" placeholder="0.00" bind:value={floorBudgetIncrease}>
                                     </div></td>
                                     <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
                                         <span>$</span>
-                                        <input type="text" placeholder="0.00" bind:value={newWeekKitchenBudget}>
+                                        <input type="text" placeholder="0.00" bind:value={kitchenBudgetIncrease}>
                                     </div></td>
                                     <td><div class="flex compact-gap nowrap" style="align-items: center; align-content: center;">
                                         <span>$</span>
-                                        <input type="text" placeholder="0.00" bind:value={newWeekFoodBudget}>
+                                        <input type="text" placeholder="0.00" bind:value={foodBudgetIncrease}>
                                     </div></td>
                                 </tr>
                             </tbody>
@@ -712,6 +720,50 @@ let dayStartBudgets = $derived(
                             }
                         }
                     }
+
+                    if (typeof floorBudgetIncrease === "string") {
+                        floorBudgetIncrease = floorBudgetIncrease.replaceAll(
+                            ",", ""
+                        );
+                        if (isNaN(parseFloat(floorBudgetIncrease))) {
+                            floorBudgetIncrease = 0;
+                        } else {
+                            floorBudgetIncrease = parseFloat(
+                                floorBudgetIncrease
+                            );
+                        }
+                    } else if (typeof floorBudgetIncrease !== "number") {
+                        floorBudgetIncrease = 0;
+                    }
+                    if (typeof kitchenBudgetIncrease === "string") {
+                        kitchenBudgetIncrease = kitchenBudgetIncrease.replaceAll(
+                            ",", ""
+                        );
+                        if (isNaN(parseFloat(kitchenBudgetIncrease))) {
+                            kitchenBudgetIncrease = 0;
+                        } else {
+                            kitchenBudgetIncrease = parseFloat(
+                                kitchenBudgetIncrease
+                            );
+                        }
+                    } else if (typeof kitchenBudgetIncrease !== "number") {
+                        kitchenBudgetIncrease = 0;
+                    }
+                    if (typeof foodBudgetIncrease === "string") {
+                        foodBudgetIncrease = foodBudgetIncrease.replaceAll(
+                            ",", ""
+                        );
+                        if (isNaN(parseFloat(foodBudgetIncrease))) {
+                            foodBudgetIncrease = 0;
+                        } else {
+                            foodBudgetIncrease = parseFloat(
+                                foodBudgetIncrease
+                            );
+                        }
+                    } else if (typeof foodBudgetIncrease !== "number") {
+                        foodBudgetIncrease = 0;
+                    }
+
                     try {
                         if (data.new) {
                             const addDayRes = await fetch(data.PUBLIC_API_URL + "/days", {
@@ -724,7 +776,10 @@ let dayStartBudgets = $derived(
                                     date: dateYMD,
                                     hoursWorked: hoursWorked,
                                     workedToday: workedToday,
-                                    foodCosts: foodCostsArray
+                                    foodCosts: foodCostsArray,
+                                    foodBudgetIncrease,
+                                    kitchenBudgetIncrease,
+                                    floorBudgetIncrease
                                 })
                             });
                             const addDayJson = await addDayRes.json();
@@ -746,7 +801,10 @@ let dayStartBudgets = $derived(
                                     date: dateYMD,
                                     hoursWorked: hoursWorked,
                                     workedToday: workedToday,
-                                    foodCosts: foodCostsArray
+                                    foodCosts: foodCostsArray,
+                                    foodBudgetIncrease,
+                                    kitchenBudgetIncrease,
+                                    floorBudgetIncrease
                                 })
                             })
                             const updateDayJson = await updateDayRes.json();

@@ -13,8 +13,8 @@ export function remainingBudgetFromDays(
         floorBudget += day.floorBudgetIncrease;
     
         const date = (() => {
-            const [year, month, day] = day.date.split("-");
-            return new Date(year, month - 1, day);
+            const [y, m, d] = day.date.split("-");
+            return new Date(y, m - 1, d);
         })();
         const weekDayKey = [
             "mon", "tue", "wed", "thu",
