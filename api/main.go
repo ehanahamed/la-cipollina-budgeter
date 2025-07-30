@@ -59,6 +59,7 @@ just check your environment variables`,
 	app.Put("/days/:id", handlers.UpdateDay)
 	app.Delete("/days/:id", handlers.DeleteDay)
 	app.Get("/weeks/:date", handlers.GetWeekByDate)
+	app.Get("/weeks", handlers.GetAllWeeks)
 	app.Post("/weeks", handlers.AddWeek)
 	app.Delete("/weeks/:id", handlers.DeleteWeek)
 	app.Get("/weeks/:date/days", handlers.GetDaysInWeekByDate)

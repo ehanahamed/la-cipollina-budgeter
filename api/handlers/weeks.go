@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/jackc/pgx/v5"
+	"github.com/georgysavva/scany/v2/pgxscan"
 
 	"la-cipollina-budgeter-api/db"
 	"la-cipollina-budgeter-api/models"
@@ -45,6 +46,24 @@ LIMIT 1`,
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting week by date"})
 	}
 	return c.JSON(week)
+}
+
+func GetAllWeeks(c *fiber.Ctx) error {
+	var weeks []models.Week
+	err := pgxscan.Select(
+		context.Background(),
+		db.Pool,
+		&weeks,
+		`SELECT id, start_date::text, end_date::text,
+start_floor_budget, start_kitchen_budget,
+start_food_budget, created_at, updated_at
+FROM weeks`,
+	)
+	if err != nil {
+		log.Print("Error in GetWeekByDate: ", err)
+		return c.Status(500).JSON(fiber.Map{"error": "Database error while getting week by date"})
+	}
+	return c.JSON(weeks)
 }
 
 func AddWeek(c *fiber.Ctx) error {
