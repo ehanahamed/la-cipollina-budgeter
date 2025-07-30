@@ -568,7 +568,7 @@ try {
             </div>
             <div class="areafood">
                 <div class="flex" style="justify-content: space-between;">
-                    <p>Food Cost</p>
+                    <p>Food Costs</p>
                     <p class="fg0">
                         {foodCostsArray.length} {foodCostsArray.length == 1 ?
                             "item" : "items"}

@@ -483,7 +483,7 @@ let dayFinalFloorBudget = $derived(
         </div>
         <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
-                <p>Food Cost</p>
+                <p>Food Costs</p>
                 <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
                 <table style="border: none;">
                     <thead>
