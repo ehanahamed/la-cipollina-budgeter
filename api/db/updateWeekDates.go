@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func updateWeekDates() error {
+func updateWeekDates() {
 	_, err := Pool.Exec(
 		context.Background(),
 		`UPDATE weeks w
