@@ -116,7 +116,7 @@ func UpdateDay(c *fiber.Ctx) error {
 worked_today = $3, food_costs = $4,
 food_budget_increase = $5,
 kitchen_budget_increase = $6,
-floor_budget_increase = $7
+floor_budget_increase = $7,
 updated_at = now()
 WHERE id = $1
 RETURNING date::text, created_at, updated_at`,
