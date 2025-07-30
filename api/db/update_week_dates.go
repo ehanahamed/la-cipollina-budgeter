@@ -3,11 +3,9 @@ package db
 import (
 	"context"
 	"log"
-
-	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func updateWeekDates() {
+func UpdateWeekDates() {
 	_, err := Pool.Exec(
 		context.Background(),
 		`UPDATE weeks w

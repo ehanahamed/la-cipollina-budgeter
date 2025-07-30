@@ -96,7 +96,7 @@ RETURNING id, created_at, updated_at`,
 		log.Print("Error in AddWeek: ", err)
 		return c.Status(500).JSON(fiber.Map{"error": "Database error while adding week"})
 	}
-	db.updateWeekDates()
+	db.UpdateWeekDates()
 	return c.Status(201).JSON(week)
 }
 
