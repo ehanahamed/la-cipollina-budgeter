@@ -650,18 +650,19 @@ try {
 
                     const workedToday = floorWorkedTodayArray.concat(kitchenWorkedTodayArray);
                     for (let index = 0; index < foodCostsArray.length; index++) {
-                        foodCostsArray[index].cost = foodCostsArray[index].cost.replaceAll(
-                            ",", "" /* remove commas for thousands before parsing as float */
-                        )
-                        if (isNaN(parseFloat(foodCostsArray[index].cost))) {
-                            foodCostsArray[index].cost = 0;
-                        } else {
-                            foodCostsArray[index].cost = parseFloat(
-                                foodCostsArray[index].cost
-                            );
+                        if (typeof foodCostsArray[index].cost === "string") {
+                            foodCostsArray[index].cost = foodCostsArray[index].cost.replaceAll(
+                                ",", "" /* remove commas for thousands before parsing as float */
+                            )
+                            if (isNaN(parseFloat(foodCostsArray[index].cost))) {
+                                foodCostsArray[index].cost = 0;
+                            } else {
+                                foodCostsArray[index].cost = parseFloat(
+                                    foodCostsArray[index].cost
+                                );
+                            }
                         }
                     }
-
                     try {
                         if (data.new) {
                             const addDayRes = await fetch(data.PUBLIC_API_URL + "/days", {
