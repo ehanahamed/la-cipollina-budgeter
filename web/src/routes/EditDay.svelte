@@ -6,6 +6,7 @@ import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
+import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
 let { data } = $props();
 let floorHoursArray = $state([]);
 let floorWorkedTodayArray = $state([]);
@@ -142,6 +143,7 @@ let startingNewWeek = $state(false);
 let newWeekFloorBudget = $state("");
 let newWeekKitchenBudget = $state("");
 let newWeekFoodBudget = $state("");
+let prevDays = $state([]);
 try {
     fetch(
         data.PUBLIC_API_URL + `/weeks/${dateYMD}`,
@@ -159,8 +161,26 @@ try {
             } else if (resJson) {
                 weekData = resJson;
                 showWeekBudget = true;
+                try {
+                    fetch(
+                        data.PUBLIC_API_URL + `/weeks/${dateYMD}/days`,
+                        {
+                            method: "GET",
+                            headers: {
+                                "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+                            }
+                        }
+                    ).then((res) => {
+                        res.json().then((resJson) => {
+                            prevDays = resJson;
+                        })
+                    });
+                } catch (err) {
+                    console.error(err);
+                    alert("something went wrong idk 💀");
+                }
             } else {
-                console.log(weekResJson);
+                console.log(resJson);
                 alert("something didn't work idk 💀");
             }
         })
@@ -190,6 +210,19 @@ try {
         }
     }
 })()
+let dayStartBudgets = $derived(
+    prevDays.length >= 1 ?
+        remainingBudgetFromDays(
+            weekData.startFoodBudget,
+            weekData.startKitchenBudget,
+            weekData.startFloorBudget,
+            prevDays
+        ) : {
+            foodBudget: weekData.startFoodBudget,
+            kitchenBudget: weekData.startKitchenBudget,
+            floorBudget: weekData.startFloorBudget
+        }
+);
 </script>
 <style>
 .gridtablelayout {
@@ -432,21 +465,21 @@ try {
                             <tbody>
                                 <tr>
                                     <td>Start</td>
-                                    <td>${weekData.startFloorBudget.toLocaleString(
+                                    <td>${dayStartBudgets.floorBudget.toLocaleString(
                                         'en-US',
                                         {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2
                                         }
                                     )}</td>
-                                    <td>${weekData.startKitchenBudget.toLocaleString(
+                                    <td>${dayStartBudgets.kitchenBudget.toLocaleString(
                                         'en-US',
                                         {
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2
                                         }
                                     )}</td>
-                                    <td>${weekData.startFoodBudget.toLocaleString(
+                                    <td>${dayStartBudgets.foodBudget.toLocaleString(
                                         'en-US',
                                         {
                                             minimumFractionDigits: 2,

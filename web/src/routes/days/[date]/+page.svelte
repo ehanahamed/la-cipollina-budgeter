@@ -5,7 +5,7 @@ import PlusIcon from "$lib/icons/Plus.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
-import { remainingBudgetFromDays } from "$lib/remainingBudgetFromDays.js";
+import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
 import { onMount } from "svelte";
 let { data } = $props();
 let floorHourlyArray = $state([]);
@@ -198,15 +198,15 @@ for (
 }
 
 let {
-    dayStartFoodBudget,
-    dayStartKitchenBudget,
-    dayStartFloorBudget
+    foodBudget: dayStartFoodBudget,
+    kitchenBudget: dayStartKitchenBudget,
+    floorBudget: dayStartFloorBudget
 } = remainingBudgetFromDays(
     data.week.startFoodBudget,
     data.week.startKitchenBudget,
     data.week.startFloorBudget,
     prevDaysArray
-)
+);
 let dayFinalFoodBudget = $derived(
     dayStartFoodBudget +
     (selectedDay.foodBudgetIncrease ?? 0) -
