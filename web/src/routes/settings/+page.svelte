@@ -88,7 +88,6 @@ async function deleteUser() {
             "" : "selected"
     }" onclick={() => {
         localStorage.setItem("budgeter:showWeekNums", "false");
-        window.location.reload();
     }}>
         <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
         Hide
@@ -98,7 +97,6 @@ async function deleteUser() {
             "selected" : ""
     }" onclick={() => {
         localStorage.setItem("budgeter:showWeekNums", "true");
-        window.location.reload();
     }}>
         <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
         Show
