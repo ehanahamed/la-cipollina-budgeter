@@ -142,7 +142,7 @@ let startingNewWeek = $state(false);
 let newWeekFloorBudget = $state("");
 let newWeekKitchenBudget = $state("");
 let newWeekFoodBudget = $state("");
-let prevDays = $state([]);
+let prevDays = [];
 try {
     fetch(
         data.PUBLIC_API_URL + `/weeks/${dateYMD}`,
