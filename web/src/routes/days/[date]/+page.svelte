@@ -5,15 +5,11 @@ import PlusIcon from "$lib/icons/Plus.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
-import { remainingBudgetFromDays } from "$lib/budget.js";
+import { calculateDay, remainingBudgetFromDays } from "$lib/budget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 import { onMount } from "svelte";
 let { data } = $props();
-let floorHourlyArray = $state([]);
-let floorSpecialArray = $state([]);
-let kitchenHourlyArray = $state([]);
-let kitchenSpecialArray = $state([]);
 const date = (() => {
     const [year, month, day] = data.date.split("-");
     const d = new Date(year, month - 1, day);
@@ -38,11 +34,8 @@ const monthName = [
     "October", "November", "December"
 ][date.getMonth()];
 const weekNum = dateGetWeekNum(date);
-let weekData = $state(null);
-let showWeekBudget = $state(false);
-let startingNewWeek = $state(false);
-let prevDaysArray = $state([]);
-let selectedDay = $state(null);
+let prevDaysArray = [];
+let selectedDay;
 const dateAsNum = parseInt(
     data.date.replaceAll("-", "")
 );
@@ -59,141 +52,6 @@ data.days.forEach((day) => {
 if (!selectedDay) {
     window.location = `${base}/days/${data.date}/err/dayNotFound`
 }
-let foodCostsTotal = $state(0);
-selectedDay.foodCosts.forEach((row) => {
-    foodCostsTotal += row.cost;
-})
-selectedDay.hoursWorked.forEach((row) => {
-    if (row.employee.specialPay) {
-        if (row.employee.type == "FLOOR") {
-            floorSpecialArray.push(row);
-        } else if (row.employee.type == "KITCHEN") {
-            kitchenSpecialArray.push(row);
-        }
-    }
-    if (row.employee.type == "FLOOR") {
-        floorHourlyArray.push(row);
-    } else if (row.employee.type == "KITCHEN") {
-        kitchenHourlyArray.push(row);
-    }
-})
-selectedDay.workedToday.forEach((row) => {
-    if (row.employee.type == "FLOOR") {
-        let found = false;
-        for (
-            let index = 0;
-            index < floorSpecialArray.length;
-            index++
-        ) {
-            if (
-                floorSpecialArray[index].employee.id ==
-                row.employee.id
-            ) {
-                found = true;
-                floorSpecialArray[
-                    index
-                ].workedToday = row.workedToday;
-            }
-        }
-        if (!found) {
-            floorSpecialArray.push(row);
-        }
-    } else if (row.employee.type == "KITCHEN") {
-        let found = false;
-        for (
-            let index = 0;
-            index < kitchenSpecialArray.length;
-            index++
-        ) {
-            if (
-                kitchenSpecialArray[index].employee.id ==
-                row.employee.id
-            ) {
-                found = true;
-                kitchenSpecialArray[
-                    index
-                ].workedToday = row.workedToday;
-            }
-        }
-        if (!found) {
-            kitchenSpecialArray.push(row);
-        }
-    }
-})
-let totalKitchenHourlyEarned = $state(0);
-let totalFloorHourlyEarned = $state(0);
-let totalKitchenSpecialEarned = $state(0);
-let totalFloorSpecialEarned = $state(0);
-kitchenHourlyArray.forEach((row) => {
-    totalKitchenHourlyEarned += (
-        row.hours * row.employee.wage
-    );
-})
-floorHourlyArray.forEach((row) => {
-    totalFloorHourlyEarned += (
-        row.hours * row.employee.wage
-    );
-})
-for (
-    let index = 0;
-    index < kitchenSpecialArray.length;
-    index++
-) {
-    const row = kitchenSpecialArray[index];
-    let earned = 0;
-    if (
-        row.workedToday &&
-        row?.employee?.specialPay?.[
-            weekDayKey
-        ]?.perDay != null
-    ) {
-        earned += row.employee.specialPay[
-            weekDayKey
-        ].perDay;
-    }
-    if (
-        row.hours != null &&
-        row?.employee?.specialPay?.[
-            weekDayKey
-        ]?.perHour != null
-    ) {
-        earned += row.hours * row.employee.specialPay[
-            weekDayKey
-        ].perDay;
-    }
-    kitchenSpecialArray[index].earned = earned;
-    totalKitchenSpecialEarned += earned;
-}
-for (
-    let index = 0;
-    index < floorSpecialArray.length;
-    index++
-) {
-    const row = floorSpecialArray[index];
-    let earned = 0;
-    if (
-        row.workedToday &&
-        row?.employee?.specialPay?.[
-            weekDayKey
-        ]?.perDay != null
-    ) {
-        earned += row.employee.specialPay[
-            weekDayKey
-        ].perDay;
-    }
-    if (
-        row.hours != null &&
-        row?.employee?.specialPay?.[
-            weekDayKey
-        ]?.perHour != null
-    ) {
-        earned += row.hours * row.employee.specialPay[
-            weekDayKey
-        ].perDay;
-    }
-    floorSpecialArray[index].earned = earned;
-    totalFloorSpecialEarned += earned;
-}
 
 let {
     foodBudget: dayStartFoodBudget,
@@ -205,25 +63,27 @@ let {
     data.week.startFloorBudget,
     prevDaysArray
 );
-let dayFinalFoodBudget = $derived(
-    dayStartFoodBudget +
-    (selectedDay.foodBudgetIncrease ?? 0) -
-    foodCostsTotal
+
+let dayResults = calculateDay(
+    dayStartFoodBudget,
+    dayStartKitchenBudget,
+    dayStartFloorBudget,
+    selectedDay
 );
-let dayFinalKitchenBudget = $derived(
-    dayStartKitchenBudget +
-    (selectedDay.kitchenBudgetIncrease ?? 0) - (
-        totalKitchenHourlyEarned +
-        totalKitchenSpecialEarned
-    )
-);
-let dayFinalFloorBudget = $derived(
-    dayStartFloorBudget +
-    (selectedDay.floorBudgetIncrease ?? 0) - (
-        totalFloorHourlyEarned +
-        totalFloorSpecialEarned
-    )
-)
+
+const foodCostsTotal = dayResults.foodExpenses;
+const totalKitchenHourlyEarned = dayResults.totalKitchenHourlyEarned;
+const totalFloorHourlyEarned = dayResults.totalFloorHourlyEarned;
+const totalKitchenSpecialEarned = dayResults.totalKitchenSpecialEarned;
+const totalFloorSpecialEarned = dayResults.totalFloorSpecialEarned;
+const floorHourlyArray = dayResults.floorHourly;
+const floorSpecialArray = dayResults.floorSpecialPay;
+const kitchenHourlyArray = dayResults.kitchenHourly;
+const kitchenSpecialArray = dayResults.kitchenSpecialPay;
+
+const dayFinalFoodBudget = dayResults.foodBudgetFinal;
+const dayFinalKitchenBudget = dayResults.kitchenBudgetFinal;
+const dayFinalFloorBudget = dayResults.floorBudgetFinal;
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
