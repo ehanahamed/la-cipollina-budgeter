@@ -7,9 +7,9 @@ export function calculateDay(
     let foodBudget = foodBudgetStart;
     let kitchenBudget = kitchenBudgetStart;
     let floorBudget = floorBudgetStart;
-    foodBudget += day.foodBudgetIncrease;
-    kitchenBudget += day.kitchenBudgetIncrease;
-    floorBudget += day.floorBudgetIncrease;
+    foodBudget += day.foodBudgetIncrease ?? 0;
+    kitchenBudget += day.kitchenBudgetIncrease ?? 0;
+    floorBudget += day.floorBudgetIncrease ?? 0;
 
     const date = (() => {
         const [y, m, d] = day.date.split("-");
@@ -26,11 +26,11 @@ export function calculateDay(
     let floorHourlyArray = [];
     let floorSpecialArray = [];
 
-    day.foodCosts.forEach((row) => {
+    day?.foodCosts?.forEach((row) => {
         foodCostsTotal += row.cost;
     })
 
-    day.hoursWorked.forEach((row) => {
+    day?.hoursWorked?.forEach((row) => {
         if (row.employee.specialPay) {
             if (row.employee.type == "FLOOR") {
                 floorSpecialArray.push(row);
@@ -44,7 +44,7 @@ export function calculateDay(
             kitchenHourlyArray.push(row);
         }
     })
-    day.workedToday.forEach((row) => {
+    day?.workedToday?.forEach((row) => {
         if (row.employee.type == "FLOOR") {
             let found = false;
             for (
@@ -91,12 +91,12 @@ export function calculateDay(
     let totalKitchenSpecialEarned = 0;
     let totalFloorHourlyEarned = 0;
     let totalFloorSpecialEarned = 0;
-    kitchenHourlyArray.forEach((row) => {
+    kitchenHourlyArray?.forEach((row) => {
         totalKitchenHourlyEarned += (
             row.hours * row.employee.wage
         );
     })
-    floorHourlyArray.forEach((row) => {
+    floorHourlyArray?.forEach((row) => {
         totalFloorHourlyEarned += (
             row.hours * row.employee.wage
         );
@@ -171,9 +171,9 @@ export function calculateDay(
         foodBudgetStart,
         kitchenBudgetStart,
         floorBudgetStart,
-        foodBudgetIncrease: day.foodBudgetIncrease,
-        kitchenBudgetIncrease: day.kitchenBudgetIncrease,
-        floorBudgetIncrease: day.floorBudgetIncrease,
+        foodBudgetIncrease: day.foodBudgetIncrease ?? 0,
+        kitchenBudgetIncrease: day.kitchenBudgetIncrease ?? 0,
+        floorBudgetIncrease: day.floorBudgetIncrease ?? 0,
         foodExpenses: foodCostsTotal,
         kitchenExpenses: totalKitchenEarned,
         floorExpenses: totalFloorEarned,
