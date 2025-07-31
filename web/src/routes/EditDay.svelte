@@ -7,7 +7,7 @@ import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import AutoResizeTextarea from "$lib/components/AutoResizeTextarea.svelte";
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
-import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
+import { remainingBudgetFromDays } from "$lib/budget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 let { data } = $props();
