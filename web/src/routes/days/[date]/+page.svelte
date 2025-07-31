@@ -5,6 +5,7 @@ import PlusIcon from "$lib/icons/Plus.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
+import DocIcon from "$lib/icons/DocFilePage.svelte";
 import { calculateDay, remainingBudgetFromDays } from "$lib/budget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
@@ -102,6 +103,10 @@ const dayFinalFloorBudget = dayResults.floorBudgetFinal;
             <a class="button alt" href="{base}/edit-day/{dateYMD}" style="margin-bottom: 2rem;">
                 <PencilIcon></PencilIcon>
                 Edit Day
+            </a>
+            <a class="button alt" href="{base}/reports/{dateYMD}" style="margin-bottom: 2rem;">
+                <DocIcon></DocIcon>
+                View Week Report
             </a>
         </div>
         <div>
