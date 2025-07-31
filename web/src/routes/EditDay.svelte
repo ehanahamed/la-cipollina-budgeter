@@ -4,6 +4,7 @@ import BackArrowIcon from "$lib/icons/BackArrow.svelte";
 import PlusIcon from "$lib/icons/Plus.svelte";
 import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
+import AutoResizeTextarea from "$lib/components/AutoResizeTextarea.svelte";
 import { onMount } from "svelte";
 import { goto } from "$app/navigation";
 import { remainingBudgetFromDays } from "$lib/remainingBudget.js";
@@ -649,8 +650,15 @@ if (!data.new) {
                                         <input type="text" placeholder="0.00" bind:value={row.cost} style="min-width: 5rem; field-sizing: content;">
                                     </div>
                                 </td>
-                                <td><textarea style="width: 10rem;" placeholder="Optional note for each expense" bind:value={row.notes}></textarea></td>
-                                    <td style="align-content: start; padding-left: 0px;">
+                                <td>
+                                    <AutoResizeTextarea bind:value={row.notes} textarea={{
+                                        placeholder: "Optional note for each expense",
+                                        style: "width: 12rem;"
+                                    }} div={{
+                                        style: "width: 12rem;"
+                                    }}></AutoResizeTextarea>
+                                </td>
+                                <td style="align-content: start; padding-left: 0px;">
                                     <button class="icon-only-button" onclick={() => {
                                         foodCostsArray.splice(rowIndex, 1)
                                     }}>
