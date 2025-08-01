@@ -21,8 +21,8 @@ grant update on auth.users to budgeter_api;
 grant delete on auth.users to budgeter_api;
 grant usage, select on auth.users_id_seq to budgeter_api;
 
-insert into auth.users (username, encrypted_password)
-values ('admin', crypt('admin', gen_salt('bf')));
+insert into auth.users (username, encrypted_password, admin)
+values ('admin', crypt('admin', gen_salt('bf')), true);
 
 create table auth.sessions (
     token text primary key default encode(gen_random_bytes(32), 'base64'),
