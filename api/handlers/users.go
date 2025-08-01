@@ -67,7 +67,7 @@ func AddUser(c *fiber.Ctx) error {
 	and non-admin users can NOT update the `admin` field
 */
 func UpdateUser(c *fiber.Ctx) error {
-	authedUser := c.Locals("User").(models.User)
+	authedUser := c.Locals("user").(models.User)
 
 	/* only allow admins or users updating themselves */
 	if *authedUser.Admin || strconv.Itoa(authedUser.ID) == c.Params("id") {
