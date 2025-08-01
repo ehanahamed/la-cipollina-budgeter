@@ -185,16 +185,70 @@ async function deleteUser() {
                                     <LockIcon></LockIcon>
                                     Edit Password
                                 </button>
-                                {#if data.authedUser.admin && user.admin}
-                                <button class="ohno" onclick={() => {
-
+                                {#if data.authedUser.admin && user.admin &&
+                                user.id != data.authedUser.id}
+                                <button class="ohno" onclick={async () => {
+                                    try {
+                                        const res = await fetch(
+                                            `${data.PUBLIC_API_URL}/users/${user.id}`,
+                                            {
+                                                method: "PATCH",
+                                                headers: {
+                                                    "Authorization": `Bearer ${
+                                                        localStorage.getItem("budgeter:auth")
+                                                    }`,
+                                                    "Content-Type": "application/json"
+                                                },
+                                                body: JSON.stringify({
+                                                    admin: false
+                                                })
+                                            }
+                                        );
+                                        const resJson = await res.json();
+                                        if (resJson.id) {
+                                            window.location.reload();
+                                        } else {
+                                            console.log(resJson);
+                                            alert("it seems to have not worked")
+                                        }
+                                    } catch (err) {
+                                        console.error(err);
+                                        alert("something didn't work")
+                                    }
                                 }}>
                                     <XMarkIcon></XMarkIcon>
                                     Remove Admin
                                 </button>
-                                {:else if data.authedUser.admin}
-                                <button onclick={() => {
-
+                                {:else if data.authedUser.admin &&
+                                user.id != data.authedUser.id}
+                                <button onclick={async () => {
+                                    try {
+                                        const res = await fetch(
+                                            `${data.PUBLIC_API_URL}/users/${user.id}`,
+                                            {
+                                                method: "PATCH",
+                                                headers: {
+                                                    "Authorization": `Bearer ${
+                                                        localStorage.getItem("budgeter:auth")
+                                                    }`,
+                                                    "Content-Type": "application/json"
+                                                },
+                                                body: JSON.stringify({
+                                                    admin: true
+                                                })
+                                            }
+                                        );
+                                        const resJson = await res.json();
+                                        if (resJson.id) {
+                                            window.location.reload();
+                                        } else {
+                                            console.log(resJson);
+                                            alert("it seems to have not worked")
+                                        }
+                                    } catch (err) {
+                                        console.error(err);
+                                        alert("something didn't work")
+                                    }
                                 }}>
                                     <CheckmarkIcon></CheckmarkIcon>
                                     Give Admin
