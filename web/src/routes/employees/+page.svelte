@@ -16,7 +16,7 @@ let specialPayEditingEmployeeIndex = $state(-1);
 let floorEmployeesCount = $derived.by(() => {
     let count = 0;
     employees.forEach((employee) => {
-        if (employee.type == "FLOOR") {
+        if (employee.type.toUpperCase() == "FLOOR") {
             count++;
         }
     });
@@ -25,7 +25,7 @@ let floorEmployeesCount = $derived.by(() => {
 let kitchenEmployeesCount = $derived.by(() => {
     let count = 0;
     employees.forEach((employee) => {
-        if (employee.type == "KITCHEN") {
+        if (employee.type.toUpperCase() == "KITCHEN") {
             count++;
         }
     });
@@ -350,7 +350,7 @@ async function removeEmployee() {
                 <button onclick={function () {
                     employees.push({
                         name: "",
-                        type: "floor",
+                        type: "FLOOR",
                         wage: "",
                         edit: true
                     })
