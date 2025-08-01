@@ -37,6 +37,7 @@ const weekDayKey = [
     "thu", "fri", "sat"
 ][date.getDay()]
 const weekNum = dateGetWeekNum(date);
+let weeklyPayEmployees = [];
 if (data.new) {
     data?.employees?.forEach(function (employee) {
         if (employee?.type == "FLOOR") {
@@ -54,6 +55,8 @@ if (data.new) {
                         hours: ""
                     });
                 }
+            } else if (employee?.weeklyPay) {
+                weeklyPayEmployees.push(employee);
             } else {
                 floorHoursArray.push({
                     employee: employee,
@@ -75,6 +78,8 @@ if (data.new) {
                         hours: ""
                     });
                 }
+            } else if (employee?.weeklyPay) {
+                weeklyPayEmployees.push(employee);
             } else {
                 kitchenHoursArray.push({
                     employee: employee,
@@ -447,7 +452,8 @@ if (!data.new) {
                                                 endDate: dateToYMDString(endDate),
                                                 startFloorBudget: newWeekFloorBudget,
                                                 startKitchenBudget: newWeekKitchenBudget,
-                                                startFoodBudget: newWeekFoodBudget
+                                                startFoodBudget: newWeekFoodBudget,
+                                                weeklyPay: weeklyPayEmployees
                                             })
                                         }
                                     );
