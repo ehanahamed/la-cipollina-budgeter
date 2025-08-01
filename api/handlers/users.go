@@ -70,7 +70,8 @@ func UpdateUser(c *fiber.Ctx) error {
 	authedUser := c.Locals("user").(models.User)
 
 	/* only allow admins or users updating themselves */
-	if *authedUser.Admin || strconv.Itoa(authedUser.ID) == c.Params("id") {
+	if (authedUser.Admin != nil && *authedUser.Admin) ||
+	strconv.Itoa(authedUser.ID) == c.Params("id") {
 		var input models.UserInput
 		if err := c.BodyParser(&input); err != nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
@@ -103,7 +104,7 @@ func UpdateUser(c *fiber.Ctx) error {
 			_, err := db.Pool.Exec(
 				context.Background(),
 				`DELETE FROM auth.sessions
-WHER	E user_id = $1`,
+WHERE user_id = $1`,
 				c.Params("id"),
 			)
 			if err != nil {
@@ -126,8 +127,8 @@ WHER	E user_id = $1`,
 		query := fmt.Sprintf(
 			`UPDATE auth.users
 SET 	%s
-WHER	E id = $%d
-RETU	RNING id, username, admin, created_at, updated_at`,
+WHERE id = $%d
+RETURNING id, username, admin, created_at, updated_at`,
 			strings.Join(setParts, ", "),
 			argNum,
 		)

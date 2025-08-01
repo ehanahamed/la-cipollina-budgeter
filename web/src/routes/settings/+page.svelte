@@ -118,6 +118,9 @@ async function deleteUser() {
 </div>
 {#if data.authedUser.admin}
 <p>Add/Edit Users</p>
+{:else}
+<p>Users:</p>
+{/if}
 <table style="min-width: 17rem;">
     <tbody>
         {#each users as user, userIndex}
@@ -157,6 +160,7 @@ async function deleteUser() {
                 {:else}
                     <td><div class="flex" style="justify-content: space-between; align-items: center; align-content: center;">
                         <span>{user.username}</span>
+                        {#if data.authedUser.admin || user.id == data.authedUser.id}
                         <div class="dropdown">
                             <button class="icon-only-button">
                                 <MoreDotsIcon></MoreDotsIcon>
@@ -175,6 +179,7 @@ async function deleteUser() {
                                     <LockIcon></LockIcon>
                                     Edit Password
                                 </button>
+                                {#if data.authedUser.admin}
                                 <button class="ohno" onclick={() => {
                                     userToDeleteIndex = userIndex;
                                     showDeleteUserConfirmation = true;
@@ -182,8 +187,10 @@ async function deleteUser() {
                                     <TrashIcon></TrashIcon>
                                     Delete
                                 </button>
+                                {/if}
                             </div>
                         </div>
+                        {/if}
                     </div></td>
                 {/if}
             </tr>
@@ -218,7 +225,7 @@ async function deleteUser() {
                     </button>
                 </div></td>
             </tr>
-        {:else}
+        {:else if data.authedUser.admin}
         <tr>
             <td>
                 <button onclick={function () {
@@ -234,10 +241,6 @@ async function deleteUser() {
         {/if}
     </tbody>
 </table>
-{:else}
-<table>
-</table>
-{/if}
 </div>
 </div>
 {#if showDeleteUserConfirmation}
