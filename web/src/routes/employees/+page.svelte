@@ -32,8 +32,24 @@ let kitchenEmployeesCount = $derived.by(() => {
     return count;
 });
 async function saveEmployee(employee) {
+    if (
+        employee.weeklyPay === "" &&
+        employee.specialPay == null &&
+        employee.wage == null
+    ) {
+        employee.weeklyPay = 0;
+    }
     if (employee.specialPay) {
         employee.wage = null;
+        employee.weeklyPay = null;
+    } else if (!isNaN(parseFloat(employee.weeklyPay))) {
+        employee.wage = null;
+        employee.specialPay = null;
+        if (typeof employee.weeklyPay === "string") {
+            /* remove any user-inputted commas for thousands */
+            employee.weeklyPay = employee.weeklyPay.replaceAll(",", "");
+        }
+        employee.weeklyPay = parseFloat(employee.weeklyPay);
     } else if (isNaN(parseFloat(employee.wage))) {
         /* isNaN(null) returns false
         isNaN(parseFloat(null)) returns true */
@@ -58,7 +74,8 @@ async function saveEmployee(employee) {
                         name: employee.name,
                         type: employee.type.toUpperCase(),
                         wage: employee.wage,
-                        specialPay: employee.specialPay
+                        specialPay: employee.specialPay,
+                        weeklyPay: employee.weeklyPay
                     })
                 })
             ).json();
@@ -85,7 +102,8 @@ async function saveEmployee(employee) {
                         name: employee.name,
                         type: employee.type.toUpperCase(),
                         wage: employee.wage,
-                        specialPay: employee.specialPay
+                        specialPay: employee.specialPay,
+                        weeklyPay: employee.weeklyPay
                     })
                 })
             ).json();
@@ -135,14 +153,115 @@ async function removeEmployee() {
 </div>
 <table>
     <thead>
-        <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Wage</th>
-        </tr>
+        {#if employees.some((employee) => employee.weeklyPay != null)}
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Weekly Pay</th>
+            </tr>
+        {:else}
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Wage</th>
+            </tr>
+        {/if}
     </thead>
     <tbody>
         {#each employees as employee, employeeIndex}
+            {#if employee.weeklyPay != null}
+            <tr>
+                {#if employee.edit}
+                    <td style="vertical-align: top;"><input type="text" placeholder="Name" bind:value={employee.name} style="min-width: 6rem; field-sizing: content;"></td>
+                    <td style="vertical-align: top;">
+                        <div class="select-wrapper" style="width: 7rem;">
+                            <select bind:value={
+                                () => employee.type.toLowerCase(), /* get */
+                                (newType) => employee.type = newType.toUpperCase() /* set */
+                            }>
+                                <option value="floor">floor</option>
+                                <option value="kitchen">kitchen</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex col">
+                            {#if employee.specialPay}
+                                <button class="alt" style="min-width: 9rem;" onclick={() => {
+                                    showSpecialPayEditing = true;
+                                    specialPayEditingEmployeeIndex = employeeIndex;
+                                }}>
+                                    <IconSettings></IconSettings>
+                                    Special pay
+                                </button>
+                            {:else}
+                            <div class="flex compact-gap nowrap" style="align-items: center; align-content: center;"><span>$</span><input type="text" placeholder="12.34" bind:value={employee.weeklyPay} style="min-width: 6rem; field-sizing: content;"></div>
+                            <button class="alt" onclick={() => {
+                                showSpecialPayEditing = true;
+                                specialPayEditingEmployeeIndex = employeeIndex;
+                            }}>
+                                <IconSettings></IconSettings>
+                                Settings
+                            </button>
+                            {/if}
+                        </div>
+                    </td>
+                    <td style="vertical-align: top;"><button onclick={() => {
+                        employee.edit = false;
+                        saveEmployee(employee);
+                    }}><CheckmarkIcon></CheckmarkIcon> Save</button></td>
+                {:else}
+                    <td>{employee.name}</td>
+                    <td>{employee.type.toLowerCase()}</td>
+                    <td>
+                    {#if employee.specialPay}
+                        <span class="fg0">special pay</span>
+                    {:else}
+                        ${parseFloat(employee.weeklyPay).toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}
+                    {/if}
+                    </td>
+                    <td>
+                        <div class="flex" style="flex-wrap: nowrap;">
+                            <button class="alt" onclick={function () {
+                                employee.edit = true
+                            }}><PencilIcon></PencilIcon> Edit</button>
+                            <div class="dropdown">
+                                <button class="icon-only-button" aria-label="dropdown">
+                                    <MoreDotsIcon></MoreDotsIcon>
+                                </button>
+                                <div class="content">
+                                    <button class="ohno" onclick={() => {
+                                        employeeToDeleteIndex = employeeIndex;
+                                        if (employee.name) {
+                                            showDeleteEmployeeConfirmation = true;
+                                        } else {
+                                            /* don't show confirmation modal/alert
+                                            if name is blank, just directly delete it */
+                                            removeEmployee();
+                                        }
+                                    }}>
+                                        <TrashIcon></TrashIcon> Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                {/if}
+            </tr>
+            {/if}
+        {/each}
+        {#if employees.some((employee) => employee.weeklyPay != null)}
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Wage</th>
+            </tr>
+        {/if}
+        {#each employees as employee, employeeIndex}
+            {#if employee.weeklyPay == null}
             <tr>
                 {#if employee.edit}
                     <td style="vertical-align: top;"><input type="text" placeholder="Name" bind:value={employee.name} style="min-width: 6rem; field-sizing: content;"></td>
@@ -224,6 +343,7 @@ async function removeEmployee() {
                     </td>
                 {/if}
             </tr>
+            {/if}
         {/each}
         <tr>
             <td>
@@ -273,16 +393,20 @@ async function removeEmployee() {
             {/if}
             <div class="combo-select">
                 <button class="left {
-                    employees[specialPayEditingEmployeeIndex].specialPay ? "" : "selected"
+                    employees[specialPayEditingEmployeeIndex].specialPay ||
+                    employees[specialPayEditingEmployeeIndex].weeklyPay != null ?
+                        "" : "selected"
                 }" onclick={() => {
                     employees[specialPayEditingEmployeeIndex].specialPay = undefined;
+                    employees[specialPayEditingEmployeeIndex].weeklyPay = undefined;
                 }}>
                     <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
                     Hourly wage
                 </button>
-                <button class="right {
+                <button class="mid {
                     employees[specialPayEditingEmployeeIndex].specialPay ? "selected" : ""
                 }" onclick={() => {
+                    employees[specialPayEditingEmployeeIndex].weeklyPay = undefined;
                     employees[specialPayEditingEmployeeIndex].specialPay = {
                         mon: {
                             perDay: null,
@@ -316,6 +440,16 @@ async function removeEmployee() {
                 }}>
                     <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
                     Special pay
+                </button>
+                <button class="right {
+                    employees[specialPayEditingEmployeeIndex].weeklyPay != null ? "selected" : ""
+                }" onclick={() => {
+                    employees[specialPayEditingEmployeeIndex].specialPay = undefined;
+                    employees[specialPayEditingEmployeeIndex].wage = null;
+                    employees[specialPayEditingEmployeeIndex].weeklyPay = 0;
+                }}>
+                    <CheckmarkIcon class="combo-selected-icon"></CheckmarkIcon>
+                    Weekly Pay
                 </button>
             </div>
             {#if employees[specialPayEditingEmployeeIndex].specialPay}

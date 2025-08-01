@@ -17,7 +17,7 @@ func GetEmployees(c *fiber.Ctx) error {
 		context.Background(),
 		db.Pool,
 		&employees,
-		`SELECT id, name, type, wage, special_pay, created_at, updated_at
+		`SELECT id, name, type, wage, special_pay, weekly_pay, created_at, updated_at
 FROM employees ORDER BY created_at`,
 	)
 	if err != nil {
@@ -34,13 +34,14 @@ func AddEmployee(c *fiber.Ctx) error {
 	}
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`INSERT INTO employees (name, wage, type, special_pay) VALUES (
-	$1, $2, $3, $4
+		`INSERT INTO employees (name, wage, type, special_pay, weekly_pay) VALUES (
+	$1, $2, $3, $4, $5
 ) RETURNING id, created_at, updated_at`,
 		employee.Name,
 		employee.Wage,
 		employee.Type,
 		employee.SpecialPay,
+		employee.WeeklyPay,
 	).Scan(
 		&employee.ID,
 		&employee.CreatedAt,
@@ -61,7 +62,8 @@ func UpdateEmployee(c *fiber.Ctx) error {
 	err := db.Pool.QueryRow(
 		context.Background(),
 		`UPDATE employees SET name = $2,
-wage = $3, type = $4, special_pay = $5, updated_at = now()
+wage = $3, type = $4, special_pay = $5,
+weekly_pay = $6, updated_at = now()
 WHERE id = $1
 RETURNING id, created_at, updated_at`,
 		c.Params("id"),
@@ -69,6 +71,7 @@ RETURNING id, created_at, updated_at`,
 		employee.Wage,
 		employee.Type,
 		employee.SpecialPay,
+		employee.WeeklyPay,
 	).Scan(&employee.ID, &employee.CreatedAt, &employee.UpdatedAt)
 	if err != nil {
 		log.Print("Error in UpdateEmployee: ", err)
