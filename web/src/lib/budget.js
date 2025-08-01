@@ -167,9 +167,9 @@ export function calculateDay(
     let totalFloorWeeklyEarned = 0;
     weeklyPay?.forEach((employee) => {
         if (employee.type == "KITCHEN") {
-            kitchenWeeklyEarned += employee.weeklyPay
+            totalKitchenWeeklyEarned += employee.weeklyPay
         } else if (employee.type == "FLOOR") {
-            floorWeeklyEarned += employee.weeklyPay
+            totalFloorWeeklyEarned += employee.weeklyPay
         }
     })
 
