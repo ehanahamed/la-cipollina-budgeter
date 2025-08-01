@@ -8,6 +8,7 @@ import IconPlus from "$lib/icons/Plus.svelte";
 import IconSettings from "$lib/icons/SettingsCogGear.svelte";
 import LockIcon from "$lib/icons/Lock.svelte";
 import ExitIcon from "$lib/icons/Exit.svelte";
+import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import { base } from "$app/paths";
 import { goto } from "$app/navigation";
 let { data } = $props();
@@ -77,12 +78,13 @@ async function deleteUser() {
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
-                <div style="margin-bottom: 1rem;"><a href={base} class="button faint">
+<h4 style="margin-bottom: 0px; text-align: center;">Settings</h4>
+                <div style="margin-bottom: 2rem;"><a href={base} class="button faint">
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a></div>
 <p>Show week numbers?</p>
-<div class="combo-select" style="margin-bottom: 2rem">
+<div class="combo-select" style="margin-bottom: 4rem">
     <button class="left {
         localStorage.getItem("budgeter:showWeekNums") == "true" ?
             "" : "selected"
@@ -104,8 +106,12 @@ async function deleteUser() {
         Show
     </button>
 </div>
-<div class="box" style="margin-bottom: 2rem;">
+<div style="margin-bottom: 2rem;">
     <p>Currently logged in as "{data?.authedUser?.username}"</p>
+    <p class="fg0" style="margin-top: 0.4rem;">Role: {
+        data?.authedUser?.admin ?
+            "admin user" : "normal user"
+    }</p>
     <div class="flex">
         <button class="ohno alt" onclick={() => {
             localStorage.removeItem("budgeter:auth");
@@ -179,6 +185,21 @@ async function deleteUser() {
                                     <LockIcon></LockIcon>
                                     Edit Password
                                 </button>
+                                {#if data.authedUser.admin && user.admin}
+                                <button class="ohno" onclick={() => {
+
+                                }}>
+                                    <XMarkIcon></XMarkIcon>
+                                    Remove Admin
+                                </button>
+                                {:else if data.authedUser.admin}
+                                <button onclick={() => {
+
+                                }}>
+                                    <CheckmarkIcon></CheckmarkIcon>
+                                    Give Admin
+                                </button>
+                                {/if}
                                 {#if data.authedUser.admin}
                                 <button class="ohno" onclick={() => {
                                     userToDeleteIndex = userIndex;
@@ -241,6 +262,17 @@ async function deleteUser() {
         {/if}
     </tbody>
 </table>
+{#if data.authedUser.admin}
+<p class="fg0">
+    Admin users can add/edit other users.<br>
+    Normal users can only change their own username and password.
+</p>
+{:else}
+<p class="fg0">
+    Only admin users can add/edit other users.<br>
+    Normal users can only change their own username and password.
+</p>
+{/if}
 </div>
 </div>
 {#if showDeleteUserConfirmation}
