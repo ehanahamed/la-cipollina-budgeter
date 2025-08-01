@@ -45,7 +45,7 @@ func AddUser(c *fiber.Ctx) error {
 ) RETURNING id, username, created_at, updated_at`,
 		*newUser.Username,
 		*newUser.NewPassword,
-		*newUser.Admin,
+		newUser.Admin,
 	).Scan(
 		&user.ID,
 		&user.Username,
