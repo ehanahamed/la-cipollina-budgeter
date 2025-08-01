@@ -307,7 +307,11 @@ async function deleteUser() {
                     setNewPasswordPassword = "";
                 }}>Cancel</button>
             </div>
+            {#if users[setNewPasswordUserIndex].id == data.authedUser.id}
+            <p class="fg0"><LockIcon></LockIcon> Changing your password will also sign you out (on all devices)</p>
+            {:else}
             <p class="fg0"><LockIcon></LockIcon> Changing this user's password will also sign them out (on all devices)</p>
+            {/if}
         </div>
     </div>
 {/if}
