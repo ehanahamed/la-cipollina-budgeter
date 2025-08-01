@@ -7,8 +7,7 @@
     import { goto } from "$app/navigation";
     let { data } = $props();
     let events = [];
-    console.log(data)
-    data.weeks.forEach((week) => {
+    data?.weeks?.forEach((week) => {
         if (week.firstDate && week.lastDate) {
             const [startY, startM, startD] = week.startDate.split("-");
             const startDate = new Date(startY, startM - 1, startD);
