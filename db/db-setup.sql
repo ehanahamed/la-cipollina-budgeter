@@ -102,6 +102,7 @@ create table days (
     food_budget_increase numeric(10, 2),
     kitchen_budget_increase numeric(10, 2),
     floor_budget_increase numeric(10, 2),
+    weekly_pay jsonb,
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );

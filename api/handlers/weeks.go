@@ -19,7 +19,8 @@ func GetWeekByDate(c *fiber.Ctx) error {
 		`SELECT id, start_date::text, end_date::text,
 	first_date::text, last_date::text,
 	start_floor_budget, start_kitchen_budget,
-	start_food_budget, created_at, updated_at
+	start_food_budget, weekly_pay,
+	created_at, updated_at
 FROM weeks
 WHERE $1::date BETWEEN start_date AND end_date
 LIMIT 1`,
@@ -33,6 +34,7 @@ LIMIT 1`,
 		&week.StartFloorBudget,
 		&week.StartKitchenBudget,
 		&week.StartFoodBudget,
+		&week.WeeklyPay,
 		&week.CreatedAt,
 		&week.UpdatedAt,
 	)
@@ -60,7 +62,8 @@ func GetAllWeeks(c *fiber.Ctx) error {
 		`SELECT id, start_date::text, end_date::text,
 first_date::text, last_date::text,
 start_floor_budget, start_kitchen_budget,
-start_food_budget, created_at, updated_at
+start_food_budget, weekly_pay,
+created_at, updated_at
 FROM weeks`,
 	)
 	if err != nil {
@@ -79,14 +82,16 @@ func AddWeek(c *fiber.Ctx) error {
 		context.Background(),
 `INSERT INTO weeks (
 	start_date, end_date, start_floor_budget,
-	start_kitchen_budget, start_food_budget
-) VALUES ($1, $2, $3, $4, $5)
+	start_kitchen_budget, start_food_budget,
+	weekly_pay
+) VALUES ($1, $2, $3, $4, $5, $6)
 RETURNING id, created_at, updated_at`,
 		week.StartDate,
 		week.EndDate,
 		week.StartFloorBudget,
 		week.StartKitchenBudget,
 		week.StartFoodBudget,
+		week.WeeklyPay,
 	).Scan(
 		&week.ID,
 		&week.CreatedAt,
