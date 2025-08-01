@@ -18,18 +18,9 @@ export async function load({ fetch }) {
                     }
                 })
             ).json();
-            const valentinosRes = await (
-                await fetch(PUBLIC_API_URL + "/valentinos", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + authToken
-                    }
-                })
-            ).json();
             return {
                 authed: true,
                 employees: res,
-                valentinos: valentinosRes,
                 PUBLIC_API_URL: PUBLIC_API_URL
             };
         } catch (err) {

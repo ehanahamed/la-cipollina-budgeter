@@ -60,6 +60,7 @@ create table employees (
     name text not null,
     type text, /* 'FLOOR' or 'KITCHEN' */
     wage numeric(10, 2), /* 2 decimal places */
+    weekly_pay numeric(10, 2), /* 2 decimal places */
     special_pay jsonb, /* null for default, not special pay using wage column, jsonb for special per-hour or per-day pay
         special pay json example:
         {
@@ -91,20 +92,6 @@ grant insert on public.employees to budgeter_api;
 grant update on public.employees to budgeter_api;
 grant delete on public.employees to budgeter_api;
 grant usage, select on employees_id_seq to budgeter_api;
-
-create table valentinos (
-    id serial primary key,
-    name text not null,
-    weekly_pay numeric(10, 2),
-    created_at timestamptz default now(),
-    updated_at timestamptz default now()
-);
-
-grant select on public.valentinos to budgeter_api;
-grant insert on public.valentinos to budgeter_api;
-grant update on public.valentinos to budgeter_api;
-grant delete on public.valentinos to budgeter_api;
-grant usage, select on valentinos_id_seq to budgeter_api;
 
 create table days (
     id serial primary key,
