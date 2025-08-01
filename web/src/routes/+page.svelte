@@ -1,6 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { base } from "$app/paths";
+    import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
     let { data } = $props();
     let authed = $state(data.authed);
     let enteredUsername = $state("");
@@ -32,11 +33,15 @@
         }
     }
     let passwordTextbox;
+    let today = new Date();
+    let todayWeekNum = dateGetWeekNum(today);
 </script>
 <style>
     .header-text {
         text-align: center;
-        margin-top: 1rem;
+        margin-top: 0.2rem;
+        font-weight: normal;
+        font-size: 1.4rem;
     }
     .img-container {
         display: flex;
@@ -45,12 +50,25 @@
         justify-items: center;
         justify-content: center;
     }
+    .img-container img {
+        height: 4rem;
+    }
 </style>
 <div class="img-container">
     <img src="{base}/logo.png" alt="La Cipollina">
 </div>
-<p class="h4 header-text">Budgeter</p>
+<p class="header-text">Budgeter</p>
 {#if authed}
+<div class="flex center underheadertext" style="flex-direction: column; margin-top: 4rem; gap: 0px;">
+    <span style="margin-bottom: 0px;">Today is</span>
+    <span class="h3" style="margin-top: 0px; margin-bottom: 0px;">{["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][today.getDay()]}</span>
+    <span>{["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][today.getMonth()]} {
+        today.getDate()
+    }, {today.getFullYear()}{
+        localStorage.getItem("budgeter:showWeekNums") == "true" ?
+            `, W${todayWeekNum}` : ""
+    }</span>
+</div>
 <div class="flex center">
     <div class="flex center no-child-clickable-effect" style="flex-direction: column;">
         <div class="combo-buttons">
