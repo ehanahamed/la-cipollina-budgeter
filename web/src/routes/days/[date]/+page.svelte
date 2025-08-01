@@ -99,12 +99,12 @@ const dayFinalFloorBudget = dayResults.floorBudgetFinal;
             localStorage.getItem("budgeter:showWeekNums") == "true" ?
                 `, W${weekNum}` : ""
         }</p>
-        <div class="flex">
-            <a class="button alt" href="{base}/edit-day/{dateYMD}" style="margin-bottom: 2rem;">
+        <div class="flex" style="margin-bottom: 2rem;">
+            <a class="button alt" href="{base}/edit-day/{dateYMD}">
                 <PencilIcon></PencilIcon>
                 Edit Day
             </a>
-            <a class="button alt" href="{base}/reports/{dateYMD}" style="margin-bottom: 2rem;">
+            <a class="button alt" href="{base}/reports/{dateYMD}">
                 <DocIcon></DocIcon>
                 View Week Report
             </a>
