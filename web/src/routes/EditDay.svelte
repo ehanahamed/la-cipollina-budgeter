@@ -38,7 +38,7 @@ const weekDayKey = [
 ][date.getDay()]
 const weekNum = dateGetWeekNum(date);
 if (data.new) {
-    data.employees.forEach(function (employee) {
+    data?.employees?.forEach(function (employee) {
         if (employee?.type == "FLOOR") {
             floorEmployeesCount++;
             if (employee?.specialPay) {
