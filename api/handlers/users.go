@@ -78,7 +78,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		}
 
 		/* Send an error if they're not updating anything */
-		if input.Username == nil && input.NewPassword == nil {
+		if input.Username == nil && input.NewPassword == nil && input.Admin == nil {
 			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No fields to update"})
 		}
 

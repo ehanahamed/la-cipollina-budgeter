@@ -41,22 +41,26 @@
     const todayYMD = dateToYMDString(today);
     const todayWeekNum = dateGetWeekNum(today);
     let newDay = $state(true);
-    (async () => {
-        try {
-            const res = await fetch(`${data.PUBLIC_API_URL}/days/${todayYMD}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+    $effect(() => {
+        if (authed) {
+            (async () => {
+            try {
+                const res = await fetch(`${data.PUBLIC_API_URL}/days/${todayYMD}`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+                    }
+                })
+                const resJson = await res.json();
+                if (resJson?.id != null) {
+                    newDay = false;
                 }
-            })
-            const resJson = await res.json();
-            if (resJson?.id != null) {
-                newDay = false;
+            } catch (err) {
+                console.error(err);
             }
-        } catch (err) {
-            console.error(err);
+            })();
         }
-    })();
+    });
 </script>
 <style>
     .header-text {
