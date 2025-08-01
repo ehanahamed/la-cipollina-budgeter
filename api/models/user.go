@@ -7,6 +7,7 @@ import (
 type User struct {
 	ID        int       `db:"id" json:"id"`
 	Username  string    `db:"username" json:"username"`
+	Admin  *bool    `db:"admin" json:"admin"`
 	CreatedAt time.Time `db:"created_at" json:"createdAt"`
 	UpdatedAt time.Time `db:"updated_at" json:"updatedAt"`
 }

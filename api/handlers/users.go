@@ -19,7 +19,7 @@ func GetUsers(c *fiber.Ctx) error {
 		context.Background(),
 		db.Pool,
 		&users,
-		`SELECT id, username, created_at, updated_at
+		`SELECT id, username, admin, created_at, updated_at
 FROM auth.users ORDER BY created_at`,
 	)
 	if err != nil {

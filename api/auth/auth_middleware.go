@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"la-cipollina-budgeter-api/db"
+	"la-cipollina-budgeter-api/models"
 )
 
 func AuthMiddleware(c *fiber.Ctx) error {
@@ -17,25 +18,29 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	}
 	token := authHeader[7:] /* `Bearer ` is 7 characters */
 
-	var isTokenValid bool
-	err := db.Pool.QueryRow(
-		context.Background(),
-		`SELECT EXISTS(
-	SELECT 1 FROM auth.sessions
-	WHERE token = $1 AND
-	expire_at > (SELECT now())
-)`,
-		token,
-	).Scan(&isTokenValid)
+	var user models.User
+    err := db.Pool.QueryRow(
+        context.Background(),
+        `SELECT u.id, u.username, u.admin,
+u.created_at, u.updated_at
+FROM auth.sessions s
+JOIN auth.users u ON s.user_id = u.id
+WHERE s.token = $1
+AND s.expire_at > now()`,
+        token,
+    ).Scan(
+		&user.ID,
+		&user.Username,
+		&user.Admin,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
 	if err != nil {
 		log.Print("Error in AuthMiddleware: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error in auth middleware"})
-	}
-	if isTokenValid {
-		/* if token is valid, allow user to use the route/endpoint's handler */
-		return c.Next()
-	} else {
-		/* if token isn't valid, return this error, which stops this route's handler from running */
 		return c.Status(401).JSON(fiber.Map{"error": "Invalid or expired token"})
 	}
+
+	c.Locals("user", user)
+
+	return c.Next()
 }

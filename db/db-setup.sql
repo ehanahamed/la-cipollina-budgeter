@@ -10,6 +10,7 @@ create table auth.users (
     id serial primary key,
     username text not null unique,
     encrypted_password text,
+    admin boolean,
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );

@@ -50,9 +50,11 @@ just check your environment variables`,
 	app.Put("/valentinos/:id", handlers.UpdateValentino)
 	app.Delete("/valentinos/:id", handlers.RemoveValentino)
 	app.Get("/users", handlers.GetUsers)
-	app.Post("/users", handlers.AddUser)
-	app.Patch("/users/:id", handlers.UpdateUser)
-	app.Delete("/users/:id", handlers.DeleteUser)
+
+	app.Post("/users", auth.AdminMiddleware, handlers.AddUser)
+	app.Patch("/users/:id", auth.AdminMiddleware, handlers.UpdateUser)
+	app.Delete("/users/:id", auth.AdminMiddleware, handlers.DeleteUser)
+
 	app.Get("/authed-user/", auth.GetAuthedUser)
 	app.Get("/days/:date", handlers.GetDayByDate)
 	app.Post("/days", handlers.RecordDay)
