@@ -102,7 +102,9 @@
                 View/Edit Day
             </a>
         {/if}
-        <a class="button alt">View/Edit Another Day</a>
+        <a class="button alt" href="{base}/select-day">
+            View/Edit Another Day
+        </a>
         <div class="separator">or</div>
         <!-- <div class="combo-buttons"> -->
         <!--     <a class="button left" href="{base}/edit-budget">Edit Budget</a> -->
