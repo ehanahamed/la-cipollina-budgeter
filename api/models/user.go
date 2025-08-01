@@ -15,4 +15,5 @@ type User struct {
 type UserInput struct {
 	Username    *string `db:"username" json:"username"`
 	NewPassword *string `json:"newPassword"`
+	Admin *bool `db:"admin" json:"admin"`
 }

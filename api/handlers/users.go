@@ -37,11 +37,12 @@ func AddUser(c *fiber.Ctx) error {
 	var user models.User
 	err := db.Pool.QueryRow(
 		context.Background(),
-		`INSERT INTO auth.users (username, encrypted_password) VALUES (
-	$1, crypt($2, gen_salt('bf'))
+		`INSERT INTO auth.users (username, encrypted_password, admin) VALUES (
+	$1, crypt($2, gen_salt('bf')), $3
 ) RETURNING id, username, created_at, updated_at`,
 		*newUser.Username,
 		*newUser.NewPassword,
+		*newUser.Admin,
 	).Scan(
 		&user.ID,
 		&user.Username,
@@ -96,6 +97,12 @@ WHERE user_id = $1`,
 		}
 	}
 
+	if input.Admin != nil {
+		setParts = append(setParts, fmt.Sprintf("admin = $%d", argNum))
+		args = append(args, *input.Admin)
+		argNum++
+	}
+
 	// Always update updated_at
 	setParts = append(setParts, "updated_at = now()")
 
@@ -105,14 +112,14 @@ WHERE user_id = $1`,
 		`UPDATE auth.users
 SET %s
 WHERE id = $%d
-RETURNING id, username, created_at, updated_at`,
+RETURNING id, username, admin, created_at, updated_at`,
 		strings.Join(setParts, ", "),
 		argNum,
 	)
 
 	var user models.User
 	err := db.Pool.QueryRow(context.Background(), query, args...).Scan(
-		&user.ID, &user.Username, &user.CreatedAt, &user.UpdatedAt,
+		&user.ID, &user.Username, &user.Admin, &user.CreatedAt, &user.UpdatedAt,
 	)
 	if err != nil {
 		log.Print("Error in UpdateUser: ", err)
@@ -143,8 +150,8 @@ func DeleteUser(c *fiber.Ctx) error {
 	if count == 0 {
 		_, err := db.Pool.Exec(
 			ctx,
-			`INSERT INTO auth.users (username, encrypted_password)
-VALUES ('admin', crypt('admin', gen_salt('bf')))`,
+			`INSERT INTO auth.users (username, encrypted_password, admin)
+VALUES ('admin', crypt('admin', gen_salt('bf')), true)`,
 		)
 		if err != nil {
 			log.Print("Error inserting new default admin user: ", err)
