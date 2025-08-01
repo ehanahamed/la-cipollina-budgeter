@@ -163,12 +163,16 @@ export function calculateDay(
         totalFloorSpecialEarned += earned;
     }
 
+    let kitchenWeeklyEmployees = [];
+    let floorWeeklyEmployees = [];
     let totalKitchenWeeklyEarned = 0;
     let totalFloorWeeklyEarned = 0;
     weeklyPay?.forEach((employee) => {
         if (employee.type == "KITCHEN") {
+            kitchenWeeklyEmployees.push(employee);
             totalKitchenWeeklyEarned += employee.weeklyPay
         } else if (employee.type == "FLOOR") {
+            floorWeeklyEmployees.push(employee);
             totalFloorWeeklyEarned += employee.weeklyPay
         }
     })
@@ -202,6 +206,8 @@ export function calculateDay(
         totalFloorSpecialEarned,
         totalKitchenWeeklyEarned,
         totalFloorWeeklyEarned,
+        kitchenWeeklyEmployees,
+        floorWeeklyEmployees,
         date
     };
 }
