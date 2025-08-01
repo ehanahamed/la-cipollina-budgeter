@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"strconv"
 
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/gofiber/fiber/v2"
@@ -29,6 +30,8 @@ FROM auth.users ORDER BY created_at`,
 	return c.JSON(users)
 }
 
+/* authorization logic is in auth/admin_middleware.go,
+only admin users can use AddUser */
 func AddUser(c *fiber.Ctx) error {
 	var newUser models.UserInput
 	if err := c.BodyParser(&newUser); err != nil {
@@ -56,79 +59,98 @@ func AddUser(c *fiber.Ctx) error {
 	return c.Status(201).JSON(user)
 }
 
+/*
+	authorization logic is HERE, in this handler
+	
+	admin users can update any user
+	non-admin users can ONLY update themselves
+	and non-admin users can NOT update the `admin` field
+*/
 func UpdateUser(c *fiber.Ctx) error {
-	var input models.UserInput
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
-	}
+	authedUser := c.Locals("User").(models.User)
 
-	/* Send an error if they're not updating anything */
-	if input.Username == nil && input.NewPassword == nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No fields to update"})
-	}
+	/* only allow admins or users updating themselves */
+	if *authedUser.Admin || strconv.Itoa(authedUser.ID) == c.Params("id") {
+		var input models.UserInput
+		if err := c.BodyParser(&input); err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+		}
 
-	/* Add to/build the query */
-	setParts := []string{}
-	args := []interface{}{}
-	argNum := 1
+		/* Send an error if they're not updating anything */
+		if input.Username == nil && input.NewPassword == nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "No fields to update"})
+		}
 
-	if input.Username != nil {
-		setParts = append(setParts, fmt.Sprintf("username = $%d", argNum))
-		args = append(args, *input.Username)
-		argNum++
-	}
+		/* Add to/build the query */
+		setParts := []string{}
+		args := []interface{}{}
+		argNum := 1
 
-	if input.NewPassword != nil {
-		setParts = append(setParts, fmt.Sprintf("encrypted_password = crypt($%d, gen_salt('bf'))", argNum))
-		args = append(args, *input.NewPassword)
-		argNum++
+		if input.Username != nil {
+			setParts = append(setParts, fmt.Sprintf("username = $%d", argNum))
+			args = append(args, *input.Username)
+			argNum++
+		}
 
-		/* when we're updating password,
-		sign user out on all devices
-		by deleting all sessions for that user */
-		_, err := db.Pool.Exec(
-			context.Background(),
-			`DELETE FROM auth.sessions
-WHERE user_id = $1`,
-			c.Params("id"),
+		if input.NewPassword != nil {
+			setParts = append(setParts, fmt.Sprintf("encrypted_password = crypt($%d, gen_salt('bf'))", argNum))
+			args = append(args, *input.NewPassword)
+			argNum++
+
+			/* when we're updating password,
+			sign user out on all devices
+			by deleting all sessions for that user */
+			_, err := db.Pool.Exec(
+				context.Background(),
+				`DELETE FROM auth.sessions
+WHER	E user_id = $1`,
+				c.Params("id"),
+			)
+			if err != nil {
+				log.Print("Error deleting sessions during password update: ", err)
+			}
+		}
+
+		/* ONLY admin users can update the admin field */
+		if input.Admin != nil && *authedUser.Admin {
+			setParts = append(setParts, fmt.Sprintf("admin = $%d", argNum))
+			args = append(args, *input.Admin)
+			argNum++
+		}
+
+		// Always update updated_at
+		setParts = append(setParts, "updated_at = now()")
+
+		// Add WHERE clause
+		args = append(args, c.Params("id"))
+		query := fmt.Sprintf(
+			`UPDATE auth.users
+SET 	%s
+WHER	E id = $%d
+RETU	RNING id, username, admin, created_at, updated_at`,
+			strings.Join(setParts, ", "),
+			argNum,
+		)
+
+		var user models.User
+		err := db.Pool.QueryRow(context.Background(), query, args...).Scan(
+			&user.ID, &user.Username, &user.Admin, &user.CreatedAt, &user.UpdatedAt,
 		)
 		if err != nil {
-			log.Print("Error deleting sessions during password update: ", err)
+			log.Print("Error in UpdateUser: ", err)
+			return c.Status(500).JSON(fiber.Map{"error": "Database error while updating user"})
 		}
+
+		return c.Status(200).JSON(user)
+	} else {
+		return c.Status(403).JSON(fiber.Map{
+			"error": "Non-admin users can only update their own username or password",
+		})
 	}
-
-	if input.Admin != nil {
-		setParts = append(setParts, fmt.Sprintf("admin = $%d", argNum))
-		args = append(args, *input.Admin)
-		argNum++
-	}
-
-	// Always update updated_at
-	setParts = append(setParts, "updated_at = now()")
-
-	// Add WHERE clause
-	args = append(args, c.Params("id"))
-	query := fmt.Sprintf(
-		`UPDATE auth.users
-SET %s
-WHERE id = $%d
-RETURNING id, username, admin, created_at, updated_at`,
-		strings.Join(setParts, ", "),
-		argNum,
-	)
-
-	var user models.User
-	err := db.Pool.QueryRow(context.Background(), query, args...).Scan(
-		&user.ID, &user.Username, &user.Admin, &user.CreatedAt, &user.UpdatedAt,
-	)
-	if err != nil {
-		log.Print("Error in UpdateUser: ", err)
-		return c.Status(500).JSON(fiber.Map{"error": "Database error while updating user"})
-	}
-
-	return c.Status(200).JSON(user)
 }
 
+/* authorization logic is in auth/admin_middleware.go,
+only admin users can use DeleteUser */
 func DeleteUser(c *fiber.Ctx) error {
 	ctx := context.Background()
 	_, err := db.Pool.Exec(

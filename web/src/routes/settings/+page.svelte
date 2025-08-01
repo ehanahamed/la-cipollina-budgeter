@@ -116,6 +116,7 @@ async function deleteUser() {
         </button>
     </div>
 </div>
+{#if data.authedUser.admin}
 <p>Add/Edit Users</p>
 <table style="min-width: 17rem;">
     <tbody>
@@ -233,6 +234,10 @@ async function deleteUser() {
         {/if}
     </tbody>
 </table>
+{:else}
+<table>
+</table>
+{/if}
 </div>
 </div>
 {#if showDeleteUserConfirmation}

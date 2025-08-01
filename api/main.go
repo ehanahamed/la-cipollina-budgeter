@@ -49,11 +49,21 @@ just check your environment variables`,
 	app.Post("/valentinos", handlers.AddValentino)
 	app.Put("/valentinos/:id", handlers.UpdateValentino)
 	app.Delete("/valentinos/:id", handlers.RemoveValentino)
+
+	/* any authed user can get all users */
 	app.Get("/users", handlers.GetUsers)
 
+	/* only admin users can POST or DELETE users
+	(authorization logic in auth.AdminMiddleware) */
 	app.Post("/users", auth.AdminMiddleware, handlers.AddUser)
-	app.Patch("/users/:id", auth.AdminMiddleware, handlers.UpdateUser)
 	app.Delete("/users/:id", auth.AdminMiddleware, handlers.DeleteUser)
+
+	/* authorization logic in handlers.UpdateUser
+	admin users can update any user
+	non-admin users can only update themselves
+	and non-admin users can not update the `admin` field
+	 */
+	app.Patch("/users/:id", handlers.UpdateUser)
 
 	app.Get("/authed-user/", auth.GetAuthedUser)
 	app.Get("/days/:date", handlers.GetDayByDate)
