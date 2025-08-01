@@ -155,6 +155,7 @@ async function removeValentino() {
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a></div>
+<div>
 <div style="display: inline-block;">
 <div class="flex" style="justify-content: space-between;">
     <p>Add/Edit Employees</p>
@@ -270,6 +271,8 @@ async function removeValentino() {
     </tbody>
 </table>
 </div>
+</div>
+<div>
 <div style="display: inline-block; margin-top: 4rem;">
 <div class="flex" style="justify-items: end; justify-content: end;">
     <p class="fg0">{valentinos.length} total</p>
@@ -406,6 +409,7 @@ async function removeValentino() {
         </tr>
     </tbody>
 </table>
+</div>
 </div>
 </div>
 </div>
