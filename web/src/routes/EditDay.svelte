@@ -94,7 +94,7 @@ if (data.new) {
     //         kitchenWorkedTodayArray
     //     ).map(row => row.employee.id)
     // ).size;
-    data.dayData.hoursWorked.forEach((row) => {
+    data?.dayData?.hoursWorked?.forEach((row) => {
         if (row.employee.type == "FLOOR") {
             floorEmployeesCount++;
             floorHoursArray.push(row);
@@ -103,7 +103,7 @@ if (data.new) {
             kitchenHoursArray.push(row);
         }
     })
-    data.dayData.workedToday.forEach((row) => {
+    data?.dayData?.workedToday?.forEach((row) => {
         if (row.employee.type == "FLOOR") {
             floorEmployeesCount++;
             floorWorkedTodayArray.push(row);
@@ -124,7 +124,7 @@ if (!data.new) {
 }
 let foodCostsTotal = $derived.by(() => {
     let total = 0;
-    foodCostsArray.forEach((row) => {
+    foodCostsArray?.forEach((row) => {
         if (typeof row.cost === "string") {
             const cost = parseFloat(row.cost.replaceAll(",", ""));
             if (!isNaN(cost)) {
