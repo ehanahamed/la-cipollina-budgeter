@@ -187,7 +187,8 @@ export function calculateDay(
         totalKitchenHourlyEarned,
         totalKitchenSpecialEarned,
         totalFloorHourlyEarned,
-        totalFloorSpecialEarned
+        totalFloorSpecialEarned,
+        date
     };
 }
 

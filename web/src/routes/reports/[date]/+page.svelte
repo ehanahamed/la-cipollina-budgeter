@@ -20,7 +20,40 @@ const startDate = (() => {
         window.location = `${base}/reports/${data.week.startDate}/err/invalid-date`
     }
 })();
+const endDate = (() => {
+    const [year, month, day] = data.week.endDate.split("-");
+    return new Date(year, month - 1, day);
+})();
 const dateYMD = dateToYMDString(startDate);
+const weekDayDates = {
+    mon: startDate,
+    tue: new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate() + 1
+    ),
+    wed: new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate() + 2
+    ),
+    thu: new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate() + 3
+    ),
+    fri: new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate() + 4
+    ),
+    sat: new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate() + 5
+    ),
+    sun: endDate
+};
 const weekDayKeys = [
     "sun", "mon", "tue", "wed",
     "thu", "fri", "sat"
@@ -31,8 +64,6 @@ const monthName = [
     "October", "November", "December"
 ][startDate.getMonth()];
 const weekNum = dateGetWeekNum(startDate);
-let prevDaysArray = [];
-let selectedDay;
 
 let dayResults = $state({});
 let foodBudget = $state(data.week.startFoodBudget);
@@ -174,7 +205,35 @@ console.log(dayResults);
                 </div>
             </div>
         </div>
-        <div class="box">
+        <p>View/Edit Days:</p>
+        <div class="flex" style="max-width: 16rem; flex-direction: column; flex-wrap: nowrap;">
+            {#each ["mon","tue","wed","thu","fri","sat","sun"] as weekDayKey}
+                <a class="button button-box" href={
+                    dayResults[weekDayKey] ?
+                        `${base}/days/${dateToYMDString(
+                            weekDayDates[weekDayKey]
+                        )}` :
+                        `${base}/record-day?d=${dateToYMDString(
+                            weekDayDates[weekDayKey]
+                        )}`
+                }>
+                    {{
+                        mon: "Monday",
+                        tue: "Tuesday",
+                        wed: "Wednesday",
+                        thu: "Thursday",
+                        fri: "Friday",
+                        sat: "Saturday",
+                        sun: "Sunday"
+                    }[weekDayKey]}, <span class="fg0">{
+                        [
+                            "Jan", "Feb", "Mar", "Apr",
+                            "May", "Jun", "Jul", "Aug",
+                            "Sep", "Oct", "Nov", "Dec"
+                        ][weekDayDates[weekDayKey].getMonth()]
+                    } {weekDayDates[weekDayKey].getDate()}</span>
+                </a>
+            {/each}
         </div>
     </div>
 </div>
