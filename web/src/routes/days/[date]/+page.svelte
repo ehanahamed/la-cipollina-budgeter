@@ -62,14 +62,20 @@ let {
     data.week.startFoodBudget,
     data.week.startKitchenBudget,
     data.week.startFloorBudget,
-    prevDaysArray
+    prevDaysArray,
+    data.week.weeklyPay
 );
 
 let dayResults = calculateDay(
     dayStartFoodBudget,
     dayStartKitchenBudget,
     dayStartFloorBudget,
-    selectedDay
+    selectedDay,
+    prevDaysArray?.length >= 1 ?
+        null : data.week.weeklyPay
+        /* use weeklyPay on this day
+        if there are no prevDays,
+        which would mean today is the first day */
 );
 
 const foodCostsTotal = dayResults.foodExpenses;
