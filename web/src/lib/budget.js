@@ -2,7 +2,8 @@ export function calculateDay(
     foodBudgetStart,
     kitchenBudgetStart,
     floorBudgetStart,
-    day
+    day,
+    weeklyPay
 ) {
     let foodBudget = foodBudgetStart;
     let kitchenBudget = kitchenBudgetStart;
@@ -161,8 +162,19 @@ export function calculateDay(
         floorSpecialArray[index].earned = earned;
         totalFloorSpecialEarned += earned;
     }
-    let totalKitchenEarned = totalKitchenHourlyEarned + totalKitchenSpecialEarned;
-    let totalFloorEarned = totalFloorHourlyEarned + totalFloorSpecialEarned;
+
+    let totalKitchenWeeklyEarned = 0;
+    let totalFloorWeeklyEarned = 0;
+    weeklyPay?.forEach((employee) => {
+        if (employee.type == "KITCHEN") {
+            kitchenWeeklyEarned += employee.weeklyPay
+        } else if (employee.type == "FLOOR") {
+            floorWeeklyEarned += employee.weeklyPay
+        }
+    })
+
+    let totalKitchenEarned = totalKitchenHourlyEarned + totalKitchenSpecialEarned + totalKitchenWeeklyEarned;
+    let totalFloorEarned = totalFloorHourlyEarned + totalFloorSpecialEarned + totalFloorWeeklyEarned;
     foodBudget -= foodCostsTotal;
     kitchenBudget -= totalKitchenEarned;
     floorBudget -= totalFloorEarned;
@@ -188,6 +200,8 @@ export function calculateDay(
         totalKitchenSpecialEarned,
         totalFloorHourlyEarned,
         totalFloorSpecialEarned,
+        totalKitchenWeeklyEarned,
+        totalFloorWeeklyEarned,
         date
     };
 }
@@ -196,21 +210,26 @@ export function remainingBudgetFromDays(
     startFoodBudget,
     startKitchenBudget,
     startFloorBudget,
-    days
+    days,
+    weeklyPay
 ) {
     let foodBudget = startFoodBudget;
     let kitchenBudget = startKitchenBudget;
     let floorBudget = startFloorBudget;
+    let dayNum = 1;
     days.forEach((day) => {
         let result = calculateDay(
             foodBudget,
             kitchenBudget,
             floorBudget,
-            day
+            day,
+            dayNum == 1 && weeklyPay?.length >= 1 ?
+                weeklyPay : null
         );
         foodBudget = result.foodBudgetFinal;
         kitchenBudget = result.kitchenBudgetFinal;
         floorBudget = result.floorBudgetFinal;
+        dayNum++;
     });
     return {
         foodBudget,
