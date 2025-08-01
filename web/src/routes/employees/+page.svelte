@@ -9,11 +9,8 @@ import IconSettings from "$lib/icons/SettingsCogGear.svelte";
 import { base } from "$app/paths";
 let { data } = $props();
 let employees = $state(data.employees ?? []);
-let valentinos = $state(data.valentinos ?? []);
 let showDeleteEmployeeConfirmation = $state(false);
 let employeeToDeleteIndex = $state(-1);
-let showDeleteValentinoConfirmation = $state(false);
-let valentinoToDeleteIndex = $state(-1);
 let showSpecialPayEditing = $state(false);
 let specialPayEditingEmployeeIndex = $state(-1);
 let floorEmployeesCount = $derived.by(() => {
@@ -121,31 +118,6 @@ async function removeEmployee() {
     } finally {
         showDeleteEmployeeConfirmation = false;
         employeeToDeleteIndex = -1;
-    }
-}
-async function removeValentino() {
-    try {
-        const res = await (
-            await fetch(data.PUBLIC_API_URL + "/valentinos/" + valentinos[valentinoToDeleteIndex].id, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
-                }
-            })
-        ).json();
-        if (res?.success) {
-            valentinos.splice(valentinoToDeleteIndex, 1);
-            valentinos = valentinos; /* to update state/trigger reactivity after splice-ing */
-        } else {
-            console.log(res);
-            alert("Error, couldn't delete ???");
-        }
-    } catch (err) {
-        console.error("Error while deleting valentino: ", err);
-        alert("Error deleting valentino :( ");
-    } finally {
-        showDeleteValentinoConfirmation = false;
-        valentinoToDeleteIndex = -1;
     }
 }
 </script>
@@ -272,145 +244,6 @@ async function removeValentino() {
 </table>
 </div>
 </div>
-<div>
-<div style="display: inline-block; margin-top: 4rem;">
-<div class="flex" style="justify-items: end; justify-content: end;">
-    <p class="fg0">{valentinos.length} total</p>
-</div>
-<table>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Weekly Pay</th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each valentinos as valentino, valentinoIndex}
-            <tr>
-                {#if valentino.edit}
-                    <td><input type="text" placeholder="Name" bind:value={valentino.name} style="min-width: 6rem; field-sizing: content;"></td>
-                    <td>
-                        <div class="flex compact-gap nowrap" style="align-items: center; align-content: center;"><span>$</span><input type="text" placeholder="1234.56" bind:value={valentino.weeklyPay} style="min-width: 6rem; field-sizing: content;"></div>
-                    </td>
-                    <td><button onclick={async function () {
-                        valentino.edit = false
-                        if (isNaN(parseFloat(valentino.weeklyPay))) {
-                            /* isNaN(null) returns false
-                            isNaN(parseFloat(null)) returns true */
-                            valentino.weeklyPay = 0;
-                        } else {
-                            if (typeof valentino.weeklyPay === "string") {
-                                /* remove any user-inputted commas for thousands */
-                                valentino.weeklyPay = valentino.weeklyPay.replaceAll(
-                                    ",", ""
-                                );
-                            }
-                            valentino.weeklyPay = parseFloat(valentino.weeklyPay);
-                        }
-                        if (valentino.id == null) {
-                            try {
-                                const res = await (
-                                    await fetch(data.PUBLIC_API_URL + "/valentinos", {
-                                        method: "POST",
-                                        headers: {
-                                            "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({
-                                            name: valentino.name,
-                                            weeklyPay: valentino.weeklyPay,
-                                        })
-                                    })
-                                ).json();
-                                if (res?.id) {
-                                    valentino.id = res.id;
-                                } else {
-                                    console.log(res);
-                                    console.error("id not returned?")
-                                }
-                            } catch (err) {
-                                console.error("Error adding valentino: ", err);
-                                alert("Error while adding valentino :( ");
-                            }
-                        } else {
-                            try {
-                                const res = await (
-                                    await fetch(data.PUBLIC_API_URL + "/valentinos/" + valentino.id, {
-                                        method: "PUT",
-                                        headers: {
-                                            "Authorization": "Bearer " + localStorage.getItem("budgeter:auth"),
-                                            "Content-Type": "application/json"
-                                        },
-                                        body: JSON.stringify({
-                                            name: valentino.name,
-                                            weeklyPay: valentino.weeklyPay,
-                                        })
-                                    })
-                                ).json();
-                            } catch (err) {
-                                console.error("Error adding valentino: ", err);
-                                alert("Error while adding valentino :( ");
-                            }
-                        }
-                    }}><CheckmarkIcon></CheckmarkIcon> Save</button></td>
-                {:else}
-                    <td>{valentino.name}</td>
-                    <td>${
-                        valentino.weeklyPay.toLocaleString(
-                            "en-US",
-                            {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            }
-                        )
-                    }</td>
-                    <td>
-                        <div class="flex" style="flex-wrap: nowrap;">
-                            <button class="alt" onclick={function () {
-                                valentino.edit = true
-                            }}><PencilIcon></PencilIcon> Edit</button>
-                            <div class="dropdown">
-                                <button class="icon-only-button" aria-label="dropdown">
-                                    <MoreDotsIcon></MoreDotsIcon>
-                                </button>
-                                <div class="content">
-                                    <button class="ohno" onclick={() => {
-                                        valentinoToDeleteIndex = valentinoIndex;
-                                        if (valentino.name) {
-                                            showDeleteValentinoConfirmation = true;
-                                        } else {
-                                            /* if name is blank, delete directly,
-                                            don't show confirmation alert/modal/popup */
-                                            removeValentino();
-                                        }
-                                    }}>
-                                        <TrashIcon></TrashIcon> Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                {/if}
-            </tr>
-        {/each}
-        <tr>
-            <td>
-                <button onclick={function () {
-                    valentinos.push({
-                        name: "",
-                        weeklyPay: "",
-                        edit: true
-                    })
-                }}>
-                    <IconPlus></IconPlus>
-                    Add
-                </button>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
-</div>
 </div>
 </div>
 {#if showDeleteEmployeeConfirmation}
@@ -425,23 +258,6 @@ async function removeValentino() {
                 <button class="alt" onclick={() => {
                     showDeleteEmployeeConfirmation = false;
                     employeeToDeleteIndex = -1;
-                }}>Cancel</button>
-            </div>
-        </div>
-    </div>
-{/if}
-{#if showDeleteValentinoConfirmation}
-    <div class="modal">
-        <div class="content">
-            <p>Are you sure you want to remove "{valentinos[valentinoToDeleteIndex].name}"?</p>
-            <div class="flex">
-                <button class="ohno" onclick={removeValentino}>
-                    <TrashIcon></TrashIcon>
-                    Remove
-                </button>
-                <button class="alt" onclick={() => {
-                    showDeleteValentinoConfirmation = false;
-                    valentinoToDeleteIndex = -1;
                 }}>Cancel</button>
             </div>
         </div>
