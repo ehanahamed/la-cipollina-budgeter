@@ -333,7 +333,11 @@ if (!data.new) {
                 </div>
             </div>
             <div class="areaback" style="margin-top: 0px">
-                <a href={base} class="button faint">
+                <a href={
+                    data.new ?
+                        base :
+                        `${base}/days/${dateYMD}`
+                } class="button faint">
                     <BackArrowIcon></BackArrowIcon>
                     Back
                 </a>
