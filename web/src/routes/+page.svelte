@@ -2,6 +2,10 @@
     import { onMount } from "svelte";
     import { base } from "$app/paths";
     import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
+    import { dateToYMDString } from "$lib/dateToYMDString.js";
+    import DocIcon from "$lib/icons/DocFilePage.svelte";
+    import SettingsIcon from "$lib/icons/SettingsCogGear.svelte";
+    import PersonIcon from "$lib/icons/Person.svelte";
     let { data } = $props();
     let authed = $state(data.authed);
     let enteredUsername = $state("");
@@ -33,8 +37,26 @@
         }
     }
     let passwordTextbox;
-    let today = new Date();
-    let todayWeekNum = dateGetWeekNum(today);
+    const today = new Date();
+    const todayYMD = dateToYMDString(today);
+    const todayWeekNum = dateGetWeekNum(today);
+    let newDay = $state(true);
+    (async () => {
+        try {
+            const res = await fetch(`${data.PUBLIC_API_URL}/days/${todayYMD}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + localStorage.getItem("budgeter:auth")
+                }
+            })
+            const resJson = await res.json();
+            if (resJson?.id != null) {
+                newDay = false;
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    })();
 </script>
 <style>
     .header-text {
@@ -70,16 +92,42 @@
     }</span>
 </div>
 <div class="flex center">
-    <div class="flex center no-child-clickable-effect" style="flex-direction: column;">
-        <div class="combo-buttons">
-            <a class="button left" href="{base}/edit-budget">Edit Budget</a>
-            <a class="button mid" href="{base}/record-day">Record Day</a>
-            <a class="button right" href="{base}/edit-day">Edit Day</a>
-        </div>
-        <a href="{base}/reports" class="button">Reports</a>
-        <a href="{base}/employees" class="button">Employees</a>
-        <a href="{base}/settings" class="button">Settings</a>
+        <div class="flex center no-child-clickable-effect" style="flex-direction: column; min-width: 16rem;">
+        {#if newDay}
+            <a class="button" href="{base}/record-day">
+                Record Day
+            </a>
+        {:else}
+            <a class="button" href="{base}/edit-day/{todayYMD}">
+                View/Edit Day
+            </a>
+        {/if}
+        <a class="button alt">View/Edit Another Day</a>
+        <div class="separator">or</div>
+        <!-- <div class="combo-buttons"> -->
+        <!--     <a class="button left" href="{base}/edit-budget">Edit Budget</a> -->
+        <!--     <a class="button mid" href="{base}/record-day">Record Day</a> -->
+        <!--     <a class="button right" href="{base}/edit-day">Edit Day</a> -->
+        <!-- </div> -->
+        <a href="{base}/reports" class="button">
+            <DocIcon></DocIcon>
+            Reports
+        </a>
+        <a href="{base}/employees" class="button">
+            <PersonIcon></PersonIcon>
+            Employees
+        </a>
+        <a href="{base}/settings" class="button">
+            <SettingsIcon></SettingsIcon>
+            Settings
+        </a>
     </div>
+</div>
+<div style="position: absolute; bottom: 4rem; width: 100%;">
+    <p class="center fg0">
+        Ehan Ahamed, Carson Fusco, Cristian Hernandez <br>
+        2025 · <a href="https://github.com/ehanahamed/la-cipollina-budgeter" class="text fg0" style="text-decoration: underline;">Source Code</a>
+    </p>
 </div>
 {:else}
 <div style="margin-top: 2rem;">
