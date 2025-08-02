@@ -102,7 +102,7 @@
                 Record Day
             </a>
         {:else}
-            <a class="button" href="{base}/edit-day/{todayYMD}">
+            <a class="button" href="{base}/days/{todayYMD}">
                 View/Edit Day
             </a>
         {/if}
