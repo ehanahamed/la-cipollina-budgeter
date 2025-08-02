@@ -264,7 +264,7 @@ let copyLinkYayTimeout;
                                 ]);
                                 copyYay = true;
                                 copyYayTimeout = setTimeout(
-                                    () => copyYay = false, 2000
+                                    () => copyYay = false, 1000
                                 );
                             } catch (error) {
                                 console.error(error)
@@ -281,28 +281,30 @@ let copyLinkYayTimeout;
                         <p style="margin-top: 2rem;">Or you can send a link to this page;<br>
                         anyone with this special link can view this report<br>
                         without having to log in<br></p>
-                        <input type="text" value={shareLink} disabled>
-                        <button class="alt" onclick={async () => {
-                            try {
-                                clearTimeout(copyLinkYayTimeout)
-                                
-                                await navigator.clipboard.writeText(shareLink)
-                                copyLinkYay = true;
-                                copyLinkYayTimeout = setTimeout(
-                                    () => copyLinkYay = false, 2000
-                                );
-                            } catch (error) {
-                                console.error(error)
-                                alert("idk why it didn't work 💀")
-                            }
-                        }}>
-                            {#if copyLinkYay}
-                                <CheckmarkIcon></CheckmarkIcon>
-                            {:else}
-                                <LinkIcon></LinkIcon>
-                            {/if}
-                            Copy Link
-                        </button>
+                        <div class="flex compact-gap">
+                            <input type="text" value={shareLink} disabled>
+                            <button class="alt" onclick={async () => {
+                                try {
+                                    clearTimeout(copyLinkYayTimeout)
+                                    
+                                    await navigator.clipboard.writeText(shareLink)
+                                    copyLinkYay = true;
+                                    copyLinkYayTimeout = setTimeout(
+                                        () => copyLinkYay = false, 1000
+                                    );
+                                } catch (error) {
+                                    console.error(error)
+                                    alert("idk why it didn't work 💀")
+                                }
+                            }}>
+                                {#if copyLinkYay}
+                                    <CheckmarkIcon></CheckmarkIcon>
+                                {:else}
+                                    <LinkIcon></LinkIcon>
+                                {/if}
+                                Copy Link
+                            </button>
+                        </div>
                     </div>
                 </details>
             </div>
