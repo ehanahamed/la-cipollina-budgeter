@@ -108,17 +108,20 @@ let copyLinkYayTimeout;
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
+        {#if !data.usingShareLink}
         <div class="flex">
             <a class="button faint" href={base}>
                 <BackArrowIcon></BackArrowIcon>
                 Back
             </a>
         </div>
+        {/if}
         <h3 style="margin-bottom: 0px;">{weekDayName}'s Report</h3>
         <p style="margin-top: 0.4rem;">{monthName} {date.getDate()}, {date.getFullYear()}{
             localStorage.getItem("budgeter:showWeekNums") == "true" ?
                 `, W${weekNum}` : ""
         }</p>
+        {#if !data.usingShareLink}
         <div class="flex" style="margin-bottom: 2rem;">
             <a class="button alt" href="{base}/edit-day/{dateYMD}">
                 <PencilIcon></PencilIcon>
@@ -129,6 +132,7 @@ let copyLinkYayTimeout;
                 View Week Report
             </a>
         </div>
+        {/if}
         <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
                 <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
@@ -221,6 +225,7 @@ let copyLinkYayTimeout;
                     </tbody>
                 </table>
                 </div>
+                {#if !data.usingShareLink}
                 <details>
                     <summary style="cursor: pointer;">Copy, Save, or Send this Report</summary>
                     <div>
@@ -289,6 +294,7 @@ let copyLinkYayTimeout;
                         </div>
                     </div>
                 </details>
+                {/if}
             </div>
         </div>
         <div>
