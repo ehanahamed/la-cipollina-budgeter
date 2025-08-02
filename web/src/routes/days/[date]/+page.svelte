@@ -6,6 +6,8 @@ import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
 import DocIcon from "$lib/icons/DocFilePage.svelte";
+import CopyIcon from "$lib/icons/Copy.svelte";
+import LinkIcon from "$lib/icons/Link.svelte";
 import { calculateDay, remainingBudgetFromDays } from "$lib/budget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
@@ -91,6 +93,29 @@ const kitchenSpecialArray = dayResults.kitchenSpecialPay;
 const dayFinalFoodBudget = dayResults.foodBudgetFinal;
 const dayFinalKitchenBudget = dayResults.kitchenBudgetFinal;
 const dayFinalFloorBudget = dayResults.floorBudgetFinal;
+let shareLinkToken = $state("");
+(async () => {
+    try {
+        const res = await fetch(
+            `${data.PUBLIC_API_URL}/share-links/${dayYMD}`,
+            {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${localStorage.getItem("budgeter:auth")}`
+                }
+            }
+        );
+        const resJson = await res.json();
+        if (resJson?.token) {
+            shareLinkToken = resJson.token;
+        } else {
+            console.error("No token returned after getting or creating share link?");
+            console.log(resJson);
+        }
+    } catch (err) {
+        console.error("Error getting or creating share link: ", err);
+    }
+})
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -207,6 +232,29 @@ const dayFinalFloorBudget = dayResults.floorBudgetFinal;
                     </tbody>
                 </table>
                 </div>
+                <details>
+                    <summary style="cursor: pointer;">Copy, Save, or Send this Report</summary>
+                    <div>
+                        <p>Copy with formatting if you're going to paste in an email,<br>
+                        Google Doc, Microsoft Word, etc</p>
+                        <button class="alt">
+                            <CopyIcon></CopyIcon>
+                            Copy with Formatting
+                        </button>
+                        <p>Copy as plain text if you need to paste in other apps</p>
+                        <button class="alt">
+                            <CopyIcon></CopyIcon>
+                            Copy as Plain Text
+                        </button>
+                        <p>Anyone with this special link can view this report,<br>
+                        without having to log in<br></p>
+                        <input type="text" value="{window.location.origin}{base}/days/{dateYMD}?s={shareLinkToken}">
+                        <button class="alt">
+                            <LinkIcon></LinkIcon>
+                            Copy Link
+                        </button>
+                    </div>
+                </details>
             </div>
         </div>
         <div>
