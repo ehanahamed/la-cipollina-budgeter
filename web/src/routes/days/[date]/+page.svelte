@@ -172,20 +172,14 @@ const dayFinalFloorBudget = dayResults.floorBudgetFinal;
                                 maximumFractionDigits: 2
                             })}</td>
                             <td>-${
-                                (
-                                    totalKitchenHourlyEarned +
-                                    totalKitchenSpecialEarned
-                                ).toLocaleString(
+                                dayResults.kitchenExpenses.toLocaleString(
                                     "en-US", {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
                                 })
                             }</td>
                             <td>-${
-                                (
-                                    totalFloorHourlyEarned +
-                                    totalFloorSpecialEarned
-                                ).toLocaleString(
+                                dayResults.floorExpenses.toLocaleString(
                                     "en-US", {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
@@ -367,6 +361,54 @@ const dayFinalFloorBudget = dayResults.floorBudgetFinal;
             </div>
             </div>
         {/if}
+        {#if dayResults.kitchenWeeklyEmployees.length >= 1}
+            <div>
+            <div style="display: inline-block; margin-bottom: 2rem;">
+                <div class="flex" style="justify-content: space-between;">
+                    <p>Floor Workers <span class="fg0">(Weekly Pay)</span></p>
+                    <p class="fg0">
+                        {#if dayResults.kitchenWeeklyEmployees.length == 1}
+                            1 employee
+                        {:else}
+                            {dayResults.kitchenWeeklyEmployees.length} employees
+                        {/if}
+                    </p>
+                </div>
+                <table style="min-width: 20rem;">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Amount Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each dayResults.kitchenWeeklyEmployees as employee}
+                            <tr>
+                                <td>{employee.name}</td>
+                                <td>${
+                                    employee.weeklyPay.toLocaleString(
+                                        "en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })
+                                }</td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <th>Total</th>
+                            <th>${
+                                dayResults.totalKitchenWeeklyEarned.toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        {/if}
         <div>
         <div style="display: inline-block; margin-bottom: 2rem;">
             <div class="flex" style="justify-content: space-between;">
@@ -473,6 +515,54 @@ const dayFinalFloorBudget = dayResults.floorBudgetFinal;
                             <th></th>
                             <th>${
                                 totalFloorSpecialEarned.toLocaleString(
+                                    "en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })
+                            }</th>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+        {/if}
+        {#if dayResults.floorWeeklyEmployees.length >= 1}
+            <div>
+            <div style="display: inline-block; margin-bottom: 2rem;">
+                <div class="flex" style="justify-content: space-between;">
+                    <p>Floor Workers <span class="fg0">(Weekly Pay)</span></p>
+                    <p class="fg0">
+                        {#if dayResults.floorWeeklyEmployees.length == 1}
+                            1 employee
+                        {:else}
+                            {dayResults.floorWeeklyEmployees.length} employees
+                        {/if}
+                    </p>
+                </div>
+                <table style="min-width: 20rem;">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Amount Earned</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each dayResults.floorWeeklyEmployees as employee}
+                            <tr>
+                                <td>{employee.name}</td>
+                                <td>${
+                                    employee.weeklyPay.toLocaleString(
+                                        "en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })
+                                }</td>
+                            </tr>
+                        {/each}
+                        <tr>
+                            <th>Total</th>
+                            <th>${
+                                dayResults.totalFloorWeeklyEarned.toLocaleString(
                                     "en-US", {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2
