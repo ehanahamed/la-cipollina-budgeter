@@ -119,6 +119,10 @@ let shareLink = $state("");
     }
 })
 let tableElement;
+let copyYay = $state(false);
+let copyYayTimeout;
+let copyLinkYay = $state(false);
+let copyLinkYayTimeout;
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -242,6 +246,8 @@ let tableElement;
                         Microsoft Word, etc and it will keep its formatting</p>
                         <button class="alt" onclick={async () => {
                             try {
+                                clearTimeout(copyYayTimeout)
+
                                 let table = tableElement.cloneNode(true);
                                 table.removeAttribute("style");
 
@@ -256,12 +262,20 @@ let tableElement;
                                     'text/plain': new Blob([plainTextTable], { type: 'text/plain' })
                                   })
                                 ]);
+                                copyYay = true;
+                                copyYayTimeout = setTimeout(
+                                    () => copyYay = false, 2000
+                                );
                             } catch (error) {
                                 console.error(error)
                                 alert("idk why it didn't work 💀")
                             }
                         }}>
-                            <CopyIcon></CopyIcon>
+                            {#if copyYay}
+                                <CheckmarkIcon></CheckmarkIcon>
+                            {:else}
+                                <CopyIcon></CopyIcon>
+                            {/if}
                             Copy
                         </button>
                         <p style="margin-top: 2rem;">Or you can send a link to this page;<br>
@@ -270,13 +284,23 @@ let tableElement;
                         <input type="text" value={shareLink} disabled>
                         <button class="alt" onclick={async () => {
                             try {
+                                clearTimeout(copyLinkYayTimeout)
+                                
                                 await navigator.clipboard.writeText(shareLink)
+                                copyLinkYay = true;
+                                copyLinkYayTimeout = setTimeout(
+                                    () => copyLinkYay = false, 2000
+                                );
                             } catch (error) {
                                 console.error(error)
                                 alert("idk why it didn't work 💀")
                             }
                         }}>
-                            <LinkIcon></LinkIcon>
+                            {#if copyLinkYay}
+                                <CheckmarkIcon></CheckmarkIcon>
+                            {:else}
+                                <LinkIcon></LinkIcon>
+                            {/if}
                             Copy Link
                         </button>
                     </div>
