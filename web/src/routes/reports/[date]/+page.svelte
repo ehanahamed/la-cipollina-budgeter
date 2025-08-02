@@ -69,6 +69,7 @@ let dayResults = $state({});
 let foodBudget = $state(data.week.startFoodBudget);
 let kitchenBudget = $state(data.week.startKitchenBudget);
 let floorBudget = $state(data.week.startFloorBudget);
+let dayNum = 1;
 data.days.forEach((day) => {
     const [y, m, d] = day.date.split("-");
     const date = new Date(y, m - 1, d);
@@ -76,7 +77,9 @@ data.days.forEach((day) => {
         foodBudget,
         kitchenBudget,
         floorBudget,
-        day
+        day,
+        dayNum == 1 ?
+            data.week.weeklyPay : null
     );
     dayResults[weekDayKeys[date.getDay()]] = result;
     foodBudget = result.foodBudgetFinal;
