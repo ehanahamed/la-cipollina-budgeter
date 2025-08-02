@@ -38,39 +38,106 @@ just check your environment variables`,
 
 	app.Post("/log-in", auth.LoginHandler)
 
-	app.Use(auth.AuthMiddleware) /* routes before this don't need auth,
-	routes after this only run the handlers if the user is logged in */
-
-	app.Get("/employees", handlers.GetEmployees)
-	app.Post("/employees", handlers.AddEmployee)
-	app.Put("/employees/:id", handlers.UpdateEmployee)
-	app.Delete("/employees/:id", handlers.RemoveEmployee)
-
+	app.Get(
+		"/employees",
+		auth.AuthMiddleware,
+		handlers.GetEmployees,
+	)
+	app.Post(
+		"/employees",
+		auth.AuthMiddleware,
+		handlers.AddEmployee,
+	)
+	app.Put(
+		"/employees/:id",
+		auth.AuthMiddleware,
+		handlers.UpdateEmployee,
+	)
+	app.Delete(
+		"/employees/:id",
+		auth.AuthMiddleware,
+		handlers.RemoveEmployee,
+	)
 	/* any authed user can get all users */
-	app.Get("/users", handlers.GetUsers)
-
+	app.Get(
+		"/users",
+		auth.AuthMiddleware,
+		handlers.GetUsers,
+	)
 	/* only admin users can POST or DELETE users
 	(authorization logic in auth.AdminMiddleware) */
-	app.Post("/users", auth.AdminMiddleware, handlers.AddUser)
-	app.Delete("/users/:id", auth.AdminMiddleware, handlers.DeleteUser)
-
+	app.Post(
+		"/users",
+		auth.AdminMiddleware,
+		handlers.AddUser,
+	)
+	app.Delete(
+		"/users/:id",
+		auth.AdminMiddleware,
+		handlers.DeleteUser,
+	)
 	/* authorization logic in handlers.UpdateUser
 	admin users can update any user
 	non-admin users can only update themselves
 	and non-admin users can not update the `admin` field
 	 */
-	app.Patch("/users/:id", handlers.UpdateUser)
+	app.Patch(
+		"/users/:id",
+		/* no auth middleware,
+		auth logic is in handlers.UpdateUser */
+		handlers.UpdateUser,
+	)
 
-	app.Get("/authed-user/", auth.GetAuthedUser)
-	app.Get("/days/:date", handlers.GetDayByDate)
-	app.Post("/days", handlers.RecordDay)
-	app.Put("/days/:id", handlers.UpdateDay)
-	app.Delete("/days/:id", handlers.DeleteDay)
-	app.Get("/weeks/:date", handlers.GetWeekByDate)
-	app.Get("/weeks", handlers.GetAllWeeks)
-	app.Post("/weeks", handlers.AddWeek)
-	app.Delete("/weeks/:id", handlers.DeleteWeek)
-	app.Get("/weeks/:date/days", handlers.GetDaysInWeekByDate)
+	app.Get(
+		"/authed-user/",
+		auth.AuthMiddleware,
+		auth.GetAuthedUser,
+	)
+	app.Get(
+		"/days/:date",
+		auth.AuthOrShareLinkMiddlewareWDateParam,
+		handlers.GetDayByDate,
+	)
+	app.Post(
+		"/days",
+		auth.AuthMiddleware,
+		handlers.RecordDay,
+	)
+	app.Put(
+		"/days/:id",
+		auth.AuthMiddleware,
+		handlers.UpdateDay,
+	)
+	app.Delete(
+		"/days/:id",
+		auth.AuthMiddleware,
+		handlers.DeleteDay,
+	)
+	app.Get(
+		"/weeks/:date",
+		auth.AuthOrShareLinkMiddlewareWDateParam,
+		handlers.GetWeekByDate,
+	)
+	app.Get(
+		"/weeks",
+		auth.AuthMiddleware,
+		handlers.GetAllWeeks,
+	)
+	app.Post(
+		"/weeks",
+		auth.AuthMiddleware,
+		handlers.AddWeek,
+	)
+	app.Delete(
+		"/weeks/:id",
+		auth.AuthMiddleware,
+		handlers.DeleteWeek,
+	)
+	app.Get(
+		"/weeks/:date/days",
+		auth.AuthOrShareLinkMiddlewareWDateParam,
+		handlers.GetDaysInWeekByDate,
+	)
 
 	port := os.Getenv("PORT")
 	if port == "" {

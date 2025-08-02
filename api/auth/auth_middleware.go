@@ -44,3 +44,26 @@ AND s.expire_at > now()`,
 
 	return c.Next()
 }
+
+func AuthOrShareLinkMiddlewareWDateParam(c *fiber.Ctx) error {
+	shareLinkToken = := c.Query("s")
+	if shareLinkToken != "" {
+		var isValid bool
+		err := db.Pool.QueryRow(
+			context.Background(),
+			`SELECT EXISTS (
+SELECT 1 FROM weeks
+WHERE $1::date BETWEEN start_date AND end_date
+AND share_link_token = $2
+)`,
+			c.Params("date"),
+			shareLinkToken,
+		).Scan(&isValid)
+
+		if err == nil && isValid {
+			return c.Next()
+		}
+	}
+
+	return AuthMiddleware(c)
+}
