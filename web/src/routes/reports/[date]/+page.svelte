@@ -6,10 +6,14 @@ import CheckmarkIcon from "$lib/icons/Checkmark.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import PencilIcon from "$lib/icons/Pencil.svelte";
 import DocIcon from "$lib/icons/DocFilePage.svelte";
+import CopyIcon from "$lib/icons/Copy.svelte";
+import LinkIcon from "$lib/icons/Link.svelte";
 import { calculateDay, remainingBudgetFromDays } from "$lib/budget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 import { onMount } from "svelte";
+import { plainTextTableFrom2DArray } from "$lib/plainTextTableFrom2DArray.js"
+import { tableTo2DArray } from "$lib/tableTo2DArray.js"
 let { data } = $props();
 const startDate = (() => {
     const [year, month, day] = data.week.startDate.split("-");
@@ -86,7 +90,16 @@ data.days.forEach((day) => {
     kitchenBudget = result.kitchenBudgetFinal;
     floorBudget = result.floorBudgetFinal;
 })
-console.log(dayResults);
+
+const shareLink = `${window.location.origin+base}/reports/${dateYMD}?s=${
+    data.week.shareLinkToken
+}`;
+
+let tableElement;
+let copyYay = $state(false);
+let copyYayTimeout;
+let copyLinkYay = $state(false);
+let copyLinkYayTimeout;
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -107,7 +120,7 @@ console.log(dayResults);
         <div style="margin-top: 2rem;">
             <div style="display: inline-block; margin-bottom: 2rem;">
                 <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
-                <table style="border: none;">
+                <table style="border: none;" bind:this={tableElement}>
                     <thead>
                         <tr>
                             <th></th>
@@ -206,6 +219,76 @@ console.log(dayResults);
                     </tbody>
                 </table>
                 </div>
+                {#if !data.usingShareLink}
+                <details>
+                    <summary style="cursor: pointer;">Copy, Save, or Send this Report</summary>
+                    <div>
+                        <p>You can paste the table in an email, Google Doc,<br>
+                        Microsoft Word, etc and it will keep its formatting</p>
+                        <button class="alt" onclick={async () => {
+                            try {
+                                clearTimeout(copyYayTimeout)
+
+                                let table = tableElement.cloneNode(true);
+                                table.removeAttribute("style");
+
+                                const plainTextTable = plainTextTableFrom2DArray(
+                                    tableTo2DArray(tableElement),
+                                    2
+                                );
+
+                                await navigator.clipboard.write([
+                                  new ClipboardItem({
+                                    'text/html': new Blob([table.outerHTML], { type: 'text/html' }),
+                                    'text/plain': new Blob([plainTextTable], { type: 'text/plain' })
+                                  })
+                                ]);
+                                copyYay = true;
+                                copyYayTimeout = setTimeout(
+                                    () => copyYay = false, 1000
+                                );
+                            } catch (error) {
+                                console.error(error)
+                                alert("idk why it didn't work 💀")
+                            }
+                        }}>
+                            {#if copyYay}
+                                <CheckmarkIcon></CheckmarkIcon>
+                            {:else}
+                                <CopyIcon></CopyIcon>
+                            {/if}
+                            Copy
+                        </button>
+                        <p style="margin-top: 2rem;">Or you can send a link to this page;<br>
+                        anyone with this special link can view this report<br>
+                        without having to log in<br></p>
+                        <div class="flex compact-gap">
+                            <input type="text" value={shareLink} disabled>
+                            <button class="alt" onclick={async () => {
+                                try {
+                                    clearTimeout(copyLinkYayTimeout)
+                                    
+                                    await navigator.clipboard.writeText(shareLink)
+                                    copyLinkYay = true;
+                                    copyLinkYayTimeout = setTimeout(
+                                        () => copyLinkYay = false, 1000
+                                    );
+                                } catch (error) {
+                                    console.error(error)
+                                    alert("idk why it didn't work 💀")
+                                }
+                            }}>
+                                {#if copyLinkYay}
+                                    <CheckmarkIcon></CheckmarkIcon>
+                                {:else}
+                                    <LinkIcon></LinkIcon>
+                                {/if}
+                                Copy Link
+                            </button>
+                        </div>
+                    </div>
+                </details>
+                {/if}
             </div>
         </div>
         <p>View/Edit Days:</p>
