@@ -33,7 +33,7 @@ just check your environment variables`,
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
-		AllowHeaders: "Authorization, Content-Type, Accept",
+		AllowHeaders: "Authorization, Content-Type, Accept, Eh-Share-Link-Token",
 	}))
 
 	app.Post("/log-in", auth.LoginHandler)
