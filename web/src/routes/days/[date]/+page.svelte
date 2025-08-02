@@ -12,6 +12,8 @@ import { calculateDay, remainingBudgetFromDays } from "$lib/budget.js";
 import { dateToYMDString } from "$lib/dateToYMDString.js";
 import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 import { onMount } from "svelte";
+import { plainTextTableFrom2DArray } from "$lib/plainTextTableFrom2DArray.js"
+import { tableTo2DArray } from "$lib/tableTo2DArray.js"
 let { data } = $props();
 const date = (() => {
     const [year, month, day] = data.date.split("-");
@@ -116,21 +118,7 @@ let shareLink = $state("");
         console.error("Error getting or creating share link: ", err);
     }
 })
-let tableContainer;
-function cloneWithInlineStyles(element) {
-    const clone = element.cloneNode(true);
-    const allElements = clone.querySelectorAll('*');
-    const originalElements = element.querySelectorAll('*');
-  
-    allElements.forEach((el, i) => {
-      const computed = getComputedStyle(originalElements[i]);
-      for (let prop of computed) {
-        el.style[prop] = computed.getPropertyValue(prop);
-      }
-    });
-  
-    return clone;
-}
+let tableElement;
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -157,8 +145,8 @@ function cloneWithInlineStyles(element) {
         </div>
         <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
-                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;" bind:this={tableContainer}>
-                <table style="border: none;">
+                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
+                <table style="border: none;" bind:this={tableElement}>
                     <thead>
                         <tr>
                             <th></th>
@@ -250,31 +238,31 @@ function cloneWithInlineStyles(element) {
                 <details>
                     <summary style="cursor: pointer;">Copy, Save, or Send this Report</summary>
                     <div>
-                        <p>Copy with formatting if you're going to paste in an email,<br>
-                        Google Doc, Microsoft Word, etc</p>
+                        <p>You can paste the table in an email, Google Doc,<br>
+                        Microsoft Word, etc and it will keep its formatting</p>
                         <button class="alt" onclick={async () => {
                             try {
-                                const tableContainerStyled = cloneWithInlineStyles(tableContainer);
-                                const tableHTML = tableContainerStyled.outerHTML;
+                                let table = tableElement.cloneNode(true);
+                                table.removeAttribute("style");
+
+                                const plainTextTable = plainTextTableFrom2DArray(
+                                    tableTo2DArray(tableElement),
+                                    2
+                                );
+
                                 await navigator.clipboard.write([
                                   new ClipboardItem({
-                                    'text/html': new Blob([html], { type: 'text/html' }),
-                                    'text/plain': new Blob([table.innerText], { type: 'text/plain' })
+                                    'text/html': new Blob([table.outerHTML], { type: 'text/html' }),
+                                    'text/plain': new Blob([plainTextTable], { type: 'text/plain' })
                                   })
                                 ]);
-                                await navigator.clipboard.writeText(shareLink)
                             } catch (error) {
-                                console.error(error.message)
+                                console.error(error)
                                 alert("idk why it didn't work 💀")
                             }
                         }}>
                             <CopyIcon></CopyIcon>
-                            Copy with Formatting
-                        </button>
-                        <p style="margin-top: 2rem;">Copy as plain text if you need to paste in other apps</p>
-                        <button class="alt">
-                            <CopyIcon></CopyIcon>
-                            Copy as Plain Text
+                            Copy
                         </button>
                         <p style="margin-top: 2rem;">Or you can send a link to this page;<br>
                         anyone with this special link can view this report<br>
@@ -284,7 +272,7 @@ function cloneWithInlineStyles(element) {
                             try {
                                 await navigator.clipboard.writeText(shareLink)
                             } catch (error) {
-                                console.error(error.message)
+                                console.error(error)
                                 alert("idk why it didn't work 💀")
                             }
                         }}>
