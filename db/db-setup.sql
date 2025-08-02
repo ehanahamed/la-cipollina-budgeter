@@ -125,6 +125,7 @@ create table weeks (
     start_kitchen_budget numeric(10, 2) not null,
     start_floor_budget numeric(10, 2) not null,
     weekly_pay jsonb,
+    share_link_token text not null default encode(gen_random_bytes(16), 'hex'),
     created_at timestamptz default now(),
     updated_at timestamptz default now()
 );
@@ -134,14 +135,3 @@ grant insert on public.weeks to budgeter_api;
 grant update on public.weeks to budgeter_api;
 grant delete on public.weeks to budgeter_api;
 grant usage, select on weeks_id_seq to budgeter_api;
-
-create table share_links (
-    token text primary key default encode(gen_random_bytes(16), 'hex'),
-    week_id int not null,
-    foreign key(week_id) references weeks(id) on delete cascade
-);
-
-grant select on public.share_links to budgeter_api;
-grant insert on public.share_links to budgeter_api;
-grant update on public.share_links to budgeter_api;
-grant delete on public.share_links to budgeter_api;
