@@ -46,7 +46,7 @@ AND s.expire_at > now()`,
 }
 
 func AuthOrShareLinkMiddlewareWDateParam(c *fiber.Ctx) error {
-	shareLinkToken = := c.Query("s")
+	shareLinkToken := c.Query("s")
 	if shareLinkToken != "" {
 		var isValid bool
 		err := db.Pool.QueryRow(
