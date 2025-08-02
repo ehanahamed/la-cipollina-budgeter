@@ -95,29 +95,11 @@ const kitchenSpecialArray = dayResults.kitchenSpecialPay;
 const dayFinalFoodBudget = dayResults.foodBudgetFinal;
 const dayFinalKitchenBudget = dayResults.kitchenBudgetFinal;
 const dayFinalFloorBudget = dayResults.floorBudgetFinal;
-let shareLink = $state("");
-(async () => {
-    try {
-        const res = await fetch(
-            `${data.PUBLIC_API_URL}/share-links/${dayYMD}`,
-            {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${localStorage.getItem("budgeter:auth")}`
-                }
-            }
-        );
-        const resJson = await res.json();
-        if (resJson?.token) {
-            shareLink = `${window.location.origin+base}/days/${dateYMD}?s=${resJson.token}`;
-        } else {
-            console.error("No token returned after getting or creating share link?");
-            console.log(resJson);
-        }
-    } catch (err) {
-        console.error("Error getting or creating share link: ", err);
-    }
-})
+
+const shareLink = `${window.location.origin+base}/days/${dateYMD}?s=${
+    data.week.shareLinkToken
+}`;
+
 let tableElement;
 let copyYay = $state(false);
 let copyYayTimeout;
