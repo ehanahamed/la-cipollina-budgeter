@@ -93,7 +93,7 @@ const kitchenSpecialArray = dayResults.kitchenSpecialPay;
 const dayFinalFoodBudget = dayResults.foodBudgetFinal;
 const dayFinalKitchenBudget = dayResults.kitchenBudgetFinal;
 const dayFinalFloorBudget = dayResults.floorBudgetFinal;
-let shareLinkToken = $state("");
+let shareLink = $state("");
 (async () => {
     try {
         const res = await fetch(
@@ -107,7 +107,7 @@ let shareLinkToken = $state("");
         );
         const resJson = await res.json();
         if (resJson?.token) {
-            shareLinkToken = resJson.token;
+            shareLink = `${window.location.origin+base}/days/${dateYMD}?s=${resJson.token}`;
         } else {
             console.error("No token returned after getting or creating share link?");
             console.log(resJson);
@@ -116,6 +116,21 @@ let shareLinkToken = $state("");
         console.error("Error getting or creating share link: ", err);
     }
 })
+let tableContainer;
+function cloneWithInlineStyles(element) {
+    const clone = element.cloneNode(true);
+    const allElements = clone.querySelectorAll('*');
+    const originalElements = element.querySelectorAll('*');
+  
+    allElements.forEach((el, i) => {
+      const computed = getComputedStyle(originalElements[i]);
+      for (let prop of computed) {
+        el.style[prop] = computed.getPropertyValue(prop);
+      }
+    });
+  
+    return clone;
+}
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -142,7 +157,7 @@ let shareLinkToken = $state("");
         </div>
         <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
-                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
+                <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;" bind:this={tableContainer}>
                 <table style="border: none;">
                     <thead>
                         <tr>
@@ -237,19 +252,42 @@ let shareLinkToken = $state("");
                     <div>
                         <p>Copy with formatting if you're going to paste in an email,<br>
                         Google Doc, Microsoft Word, etc</p>
-                        <button class="alt">
+                        <button class="alt" onclick={async () => {
+                            try {
+                                const tableContainerStyled = cloneWithInlineStyles(tableContainer);
+                                const tableHTML = tableContainerStyled.outerHTML;
+                                await navigator.clipboard.write([
+                                  new ClipboardItem({
+                                    'text/html': new Blob([html], { type: 'text/html' }),
+                                    'text/plain': new Blob([table.innerText], { type: 'text/plain' })
+                                  })
+                                ]);
+                                await navigator.clipboard.writeText(shareLink)
+                            } catch (error) {
+                                console.error(error.message)
+                                alert("idk why it didn't work 💀")
+                            }
+                        }}>
                             <CopyIcon></CopyIcon>
                             Copy with Formatting
                         </button>
-                        <p>Copy as plain text if you need to paste in other apps</p>
+                        <p style="margin-top: 2rem;">Copy as plain text if you need to paste in other apps</p>
                         <button class="alt">
                             <CopyIcon></CopyIcon>
                             Copy as Plain Text
                         </button>
-                        <p>Anyone with this special link can view this report,<br>
+                        <p style="margin-top: 2rem;">Or you can send a link to this page;<br>
+                        anyone with this special link can view this report<br>
                         without having to log in<br></p>
-                        <input type="text" value="{window.location.origin}{base}/days/{dateYMD}?s={shareLinkToken}">
-                        <button class="alt">
+                        <input type="text" value={shareLink} disabled>
+                        <button class="alt" onclick={async () => {
+                            try {
+                                await navigator.clipboard.writeText(shareLink)
+                            } catch (error) {
+                                console.error(error.message)
+                                alert("idk why it didn't work 💀")
+                            }
+                        }}>
                             <LinkIcon></LinkIcon>
                             Copy Link
                         </button>
