@@ -20,7 +20,7 @@ func GetWeekByDate(c *fiber.Ctx) error {
 	first_date::text, last_date::text,
 	start_floor_budget, start_kitchen_budget,
 	start_food_budget, weekly_pay,
-	created_at, updated_at
+	share_link_token, created_at, updated_at
 FROM weeks
 WHERE $1::date BETWEEN start_date AND end_date
 LIMIT 1`,
@@ -35,6 +35,7 @@ LIMIT 1`,
 		&week.StartKitchenBudget,
 		&week.StartFoodBudget,
 		&week.WeeklyPay,
+		&week.ShareLinkToken,
 		&week.CreatedAt,
 		&week.UpdatedAt,
 	)
@@ -63,7 +64,7 @@ func GetAllWeeks(c *fiber.Ctx) error {
 first_date::text, last_date::text,
 start_floor_budget, start_kitchen_budget,
 start_food_budget, weekly_pay,
-created_at, updated_at
+share_link_token, created_at, updated_at
 FROM weeks`,
 	)
 	if err != nil {

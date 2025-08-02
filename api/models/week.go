@@ -14,6 +14,7 @@ type Week struct {
 	StartKitchenBudget *float64 `db:"start_kitchen_budget" json:"startKitchenBudget"`
 	StartFoodBudget   *float64  `db:"start_food_budget" json:"startFoodBudget"`
 	WeeklyPay []Employee `db:"weekly_pay" json:"weeklyPay"`
+	ShareLinkToken string `db:"share_link_token" json:"shareLinkToken"`
 	CreatedAt   time.Time        `db:"created_at" json:"createdAt"`
 	UpdatedAt   time.Time        `db:"updated_at" json:"updatedAt"`
 }
