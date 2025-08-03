@@ -85,7 +85,8 @@ just check your environment variables`,
 	 */
 	app.Patch(
 		"/users/:id",
-		/* no auth middleware,
+		auth.AuthMiddleware,
+		/* no admin middleware,
 		auth logic is in handlers.UpdateUser */
 		handlers.UpdateUser,
 	)
