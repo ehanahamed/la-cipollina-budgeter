@@ -228,7 +228,7 @@ async function removeEmployee() {
                             <button class="alt" onclick={function () {
                                 employee.edit = true
                             }}><PencilIcon></PencilIcon> Edit</button>
-                            <div class="dropdown">
+                            <div class="dropdown" tabindex="0">
                                 <button class="icon-only-button" aria-label="dropdown">
                                     <MoreDotsIcon></MoreDotsIcon>
                                 </button>
@@ -320,7 +320,7 @@ async function removeEmployee() {
                             <button class="alt" onclick={function () {
                                 employee.edit = true
                             }}><PencilIcon></PencilIcon> Edit</button>
-                            <div class="dropdown">
+                            <div class="dropdown" tabindex="0">
                                 <button class="icon-only-button" aria-label="dropdown">
                                     <MoreDotsIcon></MoreDotsIcon>
                                 </button>

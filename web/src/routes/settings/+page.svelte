@@ -167,7 +167,7 @@ async function deleteUser() {
                     <td><div class="flex" style="justify-content: space-between; align-items: center; align-content: center;">
                         <span>{user.username}</span>
                         {#if data.authedUser.admin || user.id == data.authedUser.id}
-                        <div class="dropdown">
+                        <div class="dropdown" tabindex="0">
                             <button class="icon-only-button">
                                 <MoreDotsIcon></MoreDotsIcon>
                             </button>
