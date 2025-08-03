@@ -68,11 +68,13 @@ just check your environment variables`,
 	(authorization logic in auth.AdminMiddleware) */
 	app.Post(
 		"/users",
+		auth.AuthMiddleware,
 		auth.AdminMiddleware,
 		handlers.AddUser,
 	)
 	app.Delete(
 		"/users/:id",
+		auth.AuthMiddleware,
 		auth.AdminMiddleware,
 		handlers.DeleteUser,
 	)
