@@ -6,7 +6,7 @@ https://freehold.dev/la-cipollina-budgeter
 
 ![Screenshot](./assets/screenshot1.png)
 
-## updating the api
+for future reference, for developers: to update the api
 
 on your machine, compile it:
 ```sh
@@ -34,8 +34,7 @@ update the databse
 sudo su postgres
 psql -d la_cipollina_budgeter_db
 # run commands in db/db-setup.sql
-# i just copy & paste the file from vim:
-# gg shift+v shift+g, alt+tab, control+shift+v
+# you can just copy and paste it into the db shell
 ```
 
 restart the service
