@@ -14,6 +14,7 @@ import { dateGetWeekNum } from "$lib/dateGetWeekNum.js";
 import { onMount } from "svelte";
 import { plainTextTableFrom2DArray } from "$lib/plainTextTableFrom2DArray.js"
 import { tableTo2DArray } from "$lib/tableTo2DArray.js"
+import { fade } from "svelte/transition"
 let { data } = $props();
 const startDate = (() => {
     const [year, month, day] = data.week.startDate.split("-");
@@ -100,6 +101,9 @@ let copyYay = $state(false);
 let copyYayTimeout;
 let copyLinkYay = $state(false);
 let copyLinkYayTimeout;
+
+let showNoData = $state(false);
+let noDataWeekDayKey = $state(-1);
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
@@ -291,17 +295,50 @@ let copyLinkYayTimeout;
                 {/if}
             </div>
         </div>
-        <p>View/Edit Days:</p>
+        <p>
+            {#if data.usingShareLink}
+                Day Reports & Details:
+            {:else}
+                View/Edit Days:
+            {/if}
+        </p>
         <div class="flex" style="max-width: 16rem; flex-direction: column; flex-wrap: nowrap;">
             {#each ["mon","tue","wed","thu","fri","sat","sun"] as weekDayKey}
+                {#if data.usingShareLink && dayResults[weekDayKey] == null}
+                <button class="button button-box" onclick={() => {
+                    showNoData = true;
+                    noDataWeekDayKey = weekDayKey;
+                }}>
+                    {{
+                        mon: "Monday",
+                        tue: "Tuesday",
+                        wed: "Wednesday",
+                        thu: "Thursday",
+                        fri: "Friday",
+                        sat: "Saturday",
+                        sun: "Sunday"
+                    }[weekDayKey]}, <span class="fg0">{
+                        [
+                            "Jan", "Feb", "Mar", "Apr",
+                            "May", "Jun", "Jul", "Aug",
+                            "Sep", "Oct", "Nov", "Dec"
+                        ][weekDayDates[weekDayKey].getMonth()]
+                    } {weekDayDates[weekDayKey].getDate()}</span>
+                </button>
+                {:else}
                 <a class="button button-box" href={
-                    dayResults[weekDayKey] ?
+                    data.usingShareLink ?
                         `${base}/days/${dateToYMDString(
                             weekDayDates[weekDayKey]
-                        )}` :
-                        `${base}/record-day?d=${dateToYMDString(
-                            weekDayDates[weekDayKey]
-                        )}`
+                        )}?s=${data.week.shareLinkToken}` : (
+                            dayResults[weekDayKey] ?
+                                `${base}/days/${dateToYMDString(
+                                    weekDayDates[weekDayKey]
+                                )}` :
+                                `${base}/record-day?d=${dateToYMDString(
+                                    weekDayDates[weekDayKey]
+                                )}`
+                        )
                 }>
                     {{
                         mon: "Monday",
@@ -319,7 +356,40 @@ let copyLinkYayTimeout;
                         ][weekDayDates[weekDayKey].getMonth()]
                     } {weekDayDates[weekDayKey].getDate()}</span>
                 </a>
+                {/if}
             {/each}
         </div>
     </div>
 </div>
+{#if showNoData}
+    <div class="modal" transition:fade={{ duration: 100 }}>
+        <div class="content">
+            <h4>
+                {{
+                    mon: "Monday",
+                    tue: "Tuesday",
+                    wed: "Wednesday",
+                    thu: "Thursday",
+                    fri: "Friday",
+                    sat: "Saturday",
+                    sun: "Sunday"
+                }[noDataWeekDayKey]}, {
+                    [
+                        "Jan", "Feb", "Mar", "Apr",
+                        "May", "Jun", "Jul", "Aug",
+                        "Sep", "Oct", "Nov", "Dec"
+                    ][weekDayDates[noDataWeekDayKey].getMonth()]
+                } {weekDayDates[noDataWeekDayKey].getDate()}
+            </h4>
+            <p>No data for this day</p>
+            <div class="flex">
+            <button onclick={() => {
+                showNoData = false;
+                noDataWeekDayKey = -1;
+            }}>
+                Okay
+            </button>
+            </div>
+        </div>
+    </div>
+{/if}
