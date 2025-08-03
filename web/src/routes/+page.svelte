@@ -129,7 +129,7 @@
         </a>
     </div>
 </div>
-<div style="position: absolute; bottom: 4rem; width: 100%;">
+<div style="width: 100%; margin-top: 4rem; margin-bottom: 8rem;">
     <p class="center fg0">
         Ehan Ahamed, Carson Fusco, Cristian Hernandez <br>
         2025 · <a href="https://github.com/ehanahamed/la-cipollina-budgeter" class="text fg0" style="text-decoration: underline;">Source Code</a>

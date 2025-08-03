@@ -19,7 +19,7 @@
     });
     let selectedDateYMD;
 </script>
-<div class="grid page" style="margin-top: 4rem;">
+<div class="grid page" style="margin-top: 4rem; margin-bottom: 8rem;">
     <div class="content">
         <div class="flex">
             <a href="{base}" class="button faint">
