@@ -121,18 +121,21 @@ let copyLinkYayTimeout;
             localStorage.getItem("budgeter:showWeekNums") == "true" ?
                 `, W${weekNum}` : ""
         }</p>
-        {#if !data.usingShareLink}
         <div class="flex" style="margin-bottom: 2rem;">
-            <a class="button alt" href="{base}/edit-day/{dateYMD}">
-                <PencilIcon></PencilIcon>
-                Edit Day
-            </a>
-            <a class="button alt" href="{base}/reports/{dateYMD}">
+            {#if !data.usingShareLink}
+                <a class="button alt" href="{base}/edit-day/{dateYMD}">
+                    <PencilIcon></PencilIcon>
+                    Edit Day
+                </a>
+            {/if}
+            <a class="button alt" href="{base}/reports/{dateYMD}{
+                data.usingShareLink ?
+                    `?s=${data.week.shareLinkToken}` : ""
+            }">
                 <DocIcon></DocIcon>
                 View Week Report
             </a>
         </div>
-        {/if}
         <div>
             <div style="display: inline-block; margin-bottom: 2rem;">
                 <div style="border: 0.2rem solid var(--border); border-radius: 0.8rem; min-width: 18rem;">
