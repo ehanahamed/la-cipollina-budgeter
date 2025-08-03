@@ -232,8 +232,7 @@ let copyLinkYayTimeout;
                 <details>
                     <summary style="cursor: pointer;">Copy, Save, or Send this Report</summary>
                     <div>
-                        <p>You can paste the table in an email, Google Doc,<br>
-                        Microsoft Word, etc and it will keep its formatting</p>
+                        <p>You can copy &amp; paste the table</p>
                         <button class="alt" onclick={async () => {
                             try {
                                 clearTimeout(copyYayTimeout)
