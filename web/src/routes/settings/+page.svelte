@@ -11,6 +11,7 @@ import ExitIcon from "$lib/icons/Exit.svelte";
 import XMarkIcon from "$lib/icons/CloseXMark.svelte";
 import { base } from "$app/paths";
 import { goto } from "$app/navigation";
+import { fade } from "svelte/transition";
 let { data } = $props();
 let users = $state(data.users);
 let showDeleteUserConfirmation = $state(false);
@@ -330,7 +331,7 @@ async function deleteUser() {
 </div>
 </div>
 {#if showDeleteUserConfirmation}
-    <div class="modal">
+    <div class="modal" transition:fade={{ duration: 200 }}>
         <div class="content">
             <p>Are you sure you want to delete "{users[userToDeleteIndex].username}"?</p>
             <div class="flex">
@@ -347,7 +348,7 @@ async function deleteUser() {
     </div>
 {/if}
 {#if showSetNewPasswordMenu}
-    <div class="modal">
+    <div class="modal" transition:fade={{ duration: 200 }}>
         <div class="content">
             <p>New password for "{users[setNewPasswordUserIndex].username}"</p>
             <input type="password" placeholder="New Password" bind:value={setNewPasswordPassword}>

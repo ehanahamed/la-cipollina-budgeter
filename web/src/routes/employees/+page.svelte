@@ -7,6 +7,7 @@ import TrashIcon from "$lib/icons/Trash.svelte";
 import IconPlus from "$lib/icons/Plus.svelte";
 import IconSettings from "$lib/icons/SettingsCogGear.svelte";
 import { base } from "$app/paths";
+import { fade } from "svelte/transition";
 let { data } = $props();
 let employees = $state(data.employees ?? []);
 let showDeleteEmployeeConfirmation = $state(false);
@@ -367,7 +368,7 @@ async function removeEmployee() {
 </div>
 </div>
 {#if showDeleteEmployeeConfirmation}
-    <div class="modal">
+    <div class="modal" transition:fade={{ duration: 200 }}>
         <div class="content">
             <p>Are you sure you want to remove "{employees[employeeToDeleteIndex].name}"?</p>
             <div class="flex">
@@ -384,7 +385,7 @@ async function removeEmployee() {
     </div>
 {/if}
 {#if showSpecialPayEditing}
-    <div class="modal">
+    <div class="modal" transition:fade={{ duration: 200 }}>
         <div class="content">
             {#if employees[specialPayEditingEmployeeIndex].name}
                 <p>Special Pay Settings for {employees[specialPayEditingEmployeeIndex].name}</p>
