@@ -109,12 +109,14 @@ let noDataWeekDayKey = $state(-1);
 </script>
 <div class="grid page" style="margin-top: 4rem; margin-bottom: 10rem;">
     <div class="content">
-        <div class="flex">
-            <a class="button faint" href="{base}/reports">
-                <BackArrowIcon></BackArrowIcon>
-                Back
-            </a>
-        </div>
+        {#if !data.usingShareLink}
+            <div class="flex">
+                <a class="button faint" href="{base}/reports">
+                    <BackArrowIcon></BackArrowIcon>
+                    Back
+                </a>
+            </div>
+        {/if}
         <h3 style="margin-bottom: 0px;">Week Report</h3>
         <p style="margin-top: 0.4rem;">
             {#if localStorage?.getItem("budgeter:showWeekNums") == "true"}
