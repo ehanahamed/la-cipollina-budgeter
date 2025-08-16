@@ -90,6 +90,8 @@ data.days.forEach((day) => {
     foodBudget = result.foodBudgetFinal;
     kitchenBudget = result.kitchenBudgetFinal;
     floorBudget = result.floorBudgetFinal;
+
+    dayNum++;
 })
 
 const shareLink = `${window.location.origin+base}/reports/${dateYMD}?s=${
